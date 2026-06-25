@@ -1,0 +1,1196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PII CMS</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',system-ui,sans-serif;background:#faf9f5;color:#0e0e0c}
+input,textarea,select{font-family:inherit;font-size:13px;width:100%;padding:9px 12px;border:1px solid rgba(14,14,12,0.12);background:#fff;color:#0e0e0c;outline:none}
+textarea{resize:vertical}
+button{font-family:inherit;cursor:pointer}
+.btn{background:#0e0e0c;color:#fff;border:none;padding:10px 20px;font-size:12px;font-weight:500;letter-spacing:0.06em;text-transform:uppercase}
+.btn-ghost{background:#fff;color:#0e0e0c;border:1px solid rgba(14,14,12,0.12);padding:8px 16px;font-size:12px;font-weight:500;letter-spacing:0.06em;text-transform:uppercase}
+.btn-danger{background:#fff;color:#c8401e;border:1px solid rgba(200,64,30,0.3);padding:5px 10px;font-size:11px}
+label{display:block;font-size:11px;font-weight:500;letter-spacing:0.06em;text-transform:uppercase;color:#3a3a36;margin-bottom:4px}
+.field{margin-bottom:14px}
+.tag{font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:#c8401e;font-weight:500}
+h1{font-family:'Playfair Display',Georgia,serif;font-size:1.6rem;font-weight:700}
+.card{background:#fff;border:1px solid rgba(14,14,12,0.12);padding:1.5rem;margin-bottom:1rem}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.5rem}
+.stat-card{background:#fff;border:1px solid rgba(14,14,12,0.12);padding:1.25rem}
+.stat-num{font-family:'Playfair Display',Georgia,serif;font-size:2rem;font-weight:700;line-height:1}
+.stat-label{font-size:11px;color:#7a7a72;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:.5rem}
+.stat-sub{font-size:11px;color:#7a7a72;margin-top:.4rem}
+table{width:100%;border-collapse:collapse}
+th{padding:9px 1rem;text-align:left;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;color:#7a7a72;border-bottom:1px solid rgba(14,14,12,0.12);background:#f3f0e8;font-weight:500}
+td{padding:9px 1rem;font-size:13px;border-bottom:1px solid rgba(14,14,12,0.12)}
+.badge{font-size:10px;padding:3px 8px;font-weight:500;letter-spacing:0.05em}
+.badge-pub{background:rgba(15,110,86,0.1);color:#0F6E56}
+.badge-draft{background:rgba(136,135,128,0.12);color:#5F5E5A}
+.badge-red{background:#f5ede9;color:#c8401e}
+#toast{position:fixed;bottom:1.5rem;right:1.5rem;background:#0e0e0c;color:#fff;padding:12px 20px;font-size:13px;font-weight:500;display:none;z-index:999}
+#login{min-height:100vh;display:flex;align-items:center;justify-content:center}
+#login .box{width:360px;background:#fff;border:1px solid rgba(14,14,12,0.12);padding:2.5rem}
+#app{display:none;flex-direction:column;min-height:100vh}
+#topbar{height:52px;background:#fff;border-bottom:1px solid rgba(14,14,12,0.12);display:flex;align-items:center;justify-content:space-between;padding:0 1.5rem;position:sticky;top:0;z-index:50}
+#shell{display:flex;flex:1}
+#sidebar{width:190px;background:#fff;border-right:1px solid rgba(14,14,12,0.12);padding:1rem 0;flex-shrink:0;min-height:calc(100vh - 52px)}
+.nav-section{font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:#7a7a72;padding:0 1rem;margin:1rem 0 0.4rem}
+.nav-item{padding:7px 1rem;font-size:13px;cursor:pointer;border-left:2px solid transparent}
+.nav-item:hover{background:#f3f0e8}
+.nav-item.active{color:#c8401e;background:#f5ede9;border-left-color:#c8401e;font-weight:500}
+#content{flex:1;padding:2rem;overflow:auto}
+.section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;padding-bottom:1.25rem;border-bottom:1px solid rgba(14,14,12,0.12)}
+.mono{font-family:'DM Mono',monospace}
+.err-box{margin-top:.75rem;background:#fff0ed;border:1px solid rgba(200,64,30,0.3);color:#c8401e;font-size:12px;padding:10px 12px}
+.section-sub{font-size:11px;letter-spacing:0.05em;text-transform:uppercase;color:#3a3a36;margin-bottom:1rem;padding-bottom:.75rem;border-bottom:1px solid rgba(14,14,12,0.12);font-weight:500}
+.card-header{display:flex;justify-content:space-between;align-items:center;cursor:pointer;user-select:none;padding:.1rem 0}
+.card-header:hover{opacity:.85}
+.card-body{margin-top:1rem;padding-top:1rem;border-top:1px solid rgba(14,14,12,0.12)}
+.chevron{font-size:11px;color:#7a7a72;margin-left:8px;transition:transform .15s}
+.chevron.open{transform:rotate(180deg)}
+.search-bar{position:relative;margin-bottom:1.25rem}
+.search-bar input{width:100%;padding:9px 12px 9px 34px;border:1px solid rgba(14,14,12,0.12);background:#fff;font-family:inherit;font-size:13px;color:#0e0e0c;outline:none}
+.search-bar input:focus{border-color:#0e0e0c}
+.search-bar svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);pointer-events:none}
+.tag-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.tag-chip{display:inline-flex;align-items:center;gap:4px;background:#f5ede9;color:#c8401e;font-size:11px;font-weight:500;padding:3px 8px;letter-spacing:.04em}
+.tag-chip button{background:none;border:none;color:#c8401e;cursor:pointer;font-size:13px;line-height:1;padding:0;margin:0;display:flex;align-items:center}
+.tag-add-row{display:flex;gap:6px;margin-top:4px}
+.tag-add-row input{flex:1;padding:6px 10px;font-size:12px;border:1px solid rgba(14,14,12,0.12);background:#fff;font-family:inherit}
+.tag-add-row button{padding:6px 12px;font-size:11px;letter-spacing:.05em;text-transform:uppercase;white-space:nowrap}
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@400;500&family=DM+Mono&display=swap">
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login">
+  <div class="box">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:2rem">
+      <div style="width:32px;height:32px;background:#0e0e0c;border-radius:50%;display:flex;align-items:center;justify-content:center">
+        <svg viewBox="0 0 20 20" width="14" height="14"><circle cx="10" cy="10" r="2.5" fill="white"/><line x1="10" y1="3" x2="10" y2="6.5" stroke="white" stroke-width="1.5" stroke-linecap="round"/><line x1="10" y1="13.5" x2="10" y2="17" stroke="white" stroke-width="1.5" stroke-linecap="round"/><line x1="3" y1="10" x2="6.5" y2="10" stroke="white" stroke-width="1.5" stroke-linecap="round"/><line x1="13.5" y1="10" x2="17" y2="10" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+      <div>
+        <div style="font-family:'Playfair Display',Georgia,serif;font-size:14px;font-weight:700">PII CMS</div>
+        <div style="font-size:10px;color:#7a7a72;letter-spacing:0.06em;text-transform:uppercase">Content Management</div>
+      </div>
+    </div>
+    <h1 style="margin-bottom:.3rem">Sign in</h1>
+    <div style="font-size:12px;color:#7a7a72;margin-bottom:1.5rem">Authorized personnel only</div>
+    <div class="field"><label>Email</label><input type="email" id="l-email" placeholder="your@email.com"></div>
+    <div class="field"><label>Password</label><input type="password" id="l-pw" placeholder=""></div>
+    <button class="btn" style="width:100%" onclick="doLogin()">Sign In</button>
+    <div class="err-box" id="l-err" style="display:none">Incorrect email or password.</div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div id="topbar">
+    <div style="display:flex;align-items:center;gap:10px">
+      <span style="font-family:'Playfair Display',Georgia,serif;font-size:13px;font-weight:700">PII CMS</span>
+      <span style="color:rgba(14,14,12,0.12);margin:0 6px">|</span>
+      <span id="topbar-name" style="font-size:12px;color:#7a7a72">Superadmin &middot; Khahlil Louisy</span>
+    </div>
+    <div style="display:flex;gap:8px">
+      <a href="index.html" class="btn-ghost" style="text-decoration:none;font-size:11px;padding:6px 12px">&larr; View Site</a>
+      <button class="btn-ghost" style="font-size:11px;padding:6px 12px" onclick="doLogout()">Sign out</button>
+    </div>
+  </div>
+  <div id="shell">
+    <div id="sidebar"></div>
+    <div id="content"></div>
+  </div>
+</div>
+<div id="toast"></div>
+
+<script>
+// \u2500\u2500 SHA-256 (pure JS, no Web Crypto) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+function sha256(s){
+  function r(n,t){return n>>>t|n<<32-t}
+  function a(a,b,c,d){return(a+b+c+d)&0xFFFFFFFF}
+  const H=[1779033703,3144134277,1013904242,2773480762,1359893119,2600822924,528734635,1541459225];
+  const K=[1116352408,1899447441,3049323471,3921009573,961987163,1508970993,2453635748,2870763221,3624381080,310598401,607225278,1426881987,1925078388,2162078206,2614888103,3248222580,3835390401,4022224774,264347078,604807628,770255983,1249150122,1555081692,1996064986,2554220882,2821834349,2952996808,3210313671,3336571891,3584528711,113926993,338241895,666307205,773529912,1294757372,1396182291,1695183700,1986661051,2177026350,2456956037,2730485921,2820302411,3259730800,3345764771,3516065817,3600352804,4094571909,275423344,430227734,506948616,659060556,883997877,958139571,1322822218,1537002063,1747873779,1955562222,2024104815,2227730452,2361852424,2428436474,2756734187,3204031479,3329325298];
+  let c=[];
+  for(let i=0;i<s.length;i++){const b=s.charCodeAt(i);if(b<128)c.push(b);else if(b<2048)c.push(192|b>>6,128|b&63);else c.push(224|b>>12,128|b>>6&63,128|b&63);}
+  const l=c.length*8;c.push(128);
+  while(c.length%64!==56)c.push(0);
+  c.push(0,0,0,0,(l>>>24)&255,(l>>>16)&255,(l>>>8)&255,l&255);
+  let hh=[...H];
+  for(let i=0;i<c.length;i+=64){
+    const w=[];
+    for(let j=0;j<16;j++)w.push(c[i+j*4]<<24|c[i+j*4+1]<<16|c[i+j*4+2]<<8|c[i+j*4+3]);
+    for(let j=16;j<64;j++){const s1=r(w[j-2],17)^r(w[j-2],19)^w[j-2]>>>10;const s0=r(w[j-15],7)^r(w[j-15],18)^w[j-15]>>>3;w.push(a(s1,w[j-7],s0,w[j-16]));}
+    let[A,B,C,D,E,F,G,HH]=[...hh];
+    for(let j=0;j<64;j++){const S1=r(E,6)^r(E,11)^r(E,25);const ch=E&F^~E&G;const t1=a(HH,S1,ch,a(K[j],w[j],0,0));const S0=r(A,2)^r(A,13)^r(A,22);const maj=A&B^A&C^B&C;const t2=a(S0,maj,0,0);HH=G;G=F;F=E;E=a(D,t1,0,0);D=C;C=B;B=A;A=a(t1,t2,0,0);}
+    hh=hh.map((v,i)=>a(v,[A,B,C,D,E,F,G,HH][i],0,0));
+  }
+  return hh.map(v=>(v>>>0).toString(16).padStart(8,'0')).join('');
+}
+
+// \u2500\u2500 Credentials (hashed) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+const EH="0dd6e6abc466574edd69c9422d79f5fd269f621b5b5caabd35e00628873469d8";
+const PH="e85608a8d9888ef66a9fde4f6194a2ece6e2d79b5277397b76630ed4ff3ead83";
+const SK="pii_session_v2",DK="pii_cms_data_v2",UK="pii_cms_users_v2";
+
+// \u2500\u2500 Users store \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+function loadUsers(){try{const r=localStorage.getItem(UK);if(r)return JSON.parse(r);}catch(e){}return[];}
+function saveUsers(u){localStorage.setItem(UK,JSON.stringify(u));}
+let USERS=loadUsers();
+let CURRENT_USER=null;
+function can(action){
+  const role=CURRENT_USER?CURRENT_USER.role:'none';
+  if(role==='superadmin')return true;
+  if(action==='write_draft')return role==='editor'||role==='contributor';
+  if(action==='publish')return role==='editor';
+  return false;
+}
+// \u2500\u2500 Session \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+function getSession(){try{return JSON.parse(localStorage.getItem(SK));}catch(e){return null;}}
+function setSession(user){localStorage.setItem(SK,JSON.stringify(user));}
+function clearSession(){localStorage.removeItem(SK);}
+
+// \u2500\u2500 Data \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+const DD={
+  site:{name:"The Public Innovation Institute",email:"info@thepii.org",tagline:"Working at the intersection of technology, public policy, and community leadership.",address:"1 Washington Mall, Suite 1159\nGovernment Center, Boston, MA 02108",twitter:"@thepii_org",ga4Id:"",pullQuote:'"The world\'s hardest problems don\'t announce themselves."'},
+  stats:[{num:"10",unit:"M",desc:"People die annually from pollution-related causes"},{num:"14",unit:"x",desc:"Return on every $1 invested in public health infrastructure"},{num:"77",unit:"%",desc:"Of jobs will require digital skills by 2030"},{num:"97",unit:"M",desc:"New jobs AI is expected to create"}],
+  carousel:[
+    {id:1,tag:"Research - Harvard Bloomberg Center",title:"AI-Enabled Infrastructure Monitoring as a Public Health Intervention",sub:"A new framework for cities to transform infrastructure monitoring into actionable public health strategy.",link:"research/ai-infrastructure-monitoring",status:"active"},
+    {id:2,tag:"Working Paper - Urban Analytics",title:"Can AI Address Equity Gaps in Urban Health Surveillance?",sub:"Evidence from Boston's 311 system and AI-detected pavement data.",link:"research/equity-gaps-urban-health",status:"active"},
+    {id:3,tag:"Program - Applications Close June 22",title:"PII x Cyvl.AI 2026 Summer Innovation Program",sub:"Six weeks at the intersection of AI, infrastructure data, and urban policy.",link:"programs/piixcyvl-2026",status:"active"}
+  ],
+  research:[
+    {id:"ai-infrastructure-monitoring",title:"A Framework for Using AI-Enabled Infrastructure Monitoring as a Public Health Intervention",author:"Khahlil Louisy",affiliation:"Harvard Bloomberg Center",tag:"Data-Smart City Solutions",status:"published",date:"June 9, 2026",excerpt:"A method for cities to transform infrastructure monitoring into actionable public health strategy.",body:"Cities face a growing tension: aging infrastructure and limited budgets demand triage...",featured:true},
+    {id:"equity-gaps-urban-health",title:"Can AI Address Equity Gaps in Urban Health Surveillance? Evidence from Boston",author:"Khahlil Louisy",affiliation:"Working Paper",tag:"Urban Analytics",status:"published",date:"June 5, 2026",excerpt:"Boston's 311 complaint system vs. AI-detected pavement data reveals equity gaps.",body:"Urban health surveillance systems rely heavily on voluntary citizen reporting...",featured:true},
+    {id:"residents-vs-algorithms",title:"When Residents and Algorithms See Different Problems",author:"Khahlil Louisy",affiliation:"The Public Innovation Institute",tag:"Infrastructure Equity",status:"published",date:"May 28, 2026",excerpt:"Analysis of 187,000 citizen reports and 5,000 computer vision detections in Boston.",body:"When a pothole appears on a Boston street, two things may or may not happen...",featured:true},
+    {id:"transportation-safety-build-act",title:"The BUILD America 250 Act: A Missed Opportunity for Safety-First Infrastructure",author:"Khahlil Louisy, Eric Plosky, Giovanni Pintor",affiliation:"Issues in Science and Technology",tag:"Policy Brief",status:"published",date:"April 2026",excerpt:"A critical analysis of the BUILD America 250 Act's transportation safety provisions.",body:"The BUILD America 250 Act represents the largest single federal infrastructure investment since 2021...",featured:false}
+  ],
+  programs:[
+    {id:"piixcyvl-2026",name:"PII x Cyvl.AI 2026 Summer Innovation Program",level:"Featured",format:"Fully virtual - 6 weeks",status:"open",deadline:"June 22, 2026",applyUrl:"#",featured:true,description:"Six weeks of hands-on work at the intersection of AI, infrastructure data, and urban policy.",fullDescription:"The PII x Cyvl.AI Summer Innovation Program is a six-week intensive..."},
+    {id:"data-social-innovation",name:"Data, Social Innovation & Public Policy",level:"Graduate",format:"Summer intensive",status:"open",deadline:"TBD",applyUrl:"#",featured:false,description:"Rigorous training for graduate students and practitioners.",fullDescription:"This graduate-level program prepares students..."},
+    {id:"data-analytics-urban-policy",name:"Data Analytics & Urban Policy",level:"Undergraduate",format:"Fully virtual - 6 weeks",status:"open",deadline:"TBD",applyUrl:"#",featured:false,description:"Hands-on training in urban data analytics.",fullDescription:"Designed for undergraduate students interested in how cities work..."},
+    {id:"tech-innovation-entrepreneurship",name:"Technology, Innovation & Entrepreneurship",level:"High School",format:"Summer - In-person",status:"open",deadline:"TBD",applyUrl:"#",featured:false,description:"An immersive introduction to civic technology for students aged 15-18.",fullDescription:"A two-week residential program for high school students..."}
+  ],
+  focusAreas:[
+    {id:1,title:"Responsible AI in Government",body:"Designing AI systems that municipal governments can deploy equitably."},
+    {id:2,title:"Health Systems & Population Health",body:"Mapping social and physical determinants of health."},
+    {id:3,title:"Civic & Digital Infrastructure",body:"Building open, interoperable data systems that power evidence-based governance."},
+    {id:4,title:"Economic Development & Digital Transformation",body:"Connecting digital capability to inclusive economic growth."},
+    {id:5,title:"Climate & Resilient Ecosystems",body:"Connecting climate data to municipal planning and infrastructure investment."},
+    {id:6,title:"Workforce & Education Innovation",body:"Preparing a new generation of civic technologists."},
+    {id:7,title:"Public-Interest Innovation & Venture Building",body:"Accelerating early-stage ventures via the Hyperion program."}
+  ],
+  hyperion:{tagline:"Venture Development Program",body:"Hyperion provides intensive support for early-stage ventures combining cutting-edge technology with deep understanding of complex social systems.",cta:"Apply to Hyperion",
+    pillars:[{num:"01",title:"Embedded Research Support",body:"Institutional partnerships across MIT, Harvard, and beyond."},{num:"02",title:"Founder Community",body:"A curated cohort of founders tackling public problems."},{num:"03",title:"Procurement Pathways",body:"Access to policymakers, pilots, and government procurement channels."},{num:"04",title:"Capital & Advisor Network",body:"Warm introductions to impact investors and philanthropies."}],
+    partners:[{name:"JP Morgan",type:"Financial Partner"},{name:"Fusion Fund",type:"Venture Partner"},{name:"Orrick",type:"Legal Partner"},{name:"MIT",type:"Academic Partner"},{name:"City of San Jose",type:"Government Partner"},{name:"City of Baltimore",type:"Government Partner"}]},
+  conference:{year:"2026",date:"May 2026",location:"New York City",theme:"Urban.Next: Inventing the Future of Urban Systems",subtitle:"The conference on public-interest innovation and invention.",regUrl:"#",tracks:[{name:"The Summit",desc:"Plenaries, keynotes, and provocations from the field's leading voices"},{name:"The Workshops",desc:"Hands-on sessions co-designed with city innovators and practitioners"}]},
+  cailPosts:[
+    {id:"cail-launch-2026",type:"article",title:"Launching City as Innovation Lab: Our Vision for Urban Testbeds",author:"Khahlil Louisy",date:"June 19, 2026",status:"published",excerpt:"CAIL is PII\u2019s new initiative to partner with cities and companies to design, test, and scale solutions in real-world urban environments.",body:"Cities are no longer just the subjects of innovation...",featured:true},
+    {id:"cail-forum-sept-2026",type:"event",title:"CAIL Urban Innovation Forum \u2014 September 2026",author:"The PII",date:"September 15, 2026",status:"published",excerpt:"A half-day convening for city leaders, companies, and researchers exploring the future of urban testbeds. Cambridge, MA.",body:"Join us for the inaugural CAIL Urban Innovation Forum...",featured:true}
+  ],
+  team:[
+    {id:"khahlil-louisy",name:"Khahlil Louisy",title:"Executive Director & Founder",group:"Leadership",bio:"Khahlil is the founder and executive director of The Public Innovation Institute. He holds a research contract with the Bloomberg Center for Cities at Harvard Kennedy School and is pursuing a graduate degree in public policy at MIT.",photo:"",linkedin:"",twitter:"",order:0,featured:true},
+    {id:"alex-radunsky",name:"Alex Radunsky",title:"Director, Science & Policy",group:"Leadership",bio:"Alex leads PII's science and policy portfolio.",photo:"",linkedin:"",twitter:"",order:1,featured:false},
+    {id:"simona-tiribelli",name:"Simona Tiribelli",title:"Director, AI & Technology Ethics",group:"Leadership",bio:"Simona leads PII's work at the intersection of artificial intelligence and ethics.",photo:"",linkedin:"",twitter:"",order:2,featured:false},
+    {id:"teresa-ayllon",name:"Teresa Ayll\u00f3n",title:"Coordinator, Academic Programs",group:"Team",bio:"Teresa coordinates PII's suite of academic programs.",photo:"",linkedin:"",twitter:"",order:3,featured:false},
+    {id:"peter-hotez",name:"Peter Hotez",title:"Institute Advisor",group:"Advisors",bio:"Peter Hotez is a leading physician-scientist and dean for the National School of Tropical Medicine at Baylor College of Medicine.",photo:"",linkedin:"",twitter:"",order:4,featured:false},
+    {id:"ryan-taylor",name:"Ryan Taylor",title:"Advisor, Hyperion",group:"Advisors",bio:"Ryan Taylor advises PII's Hyperion program.",photo:"",linkedin:"",twitter:"",order:5,featured:false},
+    {id:"stephen-caines",name:"Stephen Caines",title:"Advisor, Hyperion",group:"Advisors",bio:"Stephen Caines advises PII's Hyperion initiative.",photo:"",linkedin:"",twitter:"",order:6,featured:false},
+    {id:"elizabeth-crowe",name:"Elizabeth Crowe",title:"Advisor, Hyperion",group:"Advisors",bio:"Elizabeth Crowe advises PII's Hyperion program.",photo:"",linkedin:"",twitter:"",order:7,featured:false},
+    {id:"alex-wissner-gross",name:"Alex Wissner-Gross",title:"Institute Advisor",group:"Advisors",bio:"Alex Wissner-Gross is a scientist, inventor, and entrepreneur affiliated with Harvard and MIT.",photo:"",linkedin:"",twitter:"",order:8,featured:false}
+  ],
+  opportunities:[
+    {id:"student-volunteer-2026",type:"volunteer",title:"Student & Recent Graduate Research Volunteer",status:"open",deadline:"Rolling",applyUrl:"https://www.thepii.org/students-and-recent-grad-submission",location:"Remote",description:"PII welcomes current students and recent graduates to contribute to our research and policy initiatives.",featured:true},
+    {id:"cail-city-partner",type:"partnership",title:"CAIL City Partnership",status:"open",deadline:"Rolling",applyUrl:"#contact",location:"Multiple Cities",description:"City as Innovation Lab (CAIL) is actively seeking municipal government partners.",featured:true},
+    {id:"cail-company-partner",type:"partnership",title:"CAIL Company Partnership",status:"open",deadline:"Rolling",applyUrl:"#contact",location:"Remote / On-site",description:"Companies building solutions for urban challenges are invited to partner with CAIL.",featured:false}
+  ]
+};
+
+function loadData(){
+  try{
+    const r=localStorage.getItem(DK);
+    if(r){const p=JSON.parse(r);return Object.assign({},DD,p,{research:p.research||DD.research,programs:p.programs||DD.programs,carousel:p.carousel||DD.carousel,cailPosts:p.cailPosts||DD.cailPosts,team:p.team||DD.team,opportunities:p.opportunities||DD.opportunities,hyperion:Object.assign({},DD.hyperion,p.hyperion||{}),site:Object.assign({},DD.site,p.site||{})});}
+  }catch(e){}
+  return JSON.parse(JSON.stringify(DD));
+}
+function saveData(d){
+  try{
+    localStorage.setItem(DK,JSON.stringify(d));
+    return true;
+  }catch(e){
+    // Likely quota exceeded — common with large base64 media
+    toast('⚠ Save failed: storage full. Try removing large images/videos or use a URL instead.');
+    return false;
+  }
+}
+let DATA=loadData();
+let PAGE="dashboard";
+// Collapsible card state: Set of "section:id" strings that are expanded
+const EXPANDED=new Set();
+// Per-section search query
+const SEARCH={research:'',programs:'',cail:'',team:'',opportunities:''};
+
+// \u2500\u2500 Auth \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+function doLogin(){
+  const email=document.getElementById('l-email').value.trim().toLowerCase();
+  const pw=document.getElementById('l-pw').value;
+  const eHash=sha256(email);
+  const pHash=sha256(pw);
+  if(eHash===EH&&pHash===PH){
+    const user={id:'superadmin',name:'Khahlil Louisy',email,role:'superadmin'};
+    CURRENT_USER=user;setSession(user);
+    document.getElementById('l-err').style.display='none';showApp();return;
+  }
+  USERS=loadUsers();
+  const match=USERS.find(u=>u.active&&u.emailHash===eHash&&u.pwHash===pHash);
+  if(match){
+    CURRENT_USER={id:match.id,name:match.name,email:match.email,role:match.role};
+    setSession(CURRENT_USER);
+    document.getElementById('l-err').style.display='none';showApp();return;
+  }
+  document.getElementById('l-err').style.display='block';
+}
+document.getElementById('l-email').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('l-pw').focus();});
+document.getElementById('l-pw').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+
+function doLogout(){clearSession();location.reload();}
+
+function showApp(){
+  document.getElementById('login').style.display='none';
+  document.getElementById('app').style.display='flex';
+  // Update topbar name
+  const nameEl=document.getElementById('topbar-name');
+  if(nameEl&&CURRENT_USER){
+    const roleLabel={superadmin:'Superadmin',editor:'Editor',contributor:'Contributor'}[CURRENT_USER.role]||CURRENT_USER.role;
+    nameEl.textContent=CURRENT_USER.name+' \u00b7 '+roleLabel;
+  }
+  rebuildSidebar();
+  nav('dashboard');
+}
+function rebuildSidebar(){
+  const sb=document.getElementById('sidebar');
+  const isSA=CURRENT_USER&&CURRENT_USER.role==='superadmin';
+  const canSite=can('manage_site');
+  sb.innerHTML=`
+    <div class="nav-section">Overview</div>
+    <div class="nav-item" onclick="nav('dashboard')">Dashboard</div>
+    <div class="nav-item" onclick="nav('analytics')">Analytics</div>
+    <div class="nav-section">Content</div>
+    <div class="nav-item" onclick="nav('research')">Research</div>
+    <div class="nav-item" onclick="nav('programs')">Programs</div>
+    <div class="nav-item" onclick="nav('cail')">CAIL Posts</div>
+    <div class="nav-item" onclick="nav('team')">People</div>
+    <div class="nav-item" onclick="nav('opportunities')">Opportunities</div>
+    ${isSA?`
+    <div class="nav-item" onclick="nav('carousel')">Carousel</div>
+    <div class="nav-item" onclick="nav('hyperion')">Hyperion</div>
+    <div class="nav-item" onclick="nav('conference')">Change.Enabled</div>`:''}
+    ${isSA?`<div class="nav-section">Site</div>
+    <div class="nav-item" onclick="nav('focus')">Focus Areas</div>
+    <div class="nav-item" onclick="nav('stats')">Impact Stats</div>
+    <div class="nav-item" onclick="nav('settings')">Settings</div>`:''}
+    ${isSA?`<div class="nav-section">Admin</div>
+    <div class="nav-item" onclick="nav('users')">User Management</div>`:''}
+  `;
+  // reattach active state
+  document.querySelectorAll('.nav-item').forEach(el=>{
+    el.classList.toggle('active',el.getAttribute('onclick')===`nav('${PAGE}')`);
+  });
+}
+
+// \u2500\u2500 Toast \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.style.display='block';
+  setTimeout(()=>t.style.display='none',2500);
+}
+
+// \u2500\u2500 Save \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+function save(){
+  try{
+    localStorage.setItem(DK,JSON.stringify(DATA));
+    toast('Saved \u2713');
+    render();
+  }catch(e){
+    toast('\u26a0 Save failed: storage full. Remove large images/videos first.');
+  }
+}
+
+// \u2500\u2500 Nav \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+function nav(pg){
+  PAGE=pg;
+  document.querySelectorAll('.nav-item').forEach(el=>{
+    el.classList.toggle('active',el.getAttribute('onclick')===`nav('${pg}')`);
+  });
+  render();
+}
+
+// \u2500\u2500 Field helpers \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+function field(label,val,onchange,rows,placeholder){
+  const ph=placeholder?` placeholder="${esc(placeholder)}"`:''
+  return `<div class="field"><label>${label}</label>${rows?`<textarea rows="${rows}" onchange="${onchange}">${esc(val||'')}</textarea>`:`<input type="text" value="${esc(val||'')}"${ph} onchange="${onchange}">`}</div>`;
+}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function badge(status){return `<span class="badge ${status==='published'||status==='open'?'badge-pub':'badge-draft'}">${status}</span>`;}
+
+// \u2500\u2500 Render \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+function render(){
+  setTimeout(applyRoleUI,0);
+  const c=document.getElementById('content');
+  if(PAGE==='dashboard') c.innerHTML=renderDashboard();
+  else if(PAGE==='analytics') c.innerHTML=renderAnalytics();
+  else if(PAGE==='team') c.innerHTML=renderTeam();
+  else if(PAGE==='opportunities') c.innerHTML=renderOpportunities();
+  else if(PAGE==='cail') c.innerHTML=renderCAIL();
+  else if(PAGE==='programs') c.innerHTML=renderPrograms();
+  else if(PAGE==='carousel') c.innerHTML=renderCarousel();
+  else if(PAGE==='hyperion') c.innerHTML=renderHyperion();
+  else if(PAGE==='conference') c.innerHTML=renderConference();
+  else if(PAGE==='focus') c.innerHTML=renderFocus();
+  else if(PAGE==='stats') c.innerHTML=renderStats();
+  else if(PAGE==='settings') c.innerHTML=renderSettings();
+  else if(PAGE==='users') c.innerHTML=renderUsers();
+}
+
+function renderDashboard(){
+  const pub=DATA.research.filter(r=>r.status==='published').length;
+  const active=DATA.carousel.filter(c=>c.status==='active').length;
+  return `
+    <div class="section-header"><div><h1>Dashboard</h1><div style="font-size:12px;color:#7a7a72;margin-top:4px">Welcome back, Khahlil.</div></div></div>
+    <div class="grid4">
+      <div class="stat-card"><div class="stat-label">Publications</div><div class="stat-num">${pub}</div><div class="stat-sub">published</div></div>
+      <div class="stat-card"><div class="stat-label">Programs</div><div class="stat-num">${DATA.programs.length}</div><div class="stat-sub">active</div></div>
+      <div class="stat-card"><div class="stat-label">CAIL Posts</div><div class="stat-num">${(DATA.cailPosts||[]).filter(p=>p.status==='published').length}</div><div class="stat-sub">published</div></div>
+      <div class="stat-card"><div class="stat-label">Carousel</div><div class="stat-num">${active}</div><div class="stat-sub">live slides</div></div>
+    </div>
+    <div class="card">
+      <div class="section-sub">Recent Publications</div>
+      <table><thead><tr><th>Title</th><th>Author</th><th>Tag</th><th>Status</th></tr></thead><tbody>
+      ${DATA.research.slice(0,5).map(r=>`<tr><td>${esc(r.title.length>55?r.title.slice(0,55)+'...':r.title)}</td><td style="color:#7a7a72">${esc(r.author.split(',')[0])}</td><td><span class="badge badge-red">${esc(r.tag)}</span></td><td>${badge(r.status)}</td></tr>`).join('')}
+      </tbody></table>
+    </div>`;
+}
+
+function renderResearch(){
+  const q=SEARCH.research.toLowerCase();
+  const allTags=[...new Set(DATA.research.flatMap(r=>r.tags||[r.tag]).filter(Boolean))].sort();
+  const items=DATA.research.filter(r=>{
+    if(!q)return true;
+    return (r.title||'').toLowerCase().includes(q)||(r.author||'').toLowerCase().includes(q)||((r.tags||[r.tag]).join(' ')).toLowerCase().includes(q);
+  });
+  return `
+    <div class="section-header">
+      <div><h1>Research</h1><div style="font-size:12px;color:#7a7a72;margin-top:4px">Manage all publications</div></div>
+      <button class="btn" onclick="addResearch()">+ New Post</button>
+    </div>
+    <div class="search-bar">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="6" cy="6" r="4.5" stroke="#7a7a72" stroke-width="1.3"/><line x1="9.5" y1="9.5" x2="13" y2="13" stroke="#7a7a72" stroke-width="1.3" stroke-linecap="round"/></svg>
+      <input type="text" placeholder="Search by title, author, or tag&hellip;" value="${esc(SEARCH.research)}" oninput="SEARCH.research=this.value;render()">
+    </div>
+    <datalist id="dl-research-tags">${allTags.map(t=>`<option value="${esc(t)}">`).join('')}</datalist>
+    ${items.length===0?'<div class="card"><p style="font-size:13px;color:#7a7a72">No posts match your search.</p></div>':''}
+    ${items.map((r)=>{
+      const i=DATA.research.indexOf(r);
+      const key='research:'+r.id;
+      const open=EXPANDED.has(key);
+      const tags=r.tags||(r.tag?[r.tag]:[]);
+      return `
+    <div class="card" style="padding:1rem 1.5rem">
+      <div class="card-header" onclick="toggleExpanded('${key}')">
+        <div style="flex:1;min-width:0">
+          <div style="font-weight:600;font-size:14px;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(r.title||'Untitled')}</div>
+          <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+            ${tags.slice(0,2).map(t=>`<span class="badge badge-red">${esc(t)}</span>`).join('')}
+            <span class="badge ${r.status==='published'?'badge-pub':'badge-draft'}">${r.status}</span>
+            ${r.featured?'<span class="badge" style="background:#fff3cd;color:#856404">Featured</span>':''}
+            <span style="font-size:11px;color:#7a7a72">${esc(r.date||'')}</span>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;flex-shrink:0;margin-left:1rem">
+          <button class="btn-danger" onclick="event.stopPropagation();delResearch(${i})">Delete</button>
+          <span class="chevron ${open?'open':''}">▼</span>
+        </div>
+      </div>
+      ${open?`<div class="card-body">
+        <div class="grid2">
+          <div class="field"><label>Title</label><input type="text" value="${esc(r.title||'')}" onchange="updateResearch(${i},'title',this.value)"></div>
+          <div class="field"><label>Author</label><input type="text" value="${esc(r.author||'')}" onchange="updateResearch(${i},'author',this.value)"></div>
+        </div>
+        <div class="grid2">
+          <div class="field"><label>Affiliation</label><input type="text" value="${esc(r.affiliation||'')}" onchange="updateResearch(${i},'affiliation',this.value)"></div>
+          <div class="field"><label>Date</label><input type="text" value="${esc(r.date||'')}" onchange="updateResearch(${i},'date',this.value)"></div>
+        </div>
+        <div class="grid2">
+          <div class="field"><label>Status</label><select onchange="updateResearch(${i},'status',this.value)" style="width:100%"><option ${r.status==='draft'?'selected':''} value="draft">Draft</option><option ${r.status==='published'?'selected':''} value="published">Published</option></select></div>
+          <div class="field" style="display:flex;align-items:center;gap:10px;padding-top:20px">
+            <input type="checkbox" id="feat-${i}" ${r.featured?'checked':''} onchange="updateResearch(${i},'featured',this.checked)" style="width:auto;margin:0">
+            <label for="feat-${i}" style="margin:0;text-transform:none;font-size:13px;letter-spacing:0;font-weight:400">Featured on homepage</label>
+          </div>
+        </div>
+        <div class="field">
+          <label>Tags</label>
+          <div class="tag-chips" id="rtags-${i}">${tags.map((t,ti)=>`<span class="tag-chip">${esc(t)}<button onclick="removeResearchTag(${i},${ti})" title="Remove">&times;</button></span>`).join('')}</div>
+          <div class="tag-add-row">
+            <input type="text" id="rtag-input-${i}" list="dl-research-tags" placeholder="Add tag&hellip;">
+            <button class="btn-ghost" onclick="addResearchTag(${i})">Add</button>
+          </div>
+        </div>
+        <div class="field"><label>Excerpt (shown in listings)</label><textarea rows="2" onchange="updateResearch(${i},'excerpt',this.value)">${esc(r.excerpt||'')}</textarea></div>
+        <div class="field"><label>Body (use **bold** for bold, blank line between paragraphs)</label><textarea rows="8" onchange="updateResearch(${i},'body',this.value)">${esc(r.body||'')}</textarea></div>
+        <div class="field">
+          <label>Cover Image or Video</label>
+          ${r.media&&r.mediaType==='video'
+            ? `<div style="margin-bottom:8px"><video src="${r.media}" controls style="max-width:100%;max-height:220px;display:block;border:1px solid rgba(14,14,12,0.12);margin-bottom:6px"></video><button class="btn-danger" onclick="removeMedia(${i},'research')">Remove</button></div>`
+            : r.media||r.image
+              ? `<div style="margin-bottom:8px"><img src="${r.media||r.image}" style="max-width:100%;max-height:180px;border:1px solid rgba(14,14,12,0.12);display:block;margin-bottom:6px"><button class="btn-danger" onclick="removeMedia(${i},'research')">Remove</button></div>`
+              : ''}
+          <input type="file" accept="image/*,video/*" onchange="uploadMedia(${i},this,'research')" style="padding:6px;background:#faf9f5;border:1px solid rgba(14,14,12,0.12)">
+          <div style="font-size:11px;color:#7a7a72;margin-top:4px">JPG, PNG, WebP, GIF — or MP4, MOV, WebM for video.</div>
+        </div>
+        <button class="btn" onclick="save()">Save Changes</button>
+      </div>`:''}
+    </div>`;}).join('')}`;
+}
+
+function renderPrograms(){
+  const q=SEARCH.programs.toLowerCase();
+  const items=DATA.programs.filter(p=>{
+    if(!q)return true;
+    return (p.name||'').toLowerCase().includes(q)||(p.level||'').toLowerCase().includes(q)||(p.format||'').toLowerCase().includes(q);
+  });
+  return `
+    <div class="section-header">
+      <div><h1>Programs</h1><div style="font-size:12px;color:#7a7a72;margin-top:4px">Manage all academic programs</div></div>
+      <button class="btn" onclick="addProgram()">+ New Program</button>
+    </div>
+    <div class="search-bar">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="6" cy="6" r="4.5" stroke="#7a7a72" stroke-width="1.3"/><line x1="9.5" y1="9.5" x2="13" y2="13" stroke="#7a7a72" stroke-width="1.3" stroke-linecap="round"/></svg>
+      <input type="text" placeholder="Search by name, level, or format&hellip;" value="${esc(SEARCH.programs)}" oninput="SEARCH.programs=this.value;render()">
+    </div>
+    ${items.length===0?'<div class="card"><p style="font-size:13px;color:#7a7a72">No programs match your search.</p></div>':''}
+    ${items.map((p)=>{
+      const i=DATA.programs.indexOf(p);
+      const key='programs:'+p.id;
+      const open=EXPANDED.has(key);
+      return `
+    <div class="card" style="padding:1rem 1.5rem">
+      <div class="card-header" onclick="toggleExpanded('${key}')">
+        <div style="flex:1;min-width:0">
+          <div style="font-weight:600;font-size:14px;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(p.name||'Untitled')}</div>
+          <div style="display:flex;gap:6px;align-items:center">
+            <span class="badge badge-red">${esc(p.level||'')}</span>
+            <span class="badge ${p.status==='open'?'badge-pub':'badge-draft'}">${p.status}</span>
+            ${p.featured?'<span class="badge" style="background:#fff3cd;color:#856404">Featured</span>':''}
+            <span style="font-size:11px;color:#7a7a72">${esc(p.format||'')}</span>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;flex-shrink:0;margin-left:1rem">
+          <button class="btn-danger" onclick="event.stopPropagation();delProgram(${i})">Delete</button>
+          <span class="chevron ${open?'open':''}">▼</span>
+        </div>
+      </div>
+      ${open?`<div class="card-body">
+        <div class="grid2">
+          <div class="field"><label>Name</label><input type="text" value="${esc(p.name||'')}" onchange="updateProgram(${i},'name',this.value)"></div>
+          <div class="field"><label>Level</label><input type="text" value="${esc(p.level||'')}" onchange="updateProgram(${i},'level',this.value)"></div>
+        </div>
+        <div class="grid2">
+          <div class="field"><label>Format</label><input type="text" value="${esc(p.format||'')}" onchange="updateProgram(${i},'format',this.value)"></div>
+          <div class="field"><label>Deadline</label><input type="text" value="${esc(p.deadline||'')}" onchange="updateProgram(${i},'deadline',this.value)"></div>
+        </div>
+        <div class="grid2">
+          <div class="field"><label>Apply URL</label><input type="text" value="${esc(p.applyUrl||'')}" onchange="updateProgram(${i},'applyUrl',this.value)"></div>
+          <div class="field"><label>Status</label><select onchange="updateProgram(${i},'status',this.value)" style="width:100%"><option ${p.status==='open'?'selected':''} value="open">Open</option><option ${p.status==='closed'?'selected':''} value="closed">Closed</option></select></div>
+        </div>
+        <div class="field" style="display:flex;align-items:center;gap:10px">
+          <input type="checkbox" id="pfeat-${i}" ${p.featured?'checked':''} onchange="updateProgram(${i},'featured',this.checked)" style="width:auto;margin:0">
+          <label for="pfeat-${i}" style="margin:0;text-transform:none;font-size:13px;letter-spacing:0;font-weight:400">Featured on homepage</label>
+        </div>
+        <div class="field"><label>Short Description</label><textarea rows="2" onchange="updateProgram(${i},'description',this.value)">${esc(p.description||'')}</textarea></div>
+        <div class="field"><label>Full Description</label><textarea rows="5" onchange="updateProgram(${i},'fullDescription',this.value)">${esc(p.fullDescription||'')}</textarea></div>
+        <button class="btn" onclick="save()">Save Changes</button>
+      </div>`:''}
+    </div>`;}).join('')}`;
+}
+
+function renderCarousel(){
+  return `
+    <div class="section-header">
+      <div><h1>Hero Carousel</h1><div style="font-size:12px;color:#7a7a72;margin-top:4px">Manage homepage slideshow</div></div>
+      <button class="btn" onclick="addSlide()">+ Add Slide</button>
+    </div>
+    ${DATA.carousel.map((s,i)=>`
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+        <span class="mono" style="font-size:12px;color:#c8401e">Slide 0${i+1}</span>
+        <div style="display:flex;gap:8px;align-items:center">
+          <select onchange="setSlideStatus(${i},this.value)" style="width:auto;padding:4px 8px;font-size:12px"><option ${s.status==='active'?'selected':''} value="active">Active</option><option ${s.status==='hidden'?'selected':''} value="hidden">Hidden</option></select>
+          <button class="btn-danger" onclick="delSlide(${i})">Remove</button>
+        </div>
+      </div>
+      <div class="grid2">
+        ${field('Tag line',s.tag,`updateSlide(${i},'tag',this.value)`)}
+        ${field('Link',s.link,`updateSlide(${i},'link',this.value)`)}
+      </div>
+      ${field('Title',s.title,`updateSlide(${i},'title',this.value)`)}
+      ${field('Subtitle',s.sub,`updateSlide(${i},'sub',this.value)`,2)}
+      <button class="btn" onclick="save()">Save Changes</button>
+    </div>`).join('')}`;
+}
+
+function renderHyperion(){
+  return `
+    <div class="section-header"><div><h1>Hyperion</h1><div style="font-size:12px;color:#7a7a72;margin-top:4px">Venture program content and partners</div></div></div>
+    <div class="card">
+      <div class="section-sub">Program Copy</div>
+      ${field('Tagline',DATA.hyperion.tagline,`DATA.hyperion.tagline=this.value`)}
+      ${field('Body',DATA.hyperion.body,`DATA.hyperion.body=this.value`,4)}
+      ${field('CTA Button Text',DATA.hyperion.cta,`DATA.hyperion.cta=this.value`)}
+      <button class="btn" onclick="save()">Save Changes</button>
+    </div>
+    <div class="card">
+      <div class="section-sub">Pillars</div>
+      ${DATA.hyperion.pillars.map((p,i)=>`
+      <div style="display:grid;grid-template-columns:40px 1fr 2fr;gap:.75rem;margin-bottom:.75rem;align-items:start">
+        <span class="mono" style="font-size:11px;color:#c8401e;padding-top:9px">${p.num}</span>
+        <input type="text" value="${esc(p.title)}" onchange="DATA.hyperion.pillars[${i}].title=this.value" placeholder="Title">
+        <input type="text" value="${esc(p.body)}" onchange="DATA.hyperion.pillars[${i}].body=this.value" placeholder="Description">
+      </div>`).join('')}
+      <button class="btn" style="margin-top:.5rem" onclick="save()">Save Changes</button>
+    </div>
+    <div class="card">
+      <div class="section-sub">Network Partners</div>
+      ${DATA.hyperion.partners.map((p,i)=>`
+      <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:.75rem;margin-bottom:.75rem;align-items:center">
+        <input type="text" value="${esc(p.name)}" onchange="DATA.hyperion.partners[${i}].name=this.value" placeholder="Partner name">
+        <input type="text" value="${esc(p.type)}" onchange="DATA.hyperion.partners[${i}].type=this.value" placeholder="Type (e.g. Financial Partner)">
+        <button class="btn-danger" onclick="DATA.hyperion.partners.splice(${i},1);save()">Remove</button>
+      </div>`).join('')}
+      <div style="display:flex;gap:8px;margin-top:.75rem">
+        <button class="btn-ghost" onclick="DATA.hyperion.partners.push({name:'',type:''});render()">+ Add Partner</button>
+        <button class="btn" onclick="save()">Save Changes</button>
+      </div>
+    </div>`;
+}
+
+function renderConference(){
+  return `
+    <div class="section-header"><div><h1>Change.Enabled</h1><div style="font-size:12px;color:#7a7a72;margin-top:4px">Annual conference settings</div></div></div>
+    <div class="card">
+      <div class="section-sub">Conference Details</div>
+      <div class="grid2">
+        ${field('Year',DATA.conference.year,`DATA.conference.year=this.value`)}
+        ${field('Date',DATA.conference.date,`DATA.conference.date=this.value`)}
+        ${field('Location',DATA.conference.location,`DATA.conference.location=this.value`)}
+        ${field('Registration URL',DATA.conference.regUrl,`DATA.conference.regUrl=this.value`)}
+      </div>
+      ${field('Theme',DATA.conference.theme,`DATA.conference.theme=this.value`)}
+      ${field('Subtitle',DATA.conference.subtitle,`DATA.conference.subtitle=this.value`,3)}
+      <button class="btn" onclick="save()">Save Changes</button>
+    </div>
+    <div class="card">
+      <div class="section-sub">Tracks</div>
+      ${DATA.conference.tracks.map((t,i)=>`
+      <div style="display:grid;grid-template-columns:1fr 2fr;gap:.75rem;margin-bottom:.75rem">
+        <input type="text" value="${esc(t.name)}" onchange="DATA.conference.tracks[${i}].name=this.value" placeholder="Track name">
+        <input type="text" value="${esc(t.desc)}" onchange="DATA.conference.tracks[${i}].desc=this.value" placeholder="Description">
+      </div>`).join('')}
+      <button class="btn" onclick="save()">Save Changes</button>
+    </div>`;
+}
+
+function renderFocus(){
+  return `
+    <div class="section-header"><div><h1>Focus Areas</h1><div style="font-size:12px;color:#7a7a72;margin-top:4px">Edit the seven strategic focus areas</div></div></div>
+    ${DATA.focusAreas.map((fa,i)=>`
+    <div class="card" style="display:grid;grid-template-columns:32px 1fr;gap:1rem;align-items:start">
+      <span class="mono" style="font-size:12px;color:#c8401e;padding-top:9px">0${fa.id}</span>
+      <div>
+        ${field('Title',fa.title,`DATA.focusAreas[${i}].title=this.value`)}
+        ${field('Description',fa.body,`DATA.focusAreas[${i}].body=this.value`,3)}
+        <button class="btn" onclick="save()">Save</button>
+      </div>
+    </div>`).join('')}`;
+}
+
+function renderStats(){
+  return `
+    <div class="section-header"><div><h1>Impact Statistics</h1><div style="font-size:12px;color:#7a7a72;margin-top:4px">The four homepage statistics</div></div></div>
+    <div class="grid2">
+      ${DATA.stats.map((s,i)=>`
+      <div class="card">
+        <div class="section-sub">Stat ${i+1}</div>
+        <div class="grid2">
+          ${field('Number',s.num,`DATA.stats[${i}].num=this.value`)}
+          ${field('Unit (M, %, x...)',s.unit,`DATA.stats[${i}].unit=this.value`)}
+        </div>
+        ${field('Description',s.desc,`DATA.stats[${i}].desc=this.value`,2)}
+        <button class="btn" onclick="save()">Save</button>
+      </div>`).join('')}
+    </div>`;
+}
+
+function renderTeam(){
+  const members=DATA.team||[];
+  const q=SEARCH.team.toLowerCase();
+  const groups=["Leadership","Team","Advisors","Fellows"];
+  const items=members.filter(m=>!q||(m.name||'').toLowerCase().includes(q)||(m.title||'').toLowerCase().includes(q)||(m.group||'').toLowerCase().includes(q));
+  const allGroups=[...new Set([...groups,...members.map(m=>m.group)])].filter(Boolean);
+  return `
+    <div class="section-header">
+      <div><h1>People</h1><div style="font-size:12px;color:#7a7a72;margin-top:4px">Team, advisors, and fellows</div></div>
+      <button class="btn" onclick="addTeamMember()">+ Add Person</button>
+    </div>
+    <div class="search-bar">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="6" cy="6" r="4.5" stroke="#7a7a72" stroke-width="1.3"/><line x1="9.5" y1="9.5" x2="13" y2="13" stroke="#7a7a72" stroke-width="1.3" stroke-linecap="round"/></svg>
+      <input type="text" placeholder="Search by name, title, or group&hellip;" value="${esc(SEARCH.team)}" oninput="SEARCH.team=this.value;render()">
+    </div>
+    ${items.length===0?'<div class="card"><p style="font-size:13px;color:#7a7a72">No team members match your search.</p></div>':''}
+    ${items.map(m=>{
+      const i=members.indexOf(m);
+      const key='team:'+m.id;
+      const open=EXPANDED.has(key);
+      return `
+    <div class="card" style="padding:1rem 1.5rem">
+      <div class="card-header" onclick="toggleExpanded('${key}')">
+        <div style="display:flex;gap:12px;align-items:center;flex:1;min-width:0">
+          ${m.photo?`<img src="${m.photo}" style="width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid rgba(14,14,12,0.1);flex-shrink:0">`:`<div style="width:44px;height:44px;border-radius:50%;background:#e8e4da;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:#0e0e0c;flex-shrink:0">${esc((m.name||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase())}</div>`}
+          <div style="min-width:0">
+            <div style="font-weight:600;font-size:14px;margin-bottom:2px">${esc(m.name||'Unnamed')}</div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <span class="badge badge-red">${esc(m.group||'')}</span>
+              <span style="font-size:11px;color:#7a7a72">${esc(m.title||'')}</span>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;flex-shrink:0;margin-left:1rem">
+          <button class="btn-danger" onclick="event.stopPropagation();delTeamMember(${i})">Delete</button>
+          <span class="chevron ${open?'open':''}">▼</span>
+        </div>
+      </div>
+      ${open?`<div class="card-body">
+        <div class="grid2">
+          <div class="field"><label>Full Name</label><input type="text" value="${esc(m.name||'')}" onchange="updateTeamMember(${i},'name',this.value)"></div>
+          <div class="field"><label>Title / Role</label><input type="text" value="${esc(m.title||'')}" onchange="updateTeamMember(${i},'title',this.value)"></div>
+        </div>
+        <div class="grid2">
+          <div class="field"><label>Group</label>
+            <select onchange="updateTeamMember(${i},'group',this.value)" style="width:100%">
+              ${allGroups.map(g=>`<option ${m.group===g?'selected':''} value="${esc(g)}">${esc(g)}</option>`).join('')}
+              <option value="__new__">+ New group&hellip;</option>
+            </select>
+          </div>
+          <div class="field"><label>Display Order</label><input type="number" value="${m.order||0}" onchange="updateTeamMember(${i},'order',+this.value)" style="width:80px"></div>
+        </div>
+        <div class="field"><label>Bio</label><textarea rows="4" onchange="updateTeamMember(${i},'bio',this.value)">${esc(m.bio||'')}</textarea></div>
+        <div class="grid2">
+          <div class="field"><label>LinkedIn URL</label><input type="text" value="${esc(m.linkedin||'')}" placeholder="https://linkedin.com/in/..." onchange="updateTeamMember(${i},'linkedin',this.value)"></div>
+          <div class="field"><label>Twitter / X URL</label><input type="text" value="${esc(m.twitter||'')}" placeholder="https://x.com/..." onchange="updateTeamMember(${i},'twitter',this.value)"></div>
+        </div>
+        <div class="field">
+          <label>Photo</label>
+          ${m.photo?`<div style="margin-bottom:8px;display:flex;gap:12px;align-items:center"><img src="${m.photo}" style="width:72px;height:72px;border-radius:50%;object-fit:cover;border:2px solid rgba(14,14,12,0.1)"><button class="btn-danger" onclick="removeTeamPhoto(${i})">Remove</button></div>`:''}
+          <input type="file" accept="image/*" onchange="uploadTeamPhoto(${i},this)" style="padding:6px;background:#faf9f5;border:1px solid rgba(14,14,12,0.12)">
+          <div style="font-size:11px;color:#7a7a72;margin-top:4px">Square crop recommended. JPG or PNG.</div>
+        </div>
+        <button class="btn" onclick="save()">Save Changes</button>
+      </div>`:''}
+    </div>`}).join('')}`;
+}
+
+function addTeamMember(){
+  if(!DATA.team)DATA.team=[];
+  const id='member-'+Date.now();
+  const order=DATA.team.length;
+  DATA.team.unshift({id,name:'New Person',title:'',group:'Team',bio:'',photo:'',linkedin:'',twitter:'',order,featured:false});
+  EXPANDED.add('team:'+id);
+  render();
+  document.getElementById('content').scrollTop=0;
+}
+function updateTeamMember(i,k,v){
+  if(!DATA.team)return;
+  if(k==='group'&&v==='__new__'){
+    const ng=prompt('Enter new group name:');
+    if(ng&&ng.trim())DATA.team[i].group=ng.trim();
+  } else {
+    DATA.team[i][k]=v;
+  }
+}
+function delTeamMember(i){
+  if(confirm('Remove this person?')){
+    EXPANDED.delete('team:'+(DATA.team[i]||{}).id);
+    DATA.team.splice(i,1);
+    save();
+  }
+}
+function uploadTeamPhoto(i,input){
+  const file=input.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=function(e){DATA.team[i].photo=e.target.result;save();};
+  reader.readAsDataURL(file);
+}
+function removeTeamPhoto(i){DATA.team[i].photo='';save();}
+
+function renderOpportunities(){
+  const opps=DATA.opportunities||[];
+  const q=SEARCH.opportunities.toLowerCase();
+  const typeLabels={volunteer:"Volunteer",fellowship:"Fellowship",job:"Job Opening",partnership:"Partnership",other:"Other"};
+  const items=opps.filter(o=>!q||(o.title||'').toLowerCase().includes(q)||(o.type||'').toLowerCase().includes(q)||(o.location||'').toLowerCase().includes(q));
+  return `
+    <div class="section-header">
+      <div><h1>Opportunities</h1><div style="font-size:12px;color:#7a7a72;margin-top:4px">Jobs, fellowships, volunteer roles, and partnerships</div></div>
+      <button class="btn" onclick="addOpportunity()">+ New Opportunity</button>
+    </div>
+    <div class="search-bar">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="6" cy="6" r="4.5" stroke="#7a7a72" stroke-width="1.3"/><line x1="9.5" y1="9.5" x2="13" y2="13" stroke="#7a7a72" stroke-width="1.3" stroke-linecap="round"/></svg>
+      <input type="text" placeholder="Search by title, type, or location&hellip;" value="${esc(SEARCH.opportunities)}" oninput="SEARCH.opportunities=this.value;render()">
+    </div>
+    ${items.length===0&&opps.length===0?'<div class="card"><p style="font-size:13px;color:#7a7a72">No opportunities yet. Click &ldquo;+ New Opportunity&rdquo; to add one.</p></div>':''}
+    ${items.length===0&&opps.length>0?'<div class="card"><p style="font-size:13px;color:#7a7a72">No opportunities match your search.</p></div>':''}
+    ${items.map(o=>{
+      const i=opps.indexOf(o);
+      const key='opp:'+o.id;
+      const open=EXPANDED.has(key);
+      return `
+    <div class="card" style="padding:1rem 1.5rem">
+      <div class="card-header" onclick="toggleExpanded('${key}')">
+        <div style="flex:1;min-width:0">
+          <div style="font-weight:600;font-size:14px;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(o.title||'Untitled')}</div>
+          <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+            <span class="badge badge-red">${esc(typeLabels[o.type]||o.type||'')}</span>
+            <span class="badge ${o.status==='open'?'badge-pub':'badge-draft'}">${o.status}</span>
+            ${o.location?`<span style="font-size:11px;color:#7a7a72">${esc(o.location)}</span>`:''}
+            ${o.deadline?`<span style="font-size:11px;color:#7a7a72">Deadline: ${esc(o.deadline)}</span>`:''}
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;flex-shrink:0;margin-left:1rem">
+          <button class="btn-danger" onclick="event.stopPropagation();delOpportunity(${i})">Delete</button>
+          <span class="chevron ${open?'open':''}">▼</span>
+        </div>
+      </div>
+      ${open?`<div class="card-body">
+        <div class="field"><label>Title</label><input type="text" value="${esc(o.title||'')}" onchange="updateOpportunity(${i},'title',this.value)"></div>
+        <div class="grid2">
+          <div class="field"><label>Type</label>
+            <select onchange="updateOpportunity(${i},'type',this.value)" style="width:100%">
+              ${Object.entries(typeLabels).map(([v,l])=>`<option ${o.type===v?'selected':''} value="${v}">${l}</option>`).join('')}
+            </select>
+          </div>
+          <div class="field"><label>Status</label>
+            <select onchange="updateOpportunity(${i},'status',this.value)" style="width:100%">
+              <option ${o.status==='open'?'selected':''} value="open">Open</option>
+              <option ${o.status==='closed'?'selected':''} value="closed">Closed</option>
+              <option ${o.status==='coming-soon'?'selected':''} value="coming-soon">Coming Soon</option>
+            </select>
+          </div>
+        </div>
+        <div class="grid2">
+          <div class="field"><label>Location</label><input type="text" value="${esc(o.location||'')}" placeholder="e.g. Remote, Boston MA" onchange="updateOpportunity(${i},'location',this.value)"></div>
+          <div class="field"><label>Deadline</label><input type="text" value="${esc(o.deadline||'')}" placeholder="e.g. Rolling, June 30 2026" onchange="updateOpportunity(${i},'deadline',this.value)"></div>
+        </div>
+        <div class="field"><label>Apply URL</label><input type="text" value="${esc(o.applyUrl||'')}" placeholder="https://... or #contact" onchange="updateOpportunity(${i},'applyUrl',this.value)"></div>
+        <div class="field"><label>Description (use **bold** and blank lines between paragraphs)</label><textarea rows="8" onchange="updateOpportunity(${i},'description',this.value)">${esc(o.description||'')}</textarea></div>
+        <button class="btn" onclick="save()">Save Changes</button>
+      </div>`:''}
+    </div>`}).join('')}`;
+}
+
+function addOpportunity(){
+  if(!DATA.opportunities)DATA.opportunities=[];
+  const id='opp-'+Date.now();
+  DATA.opportunities.unshift({id,type:'volunteer',title:'New Opportunity',status:'open',deadline:'Rolling',applyUrl:'',location:'Remote',description:'',featured:false});
+  EXPANDED.add('opp:'+id);
+  render();
+  document.getElementById('content').scrollTop=0;
+}
+function updateOpportunity(i,k,v){if(!DATA.opportunities)return;DATA.opportunities[i][k]=v;}
+function delOpportunity(i){
+  if(confirm('Delete this opportunity?')){
+    EXPANDED.delete('opp:'+(DATA.opportunities[i]||{}).id);
+    DATA.opportunities.splice(i,1);
+    save();
+  }
+}
+
+function renderSettings(){
+  return `
+    <div class="section-header"><div><h1>Settings</h1><div style="font-size:12px;color:#7a7a72;margin-top:4px">Global site configuration</div></div></div>
+    <div class="card">
+      <div class="section-sub">Site Identity</div>
+      <div class="grid2">
+        ${field('Organization Name',DATA.site.name,`DATA.site.name=this.value`)}
+        ${field('Contact Email',DATA.site.email,`DATA.site.email=this.value`)}
+        ${field('Twitter Handle',DATA.site.twitter,`DATA.site.twitter=this.value`)}
+      </div>
+      ${field('Tagline',DATA.site.tagline,`DATA.site.tagline=this.value`,2)}
+      ${field('Address',DATA.site.address,`DATA.site.address=this.value`,2)}
+      ${field('Homepage Pull Quote',DATA.site.pullQuote,`DATA.site.pullQuote=this.value`,3)}
+      <button class="btn" onclick="save()">Save Changes</button>
+    </div>
+    <div class="card">
+      <div class="section-sub">Analytics</div>
+      <p style="font-size:12px;color:#3a3a36;margin-bottom:1rem">Enter your Google Analytics 4 Measurement ID (format: <code style="font-family:monospace;background:#f3f0e8;padding:1px 5px">G-XXXXXXXXXX</code>). Leave blank to disable tracking.</p>
+      <div style="max-width:320px;margin-bottom:1rem">${field('GA4 Measurement ID',DATA.site.ga4Id||'',`DATA.site.ga4Id=this.value`,'','G-XXXXXXXXXX')}</div>
+      <button class="btn" onclick="save()">Save</button>
+      ${DATA.site.ga4Id?`<p style="font-size:11px;color:#7a7a72;margin-top:.75rem">\u2713 GA4 active &mdash; <a href="https://analytics.google.com" target="_blank" style="color:#c8401e">Open Analytics Dashboard \u2197</a></p>`:`<p style="font-size:11px;color:#7a7a72;margin-top:.75rem">No GA4 ID set. <a href="https://analytics.google.com" target="_blank" style="color:#c8401e">Create a GA4 property \u2197</a></p>`}
+    </div>
+    <div class="card" style="background:#fff0ed;border-color:rgba(200,64,30,0.2)">
+      <div class="section-sub" style="color:#c8401e">Export / Import</div>
+      <p style="font-size:12px;color:#3a3a36;margin-bottom:1rem">Download your content as JSON for backup, or import to restore.</p>
+      <div style="display:flex;gap:.75rem">
+        <button class="btn" style="background:#c8401e" onclick="exportJSON()">Download JSON</button>
+        <button class="btn-ghost" onclick="importJSON()">Import JSON</button>
+      </div>
+    </div>`;
+}
+
+function renderAnalytics(){
+  const id=DATA.site.ga4Id||'';
+  const hasId=!!id;
+  const pages=[
+    {label:'Traffic Overview',desc:'Sessions, users, page views over time',path:'reports/reportinghub'},
+    {label:'Traffic Sources',desc:'Where visitors come from — search, social, direct, referral',path:'reports/acquisition/acquisition-overview'},
+    {label:'Pages & Screens',desc:'Most visited pages, time on page, bounce rate',path:'reports/engagement/engagement-overview'},
+    {label:'User Demographics',desc:'Country, city, device, browser breakdown',path:'reports/user/user-attributes-overview'},
+    {label:'Engagement Events',desc:'Clicks, scrolls, outbound links, article reads',path:'reports/engagement/events'},
+    {label:'Realtime',desc:'Who is on the site right now',path:'reports/realtime'},
+  ];
+  const gaBase=hasId?`https://analytics.google.com/analytics/web/#/${id}/`:null;
+
+  return `
+    <div class="section-header">
+      <div><h1>Analytics</h1><div style="font-size:12px;color:#7a7a72;margin-top:4px">Site traffic via Google Analytics 4</div></div>
+      ${hasId?`<a href="https://analytics.google.com" target="_blank" class="btn" style="text-decoration:none">Open GA4 \u2197</a>`:''}
+    </div>
+
+    ${!hasId?`
+    <div class="card" style="border:2px dashed rgba(14,14,12,0.15);background:#faf9f5;text-align:center;padding:3rem 2rem">
+      <div style="font-size:2rem;margin-bottom:1rem">\u{1F4CA}</div>
+      <div style="font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700;margin-bottom:.75rem">No GA4 Measurement ID configured</div>
+      <p style="font-size:13px;color:#7a7a72;max-width:420px;margin:0 auto 1.5rem;line-height:1.7">To enable analytics, create a free Google Analytics 4 property and paste your Measurement ID (G-XXXXXXXXXX) in Settings.</p>
+      <div style="display:flex;gap:.75rem;justify-content:center">
+        <a href="https://analytics.google.com" target="_blank" class="btn" style="text-decoration:none">Set Up GA4 \u2197</a>
+        <button class="btn-ghost" onclick="nav('settings')">Go to Settings</button>
+      </div>
+      <div style="margin-top:2rem;padding-top:1.5rem;border-top:1px solid rgba(14,14,12,0.1)">
+        <div style="font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#7a7a72;margin-bottom:1rem">Setup Guide</div>
+        <div style="text-align:left;max-width:480px;margin:0 auto">
+          ${['Go to <a href="https://analytics.google.com" target="_blank" style="color:#c8401e">analytics.google.com</a> and sign in with your Google account','Click Admin (gear icon) \u2192 Create \u2192 Property. Name it "thepii.org"','Choose Web, enter <strong>www.thepii.org</strong> as your URL','Copy your Measurement ID (starts with G-)','Paste it in <button onclick="nav(\'settings\')" style="background:none;border:none;color:#c8401e;cursor:pointer;font-family:inherit;font-size:inherit;padding:0">Settings \u2192 Analytics</button> and Save','Redeploy index.html to GitHub Pages — tracking starts immediately'].map((s,i)=>`
+          <div style="display:flex;gap:.75rem;align-items:flex-start;margin-bottom:.75rem">
+            <span style="background:#0e0e0c;color:#fff;font-size:10px;font-weight:700;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">${i+1}</span>
+            <span style="font-size:13px;color:#3a3a36;line-height:1.6">${s}</span>
+          </div>`).join('')}
+        </div>
+      </div>
+    </div>`:`
+    <div class="grid4" style="grid-template-columns:repeat(3,1fr)">
+      <div class="stat-card" style="border-top:3px solid #c8401e">
+        <div class="stat-label">Status</div>
+        <div style="font-size:1rem;font-weight:600;color:#2d7a3a;margin:.4rem 0">\u2713 Active</div>
+        <div class="stat-sub">${esc(id)}</div>
+      </div>
+      <div class="stat-card" style="border-top:3px solid #0e0e0c">
+        <div class="stat-label">Property</div>
+        <div style="font-size:1rem;font-weight:600;margin:.4rem 0">thepii.org</div>
+        <div class="stat-sub">Google Analytics 4</div>
+      </div>
+      <div class="stat-card" style="border-top:3px solid #7a7a72">
+        <div class="stat-label">Tracking</div>
+        <div style="font-size:1rem;font-weight:600;margin:.4rem 0">All Pages</div>
+        <div class="stat-sub">Page views + events</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-sub">Quick Links — Open in GA4</div>
+      <p style="font-size:12px;color:#7a7a72;margin-bottom:1.25rem">Click any report to open it directly in Google Analytics. Sign in with the Google account that owns the GA4 property.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem">
+        ${pages.map(p=>`
+        <a href="${gaBase}${p.path}" target="_blank" style="text-decoration:none;display:flex;gap:.75rem;align-items:flex-start;padding:1rem;border:1px solid rgba(14,14,12,0.12);background:#faf9f5;transition:background .15s" onmouseover="this.style.background='#f3f0e8'" onmouseout="this.style.background='#faf9f5'">
+          <div style="flex:1">
+            <div style="font-size:13px;font-weight:600;color:#0e0e0c;margin-bottom:3px">${p.label}</div>
+            <div style="font-size:11px;color:#7a7a72;line-height:1.5">${p.desc}</div>
+          </div>
+          <span style="color:#c8401e;font-size:14px;flex-shrink:0">\u2197</span>
+        </a>`).join('')}
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-sub">What's Being Tracked</div>
+      <table><thead><tr><th>Event</th><th>What it captures</th><th>Status</th></tr></thead><tbody>
+        <tr><td>page_view</td><td style="color:#7a7a72">Every page and article visit, with page title and URL</td><td><span class="badge badge-pub">Active</span></td></tr>
+        <tr><td>scroll</td><td style="color:#7a7a72">How far down the page visitors scroll (25%, 50%, 75%, 90%)</td><td><span class="badge badge-pub">Active</span></td></tr>
+        <tr><td>click</td><td style="color:#7a7a72">Outbound link clicks to external sites</td><td><span class="badge badge-pub">Active</span></td></tr>
+        <tr><td>session_start</td><td style="color:#7a7a72">New sessions, source, medium, campaign</td><td><span class="badge badge-pub">Active</span></td></tr>
+        <tr><td>first_visit</td><td style="color:#7a7a72">New vs returning users</td><td><span class="badge badge-pub">Active</span></td></tr>
+        <tr><td>user_engagement</td><td style="color:#7a7a72">Time on page, engaged sessions</td><td><span class="badge badge-pub">Active</span></td></tr>
+      </tbody></table>
+    </div>
+
+    <div class="card" style="background:#f3f0e8;border-color:transparent">
+      <div style="font-size:12px;color:#7a7a72;line-height:1.7">
+        <strong style="color:#0e0e0c">Note:</strong> GA4 data is not embedded directly here because Google requires authentication to display it. All reports open in a new tab in your GA4 dashboard. For a fully embedded view without leaving this CMS, a Google Looker Studio report linked to your GA4 property can be embedded as an iframe — <button onclick="nav('settings')" style="background:none;border:none;color:#c8401e;cursor:pointer;font-family:inherit;font-size:inherit;padding:0">ask about this in Settings</button>.
+      </div>
+    </div>`}`;
+}
+
+// \u2500\u2500 Mutation helpers \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+function updateResearch(i,k,v){DATA.research[i][k]=v;}
+function setResearchStatus(i,v){DATA.research[i].status=v;}
+function setResearchFeatured(i,v){DATA.research[i].featured=v;}
+function delResearch(i){if(confirm('Delete this post?')){EXPANDED.delete('research:'+DATA.research[i].id);DATA.research.splice(i,1);save();}}
+
+function addResearch(){const id='post-'+Date.now();DATA.research.unshift({id,title:'New Post',author:'Khahlil Louisy',affiliation:'The PII',tag:'Working Paper',tags:['Working Paper'],status:'draft',date:'',excerpt:'',body:'',featured:false});EXPANDED.add('research:'+id);render();document.getElementById('content').scrollTop=0;}
+function addResearchTag(i){const inp=document.getElementById('rtag-input-'+i);const val=(inp.value||'').trim();if(!val)return;if(!DATA.research[i].tags)DATA.research[i].tags=[DATA.research[i].tag].filter(Boolean);if(!DATA.research[i].tags.includes(val)){DATA.research[i].tags.push(val);DATA.research[i].tag=DATA.research[i].tags[0];}inp.value='';save();}
+function removeResearchTag(i,ti){if(!DATA.research[i].tags)DATA.research[i].tags=[DATA.research[i].tag].filter(Boolean);DATA.research[i].tags.splice(ti,1);DATA.research[i].tag=DATA.research[i].tags[0]||'';save();}
+
+function toggleExpanded(key){if(EXPANDED.has(key))EXPANDED.delete(key);else EXPANDED.add(key);render();}
+
+function updateProgram(i,k,v){DATA.programs[i][k]=v;}
+function setProgramStatus(i,v){DATA.programs[i].status=v;}
+function setProgramFeatured(i,v){DATA.programs[i].featured=v;}
+function delProgram(i){if(confirm('Delete this program?')){EXPANDED.delete('programs:'+(DATA.programs[i]||{}).id);DATA.programs.splice(i,1);save();}}
+function addProgram(){const id='prog-'+Date.now();DATA.programs.unshift({id,name:'New Program',level:'Graduate',format:'',status:'open',deadline:'TBD',applyUrl:'#',featured:false,description:'',fullDescription:''});EXPANDED.add('programs:'+id);render();document.getElementById('content').scrollTop=0;}
+
+function renderCAIL(){
+  const posts=DATA.cailPosts||[];
+  const q=SEARCH.cail.toLowerCase();
+  const allTags=[...new Set(posts.flatMap(p=>p.tags||[]).filter(Boolean))].sort();
+  const items=posts.filter(p=>{
+    if(!q)return true;
+    return (p.title||'').toLowerCase().includes(q)||(p.author||'').toLowerCase().includes(q)||(p.type||'').toLowerCase().includes(q)||((p.tags||[]).join(' ')).toLowerCase().includes(q);
+  });
+  return `
+    <div class="section-header">
+      <div><h1>CAIL Posts</h1><div style="font-size:12px;color:#7a7a72;margin-top:4px">Events and articles for City as Innovation Lab</div></div>
+      <button class="btn" onclick="addCAILPost()">+ New Post</button>
+    </div>
+    <div class="search-bar">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="6" cy="6" r="4.5" stroke="#7a7a72" stroke-width="1.3"/><line x1="9.5" y1="9.5" x2="13" y2="13" stroke="#7a7a72" stroke-width="1.3" stroke-linecap="round"/></svg>
+      <input type="text" placeholder="Search by title, author, tag, or type&hellip;" value="${esc(SEARCH.cail)}" oninput="SEARCH.cail=this.value;render()">
+    </div>
+    <datalist id="dl-cail-tags">${allTags.map(t=>`<option value="${esc(t)}">`).join('')}</datalist>
+    ${items.length===0&&posts.length===0?'<div class="card"><p style="font-size:13px;color:#7a7a72">No CAIL posts yet. Click &ldquo;+ New Post&rdquo; to create one.</p></div>':''}
+    ${items.length===0&&posts.length>0?'<div class="card"><p style="font-size:13px;color:#7a7a72">No posts match your search.</p></div>':''}
+    ${items.map((p)=>{
+      const i=posts.indexOf(p);
+      const key='cail:'+p.id;
+      const open=EXPANDED.has(key);
+      const tags=p.tags||[];
+      return `
+    <div class="card" style="padding:1rem 1.5rem">
+      <div class="card-header" onclick="toggleExpanded('${key}')">
+        <div style="flex:1;min-width:0">
+          <div style="font-weight:600;font-size:14px;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(p.title||'Untitled')}</div>
+          <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+            <span class="badge ${p.type==='event'?'':'badge-red'}" style="${p.type==='event'?'background:#e8f0fe;color:#1a56db':''}">${p.type==='event'?'Event':'Article'}</span>
+            <span class="badge ${p.status==='published'?'badge-pub':'badge-draft'}">${p.status}</span>
+            ${tags.slice(0,2).map(t=>`<span class="badge badge-red">${esc(t)}</span>`).join('')}
+            <span style="font-size:11px;color:#7a7a72">${esc(p.date||'')}</span>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;flex-shrink:0;margin-left:1rem">
+          <button class="btn-danger" onclick="event.stopPropagation();delCAILPost(${i})">Delete</button>
+          <span class="chevron ${open?'open':''}">▼</span>
+        </div>
+      </div>
+      ${open?`<div class="card-body">
+        <div class="grid2">
+          <div class="field"><label>Title</label><input type="text" value="${esc(p.title||'')}" onchange="updateCAILPost(${i},'title',this.value)"></div>
+          <div class="field"><label>Author</label><input type="text" value="${esc(p.author||'')}" onchange="updateCAILPost(${i},'author',this.value)"></div>
+        </div>
+        <div class="grid2">
+          <div class="field"><label>Date</label><input type="text" value="${esc(p.date||'')}" onchange="updateCAILPost(${i},'date',this.value)" placeholder="e.g. June 19, 2026"></div>
+          <div class="field"><label>Type</label><select onchange="updateCAILPost(${i},'type',this.value)" style="width:100%"><option ${p.type==='article'?'selected':''} value="article">Article</option><option ${p.type==='event'?'selected':''} value="event">Event</option></select></div>
+        </div>
+        <div class="field"><label>Status</label><select onchange="updateCAILPost(${i},'status',this.value)" style="width:auto;min-width:160px"><option ${p.status==='draft'?'selected':''} value="draft">Draft</option><option ${p.status==='published'?'selected':''} value="published">Published</option></select></div>
+        <div class="field">
+          <label>Tags</label>
+          <div class="tag-chips">${tags.map((t,ti)=>`<span class="tag-chip">${esc(t)}<button onclick="removeCAILTag(${i},${ti})" title="Remove">&times;</button></span>`).join('')}</div>
+          <div class="tag-add-row">
+            <input type="text" id="ctag-input-${i}" list="dl-cail-tags" placeholder="Add tag&hellip;">
+            <button class="btn-ghost" onclick="addCAILTag(${i})">Add</button>
+          </div>
+        </div>
+        <div class="field"><label>Excerpt (shown in feed)</label><textarea rows="2" onchange="updateCAILPost(${i},'excerpt',this.value)">${esc(p.excerpt||'')}</textarea></div>
+        <div class="field"><label>Body (use **bold** and blank lines between paragraphs; use - for bullets)</label><textarea rows="8" onchange="updateCAILPost(${i},'body',this.value)">${esc(p.body||'')}</textarea></div>
+        <div class="field">
+          <label>Cover Image or Video</label>
+          ${p.media&&p.mediaType==='video'
+            ? `<div style="margin-bottom:8px"><video src="${p.media}" controls style="max-width:100%;max-height:220px;display:block;border:1px solid rgba(14,14,12,0.12);margin-bottom:6px"></video><button class="btn-danger" onclick="removeMedia(${i},'cail')">Remove</button></div>`
+            : p.media||p.image
+              ? `<div style="margin-bottom:8px"><img src="${p.media||p.image}" style="max-width:100%;max-height:180px;border:1px solid rgba(14,14,12,0.12);display:block;margin-bottom:6px"><button class="btn-danger" onclick="removeMedia(${i},'cail')">Remove</button></div>`
+              : ''}
+          <input type="file" accept="image/*,video/*" onchange="uploadMedia(${i},this,'cail')" style="padding:6px;background:#faf9f5;border:1px solid rgba(14,14,12,0.12)">
+          <div style="font-size:11px;color:#7a7a72;margin-top:4px">JPG, PNG, WebP, GIF — or MP4, MOV, WebM for video.</div>
+        </div>
+        <button class="btn" onclick="save()">Save Changes</button>
+      </div>`:''}
+    </div>`;}).join('')}`;
+}
+
+function updateSlide(i,k,v){DATA.carousel[i][k]=v;}
+function setSlideStatus(i,v){DATA.carousel[i].status=v;}
+function delSlide(i){if(confirm('Remove slide?')){DATA.carousel.splice(i,1);save();}}
+function addSlide(){DATA.carousel.push({id:Date.now(),tag:'',title:'',sub:'',link:'/',status:'active'});render();}
+
+function exportJSON(){const b=new Blob([JSON.stringify(DATA,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='pii_content.json';a.click();}
+function importJSON(){const j=prompt('Paste JSON content:');if(j){try{DATA=Object.assign({},DD,JSON.parse(j));save();alert('Restored.');}catch(e){alert('Invalid JSON.');}}}
+
+function updateCAILPost(i,k,v){if(!DATA.cailPosts)DATA.cailPosts=[];DATA.cailPosts[i][k]=v;}
+function delCAILPost(i){if(confirm('Delete this post?')){EXPANDED.delete('cail:'+(DATA.cailPosts[i]||{}).id);DATA.cailPosts.splice(i,1);save();}}
+function addCAILPost(){if(!DATA.cailPosts)DATA.cailPosts=[];const id='cail-'+Date.now();DATA.cailPosts.unshift({id,type:'article',title:'New Post',author:'Khahlil Louisy',date:'',status:'draft',excerpt:'',body:'',tags:[],featured:false});EXPANDED.add('cail:'+id);render();document.getElementById('content').scrollTop=0;}
+function addCAILTag(i){const inp=document.getElementById('ctag-input-'+i);const val=(inp.value||'').trim();if(!val)return;if(!DATA.cailPosts[i].tags)DATA.cailPosts[i].tags=[];if(!DATA.cailPosts[i].tags.includes(val))DATA.cailPosts[i].tags.push(val);inp.value='';save();}
+function removeCAILTag(i,ti){if(!DATA.cailPosts[i].tags)DATA.cailPosts[i].tags=[];DATA.cailPosts[i].tags.splice(ti,1);save();}
+
+// \u2500\u2500 User Management \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+function renderUsers(){
+  if(!can('manage_users')) return '<div class="card"><p style="color:#c8401e">Access denied.</p></div>';
+  const roleBadge=r=>({superadmin:'<span class="badge" style="background:#0e0e0c;color:#fff">Superadmin</span>',editor:'<span class="badge badge-pub">Editor</span>',contributor:'<span class="badge badge-draft">Contributor</span>'}[r]||r);
+  return `
+    <div class="section-header">
+      <div><h1>User Management</h1><div style="font-size:12px;color:#7a7a72;margin-top:4px">Manage team access and roles</div></div>
+    </div>
+
+    <!-- Role summary -->
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.5rem">
+      <div class="card" style="border-left:3px solid #0e0e0c">
+        <div style="font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:#7a7a72;margin-bottom:.4rem">Superadmin</div>
+        <div style="font-size:13px;color:#0e0e0c;line-height:1.6">Full access to all content, site settings, and user management.</div>
+      </div>
+      <div class="card" style="border-left:3px solid #0F6E56">
+        <div style="font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:#7a7a72;margin-bottom:.4rem">Editor</div>
+        <div style="font-size:13px;color:#0e0e0c;line-height:1.6">Can create, edit, and publish research and programs. No site settings or user access.</div>
+      </div>
+      <div class="card" style="border-left:3px solid #7a7a72">
+        <div style="font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:#7a7a72;margin-bottom:.4rem">Contributor</div>
+        <div style="font-size:13px;color:#0e0e0c;line-height:1.6">Can create and edit drafts only. Cannot publish. No site settings or user access.</div>
+      </div>
+    </div>
+
+    <!-- Current users -->
+    <div class="card" style="margin-bottom:1.5rem">
+      <div class="section-sub">Team Members</div>
+      <!-- Superadmin (hardcoded, cannot be edited) -->
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:.85rem 0;border-bottom:1px solid rgba(14,14,12,0.12)">
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="width:34px;height:34px;background:#0e0e0c;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:600;flex-shrink:0">KL</div>
+          <div>
+            <div style="font-size:13px;font-weight:500">Khahlil Louisy</div>
+            <div style="font-size:11px;color:#7a7a72">khahlil.louisy@gmail.com</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px">
+          ${roleBadge('superadmin')}
+          <span style="font-size:11px;color:#7a7a72;font-style:italic">Hardcoded</span>
+        </div>
+      </div>
+      ${USERS.map((u,i)=>`
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:.85rem 0;border-bottom:1px solid rgba(14,14,12,0.12)">
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="width:34px;height:34px;background:${u.active?'#3a3a36':'#ccc'};border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:600;flex-shrink:0">${u.name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase()}</div>
+          <div>
+            <div style="font-size:13px;font-weight:500">${esc(u.name)}</div>
+            <div style="font-size:11px;color:#7a7a72">${esc(u.email)}</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          ${roleBadge(u.role)}
+          <span class="badge ${u.active?'badge-pub':'badge-draft'}">${u.active?'Active':'Suspended'}</span>
+          <select onchange="updateUser(${i},'role',this.value)" style="width:auto;padding:4px 8px;font-size:12px">
+            <option ${u.role==='editor'?'selected':''} value="editor">Editor</option>
+            <option ${u.role==='contributor'?'selected':''} value="contributor">Contributor</option>
+          </select>
+          <button class="btn-ghost" style="font-size:11px;padding:5px 10px" onclick="toggleUser(${i})">${u.active?'Suspend':'Activate'}</button>
+          <button class="btn-danger" onclick="deleteUser(${i})">Remove</button>
+        </div>
+      </div>`).join('')}
+      ${USERS.length===0?'<div style="font-size:13px;color:#7a7a72;padding:1rem 0">No team members added yet.</div>':''}
+    </div>
+
+    <!-- Add new user -->
+    <div class="card">
+      <div class="section-sub">Add Team Member</div>
+      <div class="grid2">
+        <div class="field"><label>Full Name</label><input type="text" id="nu-name" placeholder="Jane Smith"></div>
+        <div class="field"><label>Email Address</label><input type="email" id="nu-email" placeholder="jane@example.com"></div>
+      </div>
+      <div class="grid2">
+        <div class="field"><label>Temporary Password</label><input type="password" id="nu-pw" placeholder="They should change this"><div style="font-size:11px;color:#7a7a72;margin-top:4px">Share this with them securely. They cannot change it themselves in the CMS.</div></div>
+        <div class="field"><label>Role</label><select id="nu-role" style="width:100%"><option value="contributor">Contributor</option><option value="editor">Editor</option></select></div>
+      </div>
+      <button class="btn" onclick="addUser()">Add Team Member</button>
+      <div id="nu-err" style="display:none;margin-top:.75rem" class="err-box"></div>
+    </div>`;
+}
+
+function addUser(){
+  const name=document.getElementById('nu-name').value.trim();
+  const email=document.getElementById('nu-email').value.trim().toLowerCase();
+  const pw=document.getElementById('nu-pw').value;
+  const role=document.getElementById('nu-role').value;
+  const errEl=document.getElementById('nu-err');
+  if(!name||!email||!pw){errEl.textContent='Please fill in all fields.';errEl.style.display='block';return;}
+  if(pw.length<6){errEl.textContent='Password must be at least 6 characters.';errEl.style.display='block';return;}
+  if(sha256(email)===EH){errEl.textContent='That email is already in use.';errEl.style.display='block';return;}
+  if(USERS.find(u=>u.email===email)){errEl.textContent='A user with that email already exists.';errEl.style.display='block';return;}
+  USERS.push({id:'u-'+Date.now(),name,email,emailHash:sha256(email),pwHash:sha256(pw),role,active:true});
+  saveUsers(USERS);
+  errEl.style.display='none';
+  toast('Team member added \u2713');
+  render();
+}
+function updateUser(i,k,v){USERS[i][k]=v;saveUsers(USERS);toast('Updated \u2713');}
+function toggleUser(i){USERS[i].active=!USERS[i].active;saveUsers(USERS);toast((USERS[i].active?'Activated':'Suspended')+' \u2713');render();}
+function deleteUser(i){if(confirm('Remove '+USERS[i].name+'? They will lose access immediately.')){USERS.splice(i,1);saveUsers(USERS);toast('Removed \u2713');render();}}
+
+// \u2500\u2500 Image upload \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+function uploadMedia(i, input, section){
+  const file = input.files[0];
+  if(!file) return;
+  const isVideo = file.type.startsWith('video/');
+  const isImage = file.type.startsWith('image/');
+  if(!isVideo && !isImage){ alert('Please upload an image (JPG, PNG, WebP, GIF) or video (MP4, MOV, WebM).'); input.value=''; return; }
+  const reader = new FileReader();
+  reader.onload = function(e){
+    const store = section==='cail' ? DATA.cailPosts[i] : DATA.research[i];
+    store.media = e.target.result;
+    store.mediaType = isVideo ? 'video' : 'image';
+    if(isImage) store.image = e.target.result;
+    save();
+  };
+  reader.readAsDataURL(file);
+}
+
+function removeMedia(i, section){
+  const store = section==='cail' ? DATA.cailPosts[i] : DATA.research[i];
+  store.media = '';
+  store.mediaType = '';
+  store.image = '';
+  save();
+}
+
+// \u2500\u2500 Boot \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+// Apply role-based UI restrictions after render
+function applyRoleUI(){
+  if(!CURRENT_USER) return;
+  const role=CURRENT_USER.role;
+  if(role==='contributor'){
+    // Disable all status selects so contributors cannot publish
+    document.querySelectorAll('select[id^="status-sel-"]').forEach(el=>{
+      el.disabled=true;
+      el.title='Only Editors and above can publish posts.';
+    });
+  }
+}
+
+(function(){const s=getSession();if(s&&s.role){CURRENT_USER=s;showApp();}})();
+</script>
+</body>
+</html>

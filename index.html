@@ -1,0 +1,1197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Public Innovation Institute</title>
+<meta name="description" content="The Public Innovation Institute works at the intersection of AI, public policy, and urban systems — based in Boston, operating globally.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.thepii.org/">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="The Public Innovation Institute">
+<meta property="og:title" content="The Public Innovation Institute">
+<meta property="og:description" content="Working at the intersection of AI, public policy, and urban systems.">
+<meta property="og:url" content="https://www.thepii.org/">
+<meta property="og:image" content="https://www.thepii.org/og-default.png">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@thepii_org">
+<meta name="twitter:title" content="The Public Innovation Institute">
+<meta name="twitter:description" content="Working at the intersection of AI, public policy, and urban systems.">
+<meta name="twitter:image" content="https://www.thepii.org/og-default.png">
+
+<!-- Google Analytics 4 — ID is set dynamically from CMS settings -->
+<script id="ga4-init">
+(function(){
+  var id=(localStorage.getItem('pii_cms_data_v2')&&JSON.parse(localStorage.getItem('pii_cms_data_v2')||'{}').site||{}).ga4Id||'';
+  if(!id)return;
+  var s=document.createElement('script');
+  s.async=true;s.src='https://www.googletagmanager.com/gtag/js?id='+id;
+  document.head.appendChild(s);
+  window.dataLayer=window.dataLayer||[];
+  function gtag(){dataLayer.push(arguments);}
+  window.gtag=gtag;
+  gtag('js',new Date());
+  gtag('config',id,{send_page_view:false});
+})();
+</script>
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:wght@400;500&family=DM+Mono:wght@400&display=swap">
+<script src="https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js"></script>
+<style>*{box-sizing:border-box;margin:0;padding:0}body{background:#faf9f5}</style>
+</head>
+<body>
+<div id="pii-root"></div>
+<script>
+const {useState,useEffect,useRef,createElement:h} = React;
+const ACCENT="#c8401e",INK="#0e0e0c",PAPER="#faf9f5",WARM="#f3f0e8",RULE="rgba(14,14,12,0.12)";
+const SERIF="'Playfair Display',Georgia,serif",SANS="'DM Sans',system-ui,sans-serif",MONO="'DM Mono',monospace";
+const STORAGE_KEY="pii_cms_data_v2";
+
+const DEFAULT_DATA={
+  site:{name:"The Public Innovation Institute",email:"info@thepii.org",tagline:"Working at the intersection of technology, public policy, and community leadership.",address:"1 Washington Mall, Suite 1159\nGovernment Center, Boston, MA 02108",twitter:"@thepii_org",ga4Id:"",pullQuote:'"The world doesn\'t move in straight lines. A child\'s health is shaped by the air they breathe, the school they attend, the code behind a distant algorithm."'},
+  stats:[{num:"10",unit:"M",desc:"People die annually from pollution-related causes — 1 in 6 global deaths"},{num:"14",unit:"×",desc:"Return on every $1 invested in public health infrastructure"},{num:"77",unit:"%",desc:"Of jobs will require digital skills by 2030, up from 50% today"},{num:"97",unit:"M",desc:"New jobs AI is expected to create as it simultaneously displaces others"}],
+  carousel:[
+    {id:1,tag:"Research · Harvard Bloomberg Center",title:"AI-Enabled Infrastructure Monitoring as a Public Health Intervention",sub:"A new framework for cities to transform infrastructure monitoring into actionable public health strategy.",link:"research/ai-infrastructure-monitoring",status:"active"},
+    {id:2,tag:"Working Paper · Urban Analytics",title:"Can AI Address Equity Gaps in Urban Health Surveillance?",sub:"Evidence from Boston's 311 system and AI-detected pavement data reveals new fault lines in civic participation.",link:"research/equity-gaps-urban-health",status:"active"},
+    {id:3,tag:"Program · Applications Close June 22",title:"PII × Cyvl.AI 2026 Summer Innovation Program",sub:"Six weeks at the intersection of AI, infrastructure data, and urban policy. Fully virtual.",link:"programs/piixcyvl-2026",status:"active"}
+  ],
+  research:[
+    {id:"ai-infrastructure-monitoring",title:"A Framework for Using AI-Enabled Infrastructure Monitoring as a Public Health Intervention",author:"Khahlil Louisy",affiliation:"Harvard Bloomberg Center",tag:"Data-Smart City Solutions",status:"published",date:"June 9, 2026",excerpt:"A method for cities to transform infrastructure monitoring into actionable public health strategy, prioritizing repairs where they're needed most while reducing health disparities.",body:"Cities face a growing tension: aging infrastructure and limited budgets demand triage, yet the systems we use to prioritize repairs often reflect who complains rather than who suffers most.\n\n**Stage 1: Multi-modal data fusion.** Integrate 311 complaint data, computer vision pavement assessments, environmental sensor readings, and health outcome data by census tract.\n\n**Stage 2: Equity-weighted prioritization.** Standard infrastructure triage weights severity of damage. This framework adds a second axis: the health vulnerability of the population affected.\n\n**Stage 3: Feedback loop design.** Deploy repair crews with structured outcome-collection protocols. Track whether completed repairs correlate with measurable changes in emergency department utilization.\n\n**Stage 4: Continuous calibration.** Use the feedback data to retrain prioritization models quarterly, improving the correlation between AI-detected issues and health impact over time.\n\nPilot data from Boston suggests that applying this framework could shift roughly 22% of annual infrastructure repair spending toward historically underserved neighborhoods — without increasing total expenditure.",featured:true},
+    {id:"equity-gaps-urban-health",title:"Can AI Address Equity Gaps in Urban Health Surveillance? Evidence from Boston",author:"Khahlil Louisy",affiliation:"Working Paper",tag:"Urban Analytics",status:"published",date:"June 5, 2026",excerpt:"Boston's 311 complaint system vs. AI-detected pavement data reveals how complaint-based systems reflect socioeconomic patterns of participation.",body:"Urban health surveillance systems in the United States rely heavily on voluntary citizen reporting. The 311 non-emergency service request system is the primary mechanism by which residents signal infrastructure problems to government. But who reports, and who doesn't, is not random.\n\nThis paper examines 187,408 pavement-related 311 service requests filed in Boston between 2021 and 2024, cross-referencing them against 5,341 computer vision detections of pavement degradation generated by the Cyvl.AI platform. The overlap is 7.9%.\n\n**Key finding:** The 92.1% of AI-detected issues not captured by 311 reports are disproportionately concentrated in neighborhoods with lower median incomes, higher proportions of non-English-speaking residents, and higher rates of chronic disease.\n\nAI-based detection offers a pathway to complaint-independent surveillance. But deploying AI detection without addressing the equity question in prioritization simply replaces one biased input with a more efficient one.",featured:true},
+    {id:"residents-vs-algorithms",title:"When Residents and Algorithms See Different Problems",author:"Khahlil Louisy",affiliation:"The Public Innovation Institute",tag:"Infrastructure Equity",status:"published",date:"May 28, 2026",excerpt:"Analysis of 187,000 citizen reports and 5,000 computer vision detections in Boston raises critical questions about who gets heard in civic data systems.",body:"When a pothole appears on a Boston street, two things may or may not happen: a resident may file a 311 report, and a computer vision system may detect it. These two detection events are far less correlated than city planners assume.\n\nThis analysis maps the spatial and demographic patterns of the gap between resident-reported and algorithmically-detected pavement issues across Boston's 23 neighborhoods.\n\nThe divergence matters because cities typically use 311 data as one input into maintenance scheduling. If the AI detection layer is added as a supplement rather than a correction, the equity gap may actually widen.\n\nThe paper concludes with three design recommendations: (1) treat AI detection as a bias-correcting input, not a neutral supplement; (2) publish equity audits of repair allocation annually; (3) create community feedback mechanisms.",featured:true},
+    {id:"transportation-safety-build-act",title:"The BUILD America 250 Act: A Missed Opportunity for Safety-First Infrastructure",author:"Khahlil Louisy, Eric Plosky, Giovanni Pintor",affiliation:"Issues in Science and Technology",tag:"Policy Brief",status:"published",date:"April 2026",excerpt:"A critical analysis of the BUILD America 250 Act's transportation safety provisions and what a performance-based alternative would look like.",body:"The BUILD America 250 Act represents the largest single federal infrastructure investment since 2021. Yet its transportation safety provisions repeat the same structural mistakes that have kept American road fatality rates among the highest in the developed world.\n\nThis article argues that the Act's safety provisions are process-oriented rather than outcome-oriented. They require states to develop safety plans and report on activities. They do not require measurable reductions in fatalities as a condition of continued funding.\n\nWe propose a Vision Zero federal funding mechanism that ties a portion of highway formula funding to verified reductions in fatality rates.",featured:false}
+  ],
+  programs:[
+    {id:"piixcyvl-2026",name:"PII × Cyvl.AI 2026 Summer Innovation Program",level:"Featured",format:"Fully virtual · 6 weeks",status:"open",deadline:"June 22, 2026",applyUrl:"#",featured:true,description:"Six weeks of hands-on work at the intersection of AI, infrastructure data, and urban policy. A select cohort of students and recent grads tackle real city challenges with real datasets.",fullDescription:"The PII × Cyvl.AI Summer Innovation Program is a six-week intensive for students and recent graduates who want to work at the frontier of AI and urban infrastructure.\n\nParticipants will work directly with Cyvl.AI's computer vision infrastructure dataset alongside public health data, 311 records, and municipal budget data from partner cities.\n\n**What you'll do:**\n- Work in small teams on a defined research or policy question\n- Learn applied data analysis, geospatial methods, and policy communication\n- Present findings to city officials, researchers, and practitioners\n- Receive mentorship from The PII's research team and Cyvl.AI engineers\n\n**Timeline:**\n- Applications close: June 22, 2026\n- Program runs: July 7 – August 15, 2026\n- Final showcase: August 14, 2026"},
+    {id:"data-social-innovation",name:"Data, Social Innovation & Public Policy",level:"Graduate",format:"Summer intensive",status:"open",deadline:"TBD",applyUrl:"#",featured:false,description:"Rigorous training for graduate students and practitioners at the intersection of data science and public policy reform.",fullDescription:"This graduate-level program prepares students to work at the intersection of data science and public policy. Over six weeks, participants develop applied skills in data analysis, policy design, and stakeholder communication.\n\nThe program draws faculty from Harvard Kennedy School, MIT, and The PII's research network."},
+    {id:"data-analytics-urban-policy",name:"Data Analytics & Urban Policy",level:"Undergraduate",format:"Fully virtual · 6 weeks",status:"open",deadline:"TBD",applyUrl:"#",featured:false,description:"Hands-on training in urban data analytics with direct application to real city challenges and municipal data infrastructure.",fullDescription:"Designed for undergraduate students interested in how cities work and how data can make them work better. This program covers the fundamentals of urban data — what cities collect, how it's structured, and how to analyze it.\n\nNo prior programming experience required. Students leave with practical skills in Python, data visualization, and policy brief writing."},
+    {id:"tech-innovation-entrepreneurship",name:"Technology, Innovation & Entrepreneurship",level:"High School",format:"Summer · In-person",status:"open",deadline:"TBD",applyUrl:"#",featured:false,description:"An immersive introduction to civic technology and public entrepreneurship for exceptional high school students aged 15–18.",fullDescription:"A two-week residential program for high school students who want to understand how technology shapes cities and communities.\n\nStudents learn design thinking, basic coding, and the fundamentals of building for public good. Each cohort completes a civic technology prototype by the end of the program."}
+  ],
+  focusAreas:[
+    {id:1,title:"Responsible AI in Government",body:"Designing AI systems that municipal governments can deploy equitably — building transparency and accountability into public-sector AI from the ground up."},
+    {id:2,title:"Health Systems & Population Health",body:"Mapping social and physical determinants of health and translating evidence into interventions that close disparity gaps."},
+    {id:3,title:"Civic & Digital Infrastructure",body:"Building open, interoperable data systems that power evidence-based governance — from 311 analytics to real-time sensor networks."},
+    {id:4,title:"Economic Development & Digital Transformation",body:"Connecting digital capability to inclusive economic growth — from workforce digitization to municipal innovation ecosystems."},
+    {id:5,title:"Climate & Resilient Ecosystems",body:"Connecting climate data to municipal planning, infrastructure investment, and community preparedness."},
+    {id:6,title:"Workforce & Education Innovation",body:"Preparing a new generation of civic technologists through rigorous programs that bridge data science, policy design, and practical governance."},
+    {id:7,title:"Public-Interest Innovation & Venture Building",body:"Accelerating early-stage ventures that harness technology for the common good via the Hyperion program."}
+  ],
+  hyperion:{tagline:"Venture Development Program",body:"Hyperion provides intensive support for early-stage ventures combining cutting-edge technology with deep understanding of complex social systems.",cta:"Apply to Hyperion",pillars:[{num:"01",title:"Embedded Research Support",body:"Institutional partnerships across MIT, Harvard, and beyond."},{num:"02",title:"Founder Community",body:"A curated cohort of founders tackling public problems with bold ideas."},{num:"03",title:"Procurement Pathways",body:"Access to policymakers, pilots, and government procurement channels."},{num:"04",title:"Capital & Advisor Network",body:"Warm introductions to impact investors and philanthropies."}],partners:[{name:"JP Morgan",type:"Financial Partner",color:"#003087"},{name:"Fusion Fund",type:"Venture Partner",color:"#0e0e0c"},{name:"Orrick",type:"Legal Partner",color:"#1a1a1a"},{name:"MIT",type:"Academic Partner",color:"#A31F34"},{name:"City of San José",type:"Government Partner",color:"#0D4F8B"},{name:"City of Baltimore",type:"Government Partner",color:"#002147"}]},
+  conference:{year:"2026",date:"May 2026",location:"New York City",theme:"Urban.Next: Inventing the Future of Urban Systems",subtitle:"The conference on public-interest innovation and invention. Bringing together researchers, city leaders, technologists, and civic entrepreneurs.",regUrl:"#",tracks:[{name:"The Summit",desc:"Plenaries, keynotes, and provocations from the field's leading voices"},{name:"The Workshops",desc:"Hands-on sessions co-designed with city innovators and practitioners"}]},
+  cailPosts:[
+    {id:"cail-launch-2026",type:"article",title:"Launching City as Innovation Lab: Our Vision for Urban Testbeds",author:"Khahlil Louisy",date:"June 19, 2026",status:"published",excerpt:"CAIL is PII\u2019s new initiative to partner with cities and companies to design, test, and scale solutions in real-world urban environments.",body:"Cities are no longer just the subjects of innovation \u2014 they are its laboratories.\n\nToday, The Public Innovation Institute formally launches City as Innovation Lab (CAIL), an initiative designed to turn cities into structured testbeds where new solutions are co-developed with civic leaders, tested against real problems, evaluated rigorously, and scaled across city networks.\n\nUrban challenges \u2014 climate resilience, infrastructure modernization, digital transformation, public health, mobility \u2014 require more than good ideas. They demand real-world testing, robust research, and cross-sector collaboration.\n\n**What CAIL does:**\n- Partners cities with companies and researchers to deploy pilots\n- Measures outcomes with independent, rigorous evaluation\n- Builds governance and financing pathways for long-term adoption\n- Shares lessons across a global network of participating cities\n\nIf you are a city leader, company, or research organization interested in participating, we\u2019d love to hear from you.",featured:true},
+    {id:"cail-forum-sept-2026",type:"event",title:"CAIL Urban Innovation Forum \u2014 September 2026",author:"The PII",date:"September 15, 2026",status:"published",excerpt:"A half-day convening for city leaders, companies, and researchers exploring the future of urban testbeds. Cambridge, MA.",body:"Join us for the inaugural CAIL Urban Innovation Forum, a half-day convening at the intersection of civic need and private sector innovation.\n\n**Date:** September 15, 2026\n**Location:** Harvard Kennedy School, Cambridge, MA\n**Format:** Panels, roundtables, and working sessions\n\nThe forum will bring together city CIOs, innovation officers, technology companies, and researchers to explore how cities can structure innovation partnerships that actually deliver measurable outcomes.\n\n**Agenda highlights:**\n- Opening keynote: The city as a platform for public-interest innovation\n- Panel: Lessons from the first generation of civic AI deployments\n- Roundtable: What cities need from companies (and vice versa)\n- Workshop: Designing a pilot that\u2019s built to scale\n\nRegistration opens July 2026. Contact info@thepii.org to express interest.",featured:true}
+  ],
+  team:[
+    {id:"khahlil-louisy",name:"Khahlil Louisy",title:"Executive Director & Founder",group:"Leadership",bio:"Khahlil is the founder and executive director of The Public Innovation Institute. He holds a research contract with the Bloomberg Center for Cities at Harvard Kennedy School, is affiliated with the Data-Smart City Solutions program at HKS, and is pursuing a graduate degree in public policy at MIT. His research focuses on AI governance, municipal infrastructure equity, and the application of quasi-experimental methods to urban systems. He has published in Issues in Science and Technology and co-authored with faculty at Harvard Business School.",photo:"",linkedin:"",twitter:"",order:0,featured:true},
+    {id:"alex-radunsky",name:"Alex Radunsky",title:"Director, Science & Policy",group:"Leadership",bio:"Alex leads PII's science and policy portfolio, connecting rigorous research to actionable policy across PII's initiatives.",photo:"",linkedin:"",twitter:"",order:1,featured:false},
+    {id:"simona-tiribelli",name:"Simona Tiribelli",title:"Director, AI & Technology Ethics",group:"Leadership",bio:"Simona leads PII's work at the intersection of artificial intelligence and ethics, ensuring that PII's research and programs center equity and responsibility in technology governance.",photo:"",linkedin:"",twitter:"",order:2,featured:false},
+    {id:"teresa-ayllon",name:"Teresa Ayll\u00f3n",title:"Coordinator, Academic Programs",group:"Team",bio:"Teresa coordinates PII's suite of academic programs, managing relationships with partner institutions and supporting student cohorts.",photo:"",linkedin:"",twitter:"",order:3,featured:false},
+    {id:"peter-hotez",name:"Peter Hotez",title:"Institute Advisor",group:"Advisors",bio:"Peter Hotez is a leading physician-scientist and dean for the National School of Tropical Medicine at Baylor College of Medicine. He serves as an Institute Advisor to PII.",photo:"",linkedin:"",twitter:"",order:4,featured:false},
+    {id:"ryan-taylor",name:"Ryan Taylor",title:"Advisor, Hyperion",group:"Advisors",bio:"Ryan Taylor advises PII's Hyperion program, bringing deep expertise in venture building and technology commercialization.",photo:"",linkedin:"",twitter:"",order:5,featured:false},
+    {id:"stephen-caines",name:"Stephen Caines",title:"Advisor, Hyperion",group:"Advisors",bio:"Stephen Caines advises PII's Hyperion initiative, contributing expertise in public-sector innovation and institutional partnerships.",photo:"",linkedin:"",twitter:"",order:6,featured:false},
+    {id:"elizabeth-crowe",name:"Elizabeth Crowe",title:"Advisor, Hyperion",group:"Advisors",bio:"Elizabeth Crowe advises PII's Hyperion program with expertise in social impact and sustainable urban development.",photo:"",linkedin:"",twitter:"",order:7,featured:false},
+    {id:"alex-wissner-gross",name:"Alex Wissner-Gross",title:"Institute Advisor",group:"Advisors",bio:"Alex Wissner-Gross is a scientist, inventor, and entrepreneur affiliated with Harvard and MIT. He serves as an Institute Advisor to PII.",photo:"",linkedin:"",twitter:"",order:8,featured:false}
+  ],
+  opportunities:[
+    {id:"student-volunteer-2026",type:"volunteer",title:"Student & Recent Graduate Research Volunteer",status:"open",deadline:"Rolling",applyUrl:"https://www.thepii.org/students-and-recent-grad-submission",location:"Remote",description:"PII welcomes current students and recent graduates to contribute to our research and policy initiatives advancing public innovation. Participants work alongside PII\u2019s researchers and partners on projects spanning the breadth of our portfolio.\n\nThese volunteer positions offer the opportunity to gain practical experience, build research and policy skills, and engage with leaders shaping innovation for the public good. For current students, PII can collaborate with your academic institution to explore options for receiving academic credit for your work.",featured:true},
+    {id:"cail-city-partner",type:"partnership",title:"CAIL City Partnership",status:"open",deadline:"Rolling",applyUrl:"#contact",location:"Multiple Cities",description:"City as Innovation Lab (CAIL) is actively seeking municipal government partners to co-develop and test AI and data-driven solutions in real-world urban environments.\n\nCity partners gain access to PII\u2019s research team, a network of technology companies, and independent evaluation of pilots — at no cost to the city. Pilot design, data sharing agreements, and evaluation frameworks are co-developed with city staff.\n\nIf your city is working on challenges in AI deployment, infrastructure, climate, public health, housing, or mobility, we want to hear from you.",featured:true},
+    {id:"cail-company-partner",type:"partnership",title:"CAIL Company Partnership",status:"open",deadline:"Rolling",applyUrl:"#contact",location:"Remote / On-site",description:"Companies building solutions for urban challenges are invited to partner with CAIL to pilot and validate their products in real city environments.\n\nCAIL provides structured access to city partners, independent research evaluation, and a pathway to multi-city deployment. Partners gain research-backed proof points, direct relationships with municipal procurement decision-makers, and participation in PII\u2019s cross-sector network.",featured:false}
+  ]
+};
+
+function loadData(){
+  try{
+    const raw=localStorage.getItem(STORAGE_KEY);
+    if(raw){
+      const parsed=JSON.parse(raw);
+      return {...DEFAULT_DATA,...parsed,
+        research:parsed.research||DEFAULT_DATA.research,
+        programs:parsed.programs||DEFAULT_DATA.programs,
+        carousel:parsed.carousel||DEFAULT_DATA.carousel,
+        cailPosts:parsed.cailPosts||DEFAULT_DATA.cailPosts,
+        team:parsed.team||DEFAULT_DATA.team,
+        opportunities:parsed.opportunities||DEFAULT_DATA.opportunities,
+        hyperion:{...DEFAULT_DATA.hyperion,...(parsed.hyperion||{})},
+        site:{...DEFAULT_DATA.site,...(parsed.site||{})}
+      };
+    }
+  }catch(e){}
+  return DEFAULT_DATA;
+}
+
+const btn=(extra={})=>({background:INK,color:"#fff",border:"none",padding:"11px 22px",fontFamily:SANS,fontSize:12,fontWeight:500,letterSpacing:"0.06em",textTransform:"uppercase",cursor:"pointer",...extra});
+const btnGhost=(extra={})=>({background:"#fff",color:INK,border:`1px solid ${RULE}`,padding:"9px 18px",fontFamily:SANS,fontSize:12,fontWeight:500,letterSpacing:"0.06em",textTransform:"uppercase",cursor:"pointer",...extra});
+const tag={fontSize:10,letterSpacing:"0.12em",textTransform:"uppercase",color:ACCENT,fontWeight:500};
+const sectionTitle={fontFamily:SERIF,fontSize:"clamp(1.8rem,3vw,2.8rem)",fontWeight:700,lineHeight:1.15};
+
+function Ticker({items}){
+  const doubled=[...items,...items];
+  return h("div",{style:{background:INK,padding:"11px 0",overflow:"hidden",whiteSpace:"nowrap"}},
+    h("style",null,"@keyframes tick{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}"),
+    h("div",{style:{display:"inline-block",animation:"tick 32s linear infinite"}},
+      doubled.map((item,i)=>h("span",{key:i},
+        h("span",{style:{display:"inline-block",fontSize:10,letterSpacing:"0.1em",textTransform:"uppercase",color:"rgba(255,255,255,0.6)",marginRight:"2.5rem",fontWeight:500}},item),
+        h("span",{style:{display:"inline-block",width:4,height:4,background:ACCENT,borderRadius:"50%",verticalAlign:"middle",marginRight:"2.5rem"}})
+      ))
+    )
+  );
+}
+
+function Nav({page,setPage,data}){
+  const links=[["research","Research"],["programs","Programs"],["initiatives","Initiatives"],["conference","Change.Enabled"],["opportunities","Opportunities"],["about","About"]];
+  const [initOpen,setInitOpen]=useState(false);
+  const [aboutOpen,setAboutOpen]=useState(false);
+  const isInitActive=page==="initiatives"||page==="cail"||page==="hyperion";
+  const isAboutActive=page==="about"||page==="team";
+  return h("nav",{style:{position:"sticky",top:0,zIndex:100,background:PAPER,borderBottom:`1px solid ${RULE}`,padding:"0 2.5rem",display:"flex",alignItems:"center",justifyContent:"space-between",height:60,fontFamily:SANS}},
+    h("div",{style:{display:"flex",alignItems:"center",gap:10,cursor:"pointer"},onClick:()=>setPage("home")},
+      h("div",{style:{width:30,height:30,background:INK,borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}},
+        h("svg",{viewBox:"0 0 20 20",width:14,height:14},
+          h("circle",{cx:10,cy:10,r:2.5,fill:"white"}),
+          h("line",{x1:10,y1:3,x2:10,y2:6.5,stroke:"white",strokeWidth:1.5,strokeLinecap:"round"}),
+          h("line",{x1:10,y1:13.5,x2:10,y2:17,stroke:"white",strokeWidth:1.5,strokeLinecap:"round"}),
+          h("line",{x1:3,y1:10,x2:6.5,y2:10,stroke:"white",strokeWidth:1.5,strokeLinecap:"round"}),
+          h("line",{x1:13.5,y1:10,x2:17,y2:10,stroke:"white",strokeWidth:1.5,strokeLinecap:"round"})
+        )
+      ),
+      h("div",null,
+        h("div",{style:{fontFamily:SERIF,fontSize:13,fontWeight:700,lineHeight:1.2,color:INK}},data.site.name),
+        h("div",{style:{fontSize:10,color:"#7a7a72",letterSpacing:"0.08em",textTransform:"uppercase"}},"Boston · Global")
+      )
+    ),
+    h("div",{style:{display:"flex",gap:"1.6rem",alignItems:"center"}},
+      links.map(([p,label])=>{
+        if(p==="initiatives"){
+          return h("div",{key:p,style:{position:"relative"},onMouseEnter:()=>setInitOpen(true),onMouseLeave:()=>setInitOpen(false)},
+            h("div",{style:{fontSize:13,color:isInitActive?ACCENT:INK,cursor:"pointer",fontWeight:isInitActive?500:400,borderBottom:isInitActive?`2px solid ${ACCENT}`:"2px solid transparent",paddingBottom:2,userSelect:"none"}},label," ▾"),
+            initOpen&&h("div",{style:{position:"absolute",top:"100%",left:0,background:"#fff",border:`1px solid ${RULE}`,boxShadow:"0 4px 16px rgba(0,0,0,0.08)",minWidth:210,zIndex:200}},
+              h("div",{onClick:()=>{setPage("hyperion");setInitOpen(false);},style:{padding:"10px 16px",fontSize:13,cursor:"pointer",color:page==="hyperion"?ACCENT:INK,borderBottom:`1px solid ${RULE}`}},"Hyperion"),
+              h("div",{onClick:()=>{setPage("cail");setInitOpen(false);},style:{padding:"10px 16px",fontSize:13,cursor:"pointer",color:page==="cail"?ACCENT:INK}},"City as Innovation Lab")
+            )
+          );
+        }
+        if(p==="about"){
+          return h("div",{key:p,style:{position:"relative"},onMouseEnter:()=>setAboutOpen(true),onMouseLeave:()=>setAboutOpen(false)},
+            h("div",{style:{fontSize:13,color:isAboutActive?ACCENT:INK,cursor:"pointer",fontWeight:isAboutActive?500:400,borderBottom:isAboutActive?`2px solid ${ACCENT}`:"2px solid transparent",paddingBottom:2,userSelect:"none"}},label," ▾"),
+            aboutOpen&&h("div",{style:{position:"absolute",top:"100%",right:0,background:"#fff",border:`1px solid ${RULE}`,boxShadow:"0 4px 16px rgba(0,0,0,0.08)",minWidth:160,zIndex:200}},
+              h("div",{onClick:()=>{setPage("about");setAboutOpen(false);},style:{padding:"10px 16px",fontSize:13,cursor:"pointer",color:page==="about"?ACCENT:INK,borderBottom:`1px solid ${RULE}`}},"About PII"),
+              h("div",{onClick:()=>{setPage("team");setAboutOpen(false);},style:{padding:"10px 16px",fontSize:13,cursor:"pointer",color:page==="team"?ACCENT:INK}},"People")
+            )
+          );
+        }
+        return h("div",{key:p,onClick:()=>setPage(p),style:{fontSize:13,color:page===p?ACCENT:INK,cursor:"pointer",fontWeight:page===p?500:400,borderBottom:page===p?`2px solid ${ACCENT}`:"2px solid transparent",paddingBottom:2}},label);
+      })
+    ),
+    h("div",{style:{display:"flex",gap:8,alignItems:"center"}},
+      h("button",{onClick:()=>setPage("contact"),style:btn({padding:"9px 18px"})},"Partner With Us")
+    )
+  );
+}
+
+function Footer({data,setPage}){
+  return h("footer",{style:{background:INK,padding:"3.5rem 2.5rem",fontFamily:SANS}},
+    h("div",{style:{display:"grid",gridTemplateColumns:"2fr 1fr 1fr 1fr",gap:"2.5rem",marginBottom:"2.5rem"}},
+      h("div",null,
+        h("div",{style:{fontFamily:SERIF,fontSize:"1.2rem",fontWeight:700,color:"#fff",marginBottom:"0.4rem"}},data.site.name),
+        h("p",{style:{fontSize:12,color:"rgba(255,255,255,0.4)",lineHeight:1.7,marginBottom:"1.2rem"}},data.site.tagline),
+        h("div",{style:{fontSize:11,color:"rgba(255,255,255,0.28)",lineHeight:1.9,fontFamily:MONO}},
+          data.site.address.split("\n").map((l,i)=>h("div",{key:i},l)),
+          h("div",null,data.site.email)
+        )
+      ),
+      ...[ ["Research",[["Research","research"],["Publications","research"],["Working Papers","research"]]],["Initiatives",[["City as Innovation Lab","cail"],["Hyperion","hyperion"],["Change.Enabled","conference"]]],["Institute",[["About","about"],["People","team"],["Opportunities","opportunities"],["Contact","contact"]]] ].map(([label,links])=>
+        h("div",{key:label},
+          h("div",{style:{fontSize:10,letterSpacing:"0.1em",textTransform:"uppercase",color:"rgba(255,255,255,0.28)",marginBottom:"0.9rem",fontWeight:500}},label),
+          links.map(([name,pg])=>h("div",{key:name,onClick:()=>setPage(pg),style:{fontSize:12,color:"rgba(255,255,255,0.45)",marginBottom:"0.5rem",cursor:"pointer"}},name))
+        )
+      )
+    ),
+    h("div",{style:{borderTop:"1px solid rgba(255,255,255,0.08)",paddingTop:"1.2rem",display:"flex",justifyContent:"space-between",alignItems:"center"}},
+      h("div",{style:{fontSize:10,color:"rgba(255,255,255,0.2)"}},`© 2026 ${data.site.name}. All rights reserved.`),
+      h("div",{style:{display:"flex",gap:"1.2rem"}},
+        ["Privacy","Terms"].map(l=>h("span",{key:l,style:{fontSize:10,color:"rgba(255,255,255,0.22)",cursor:"pointer"}},l))
+      )
+    )
+  );
+}
+
+function HeroCarousel({slides,setPage}){
+  const [cur,setCur]=useState(0);
+  const timerRef=useRef(null);
+  const active=slides.filter(s=>s.status==="active");
+  useEffect(()=>{if(!active.length)return;timerRef.current=setInterval(()=>setCur(c=>(c+1)%active.length),5000);return()=>clearInterval(timerRef.current);},[active.length]);
+  const BG=["#e8e4da","#e4e8ec","#f0ece2"];
+  if(!active.length)return null;
+  return h("div",{style:{flex:1,position:"relative",cursor:"pointer",overflow:"hidden",minHeight:400},onClick:()=>{const s=active[cur];if(s?.link)setPage(s.link);}},
+    active.map((slide,i)=>h("div",{key:slide.id,style:{position:"absolute",inset:0,opacity:i===cur?1:0,transition:"opacity .6s ease"}},
+      h("svg",{viewBox:"0 0 560 480",preserveAspectRatio:"xMidYMid slice",style:{width:"100%",height:"100%",display:"block"}},
+        h("rect",{width:560,height:480,fill:BG[i%3]}),
+        i===0&&h("g",null,
+          h("rect",{x:0,y:275,width:560,height:205,fill:"#ddd8cc"}),
+          h("rect",{x:25,y:165,width:26,height:118,fill:"rgba(14,14,12,0.1)"}),
+          h("rect",{x:120,y:82,width:46,height:201,fill:"rgba(14,14,12,0.14)"}),
+          h("rect",{x:230,y:56,width:52,height:227,fill:"rgba(14,14,12,0.16)"}),
+          h("rect",{x:398,y:78,width:48,height:205,fill:"rgba(14,14,12,0.13)"}),
+          h("circle",{cx:143,cy:60,r:22,fill:"rgba(200,64,30,0.15)",stroke:ACCENT,strokeWidth:1.5}),
+          h("circle",{cx:143,cy:60,r:8,fill:ACCENT}),
+          h("circle",{cx:256,cy:36,r:15,fill:"rgba(200,64,30,0.1)",stroke:ACCENT,strokeWidth:1}),
+          h("circle",{cx:256,cy:36,r:6,fill:ACCENT,opacity:0.7}),
+          h("line",{x1:143,y1:60,x2:256,y2:36,stroke:ACCENT,strokeWidth:1,strokeDasharray:"5 4",opacity:0.5})
+        ),
+        i===1&&h("g",null,
+          h("circle",{cx:140,cy:200,r:90,fill:"rgba(14,14,12,0.06)",stroke:"rgba(14,14,12,0.1)",strokeWidth:1}),
+          h("circle",{cx:140,cy:200,r:55,fill:"rgba(14,14,12,0.05)"}),
+          h("circle",{cx:140,cy:200,r:25,fill:"rgba(200,64,30,0.28)"}),
+          h("circle",{cx:310,cy:178,r:68,fill:"rgba(14,14,12,0.06)",stroke:"rgba(14,14,12,0.1)",strokeWidth:1}),
+          h("circle",{cx:310,cy:178,r:42,fill:"rgba(14,14,12,0.05)"}),
+          h("circle",{cx:310,cy:178,r:19,fill:"rgba(200,64,30,0.2)"}),
+          h("text",{x:140,y:310,fontFamily:MONO,fontSize:10,fill:"rgba(14,14,12,0.4)",textAnchor:"middle"},"Jamaica Plain"),
+          h("text",{x:310,y:264,fontFamily:MONO,fontSize:10,fill:"rgba(14,14,12,0.4)",textAnchor:"middle"},"Roxbury")
+        ),
+        i===2&&h("g",null,
+          h("rect",{x:75,y:200,width:114,height:172,fill:"rgba(14,14,12,0.09)",rx:2}),
+          h("rect",{x:225,y:158,width:114,height:214,fill:"rgba(14,14,12,0.11)",rx:2}),
+          h("rect",{x:375,y:176,width:114,height:196,fill:"rgba(14,14,12,0.1)",rx:2}),
+          h("rect",{x:75,y:138,width:34,height:34,fill:"rgba(200,64,30,0.2)",rx:2}),
+          h("rect",{x:225,y:116,width:34,height:34,fill:"rgba(200,64,30,0.2)",rx:2}),
+          h("text",{x:280,y:84,fontFamily:MONO,fontSize:12,fill:"rgba(14,14,12,0.32)",textAnchor:"middle"},"PII × Cyvl.AI · Summer 2026")
+        )
+      ),
+      h("div",{style:{position:"absolute",bottom:0,left:0,right:0,background:"linear-gradient(transparent,rgba(14,14,12,0.85))",padding:"2.2rem 2rem 1.8rem"}},
+        h("div",{style:{fontSize:10,letterSpacing:"0.12em",textTransform:"uppercase",color:"rgba(255,255,255,0.6)",marginBottom:"0.5rem",fontWeight:500}},slide.tag),
+        h("div",{style:{fontFamily:SERIF,fontSize:"1.3rem",fontWeight:700,color:"#fff",lineHeight:1.25,marginBottom:"0.4rem"}},slide.title),
+        h("div",{style:{fontSize:12,color:"rgba(255,255,255,0.65)",lineHeight:1.5}},slide.sub),
+        h("div",{style:{marginTop:"0.9rem",display:"inline-flex",fontSize:11,fontWeight:500,letterSpacing:"0.06em",textTransform:"uppercase",color:"rgba(255,255,255,0.85)",borderBottom:"1px solid rgba(255,255,255,0.3)",paddingBottom:2}},"Read more ↗")
+      )
+    )),
+    h("div",{style:{position:"absolute",bottom:"1.2rem",right:"1.2rem",display:"flex",gap:5,zIndex:2}},
+      active.map((_,i)=>h("div",{key:i,onClick:e=>{e.stopPropagation();setCur(i);},style:{width:6,height:6,borderRadius:"50%",background:i===cur?"#fff":"rgba(255,255,255,0.35)",cursor:"pointer"}}))
+    )
+  );
+}
+
+function BodyText({text}){
+  if(!text)return null;
+  return h("div",null,text.split("\n\n").map((para,i)=>{
+    if(para.startsWith("- ")||para.includes("\n- ")){
+      const items=para.split("\n").filter(l=>l.startsWith("- "));
+      return h("ul",{key:i,style:{paddingLeft:"1.5rem",marginBottom:"1.2rem"}},items.map((item,j)=>h("li",{key:j,style:{fontSize:15,color:"#3a3a36",lineHeight:1.85,marginBottom:"0.4rem"}},item.replace(/^- /,""))));
+    }
+    const processed=para.replace(/\*\*([^*]+)\*\*/g,"<strong>$1</strong>");
+    return h("p",{key:i,style:{fontSize:15,color:"#3a3a36",lineHeight:1.85,marginBottom:"1.2rem"},dangerouslySetInnerHTML:{__html:processed}});
+  }));
+}
+
+function HomePage({data,setPage}){
+  const TICKER=data.focusAreas.map(f=>f.title);
+  const FICONS=[
+    h("svg",{key:1,viewBox:"0 0 18 18",fill:"none"},h("rect",{x:2,y:10,width:3,height:6,stroke:ACCENT,strokeWidth:1.3,strokeLinecap:"round"}),h("rect",{x:7.5,y:6,width:3,height:10,stroke:ACCENT,strokeWidth:1.3,strokeLinecap:"round"}),h("rect",{x:13,y:2,width:3,height:14,stroke:ACCENT,strokeWidth:1.3,strokeLinecap:"round"}),h("path",{d:"M2 8l3.5-4 3.5 3 5-5",stroke:ACCENT,strokeWidth:1.3,strokeLinecap:"round",strokeLinejoin:"round"})),
+    h("svg",{key:2,viewBox:"0 0 18 18",fill:"none"},h("circle",{cx:9,cy:7,r:3.5,stroke:ACCENT,strokeWidth:1.3}),h("path",{d:"M3 16c0-3.3 2.7-6 6-6s6 2.7 6 6",stroke:ACCENT,strokeWidth:1.3,strokeLinecap:"round"})),
+    h("svg",{key:3,viewBox:"0 0 18 18",fill:"none"},h("rect",{x:2,y:2,width:6,height:6,rx:1,stroke:ACCENT,strokeWidth:1.3}),h("rect",{x:10,y:2,width:6,height:6,rx:1,stroke:ACCENT,strokeWidth:1.3}),h("rect",{x:2,y:10,width:6,height:6,rx:1,stroke:ACCENT,strokeWidth:1.3}),h("rect",{x:10,y:10,width:6,height:6,rx:1,stroke:ACCENT,strokeWidth:1.3})),
+    h("svg",{key:4,viewBox:"0 0 18 18",fill:"none"},h("circle",{cx:9,cy:9,r:6.5,stroke:ACCENT,strokeWidth:1.3}),h("path",{d:"M9 2.5v13M2.5 9h13",stroke:ACCENT,strokeWidth:1.3,strokeLinecap:"round"})),
+    h("svg",{key:5,viewBox:"0 0 18 18",fill:"none"},h("path",{d:"M9 2C5.5 2 2 5 2 9c0 1.8.6 3.4 1.7 4.7L2 16h4.2c.8.3 1.8.5 2.8.5 3.9 0 7-3.1 7-7S12.9 2 9 2z",stroke:ACCENT,strokeWidth:1.3,strokeLinecap:"round",strokeLinejoin:"round"}),h("circle",{cx:9,cy:10,r:1,fill:ACCENT})),
+    h("svg",{key:6,viewBox:"0 0 18 18",fill:"none"},h("path",{d:"M9 2L2 6v6l7 4 7-4V6L9 2z",stroke:ACCENT,strokeWidth:1.3,strokeLinecap:"round",strokeLinejoin:"round"}),h("path",{d:"M9 2v14M2 6l7 4 7-4",stroke:ACCENT,strokeWidth:1.3,strokeLinecap:"round",strokeLinejoin:"round",opacity:0.5})),
+    h("svg",{key:7,viewBox:"0 0 18 18",fill:"none"},h("path",{d:"M9 2l1.8 4 4.2.6-3 3 .7 4.4L9 12l-3.7 2 .7-4.4-3-3 4.2-.6L9 2z",stroke:ACCENT,strokeWidth:1.3,strokeLinecap:"round",strokeLinejoin:"round"}))
+  ];
+
+  const ResearchImg=({r,i})=>{
+    if(r&&r.media&&r.mediaType==='video')
+      return h("video",{src:r.media,style:{width:"100%",height:"100%",objectFit:"cover",display:"block"},muted:true,playsInline:true});
+    if(r&&(r.media||r.image))
+      return h("img",{src:r.media||r.image,style:{width:"100%",height:"100%",objectFit:"cover",display:"block"},alt:r.title||""});
+    const svgs=[
+      h("svg",{key:0,viewBox:"0 0 300 200",preserveAspectRatio:"xMidYMid slice",style:{width:"100%",height:"100%",display:"block"}},h("rect",{width:300,height:200,fill:"#e8e4da"}),h("rect",{x:8,y:50,width:22,height:150,fill:"rgba(14,14,12,0.1)"}),h("rect",{x:42,y:28,width:30,height:172,fill:"rgba(14,14,12,0.12)"}),h("rect",{x:84,y:6,width:38,height:194,fill:"rgba(14,14,12,0.14)"}),h("rect",{x:174,y:-4,width:44,height:204,fill:"rgba(14,14,12,0.15)"}),h("circle",{cx:103,cy:-2,r:13,fill:"rgba(200,64,30,0.15)",stroke:ACCENT,strokeWidth:1.5}),h("circle",{cx:103,cy:-2,r:5,fill:ACCENT})),
+      h("svg",{key:1,viewBox:"0 0 300 200",preserveAspectRatio:"xMidYMid slice",style:{width:"100%",height:"100%",display:"block"}},h("rect",{width:300,height:200,fill:"#e4e8ec"}),h("circle",{cx:82,cy:100,r:78,fill:"rgba(14,14,12,0.06)",stroke:"rgba(14,14,12,0.1)",strokeWidth:1}),h("circle",{cx:82,cy:100,r:48,fill:"rgba(14,14,12,0.05)"}),h("circle",{cx:82,cy:100,r:21,fill:"rgba(200,64,30,0.28)"}),h("circle",{cx:212,cy:88,r:60,fill:"rgba(14,14,12,0.06)",stroke:"rgba(14,14,12,0.1)",strokeWidth:1}),h("circle",{cx:212,cy:88,r:37,fill:"rgba(14,14,12,0.05)"}),h("circle",{cx:212,cy:88,r:16,fill:"rgba(200,64,30,0.2)"})),
+      h("svg",{key:2,viewBox:"0 0 300 200",preserveAspectRatio:"xMidYMid slice",style:{width:"100%",height:"100%",display:"block"}},h("rect",{width:300,height:200,fill:"#ece8e0"}),h("line",{x1:0,y1:168,x2:300,y2:168,stroke:"rgba(14,14,12,0.15)",strokeWidth:1}),h("polyline",{points:"0,150 38,126 76,140 114,90 152,108 190,62 228,76 300,50",fill:"none",stroke:"rgba(14,14,12,0.2)",strokeWidth:2}),h("polyline",{points:"0,162 38,156 76,160 114,142 152,152 190,124 228,118 300,110",fill:"none",stroke:ACCENT,strokeWidth:2,strokeDasharray:"5 3"}))
+    ];
+    return svgs[(i||0)%3];
+  };
+
+  return h("div",{style:{fontFamily:SANS}},
+    h("section",{style:{display:"grid",gridTemplateColumns:"1fr 1fr",minHeight:"88vh",borderBottom:`1px solid ${RULE}`}},
+      h("div",{style:{padding:"4rem 2.5rem",display:"flex",flexDirection:"column",justifyContent:"space-between",borderRight:`1px solid ${RULE}`}},
+        h("div",null,
+          h("div",{style:tag},"The Public Innovation Institute"),
+          h("h1",{style:{fontFamily:SERIF,fontSize:"clamp(2.6rem,4vw,4.8rem)",lineHeight:1.05,fontWeight:900,margin:"1.2rem 0 1.6rem",color:INK}},
+            "Engineering",h("br"),"Solutions for",h("br"),h("em",{style:{fontStyle:"italic",color:ACCENT}},"Society's Hardest"),h("br"),"Challenges"
+          ),
+          h("p",{style:{fontSize:15,color:"#3a3a36",lineHeight:1.8,maxWidth:440,marginBottom:"2rem"}},"At the intersection of AI, public policy, and urban systems, we design, test, and scale innovations that improve lives and strengthen the common good."),
+          h("div",{style:{display:"flex",gap:"1rem",alignItems:"center"}},
+            h("button",{onClick:()=>setPage("research"),style:btn()},"Explore Our Work"),
+            h("button",{onClick:()=>setPage("research"),style:{fontSize:13,color:"#3a3a36",fontWeight:500,background:"none",border:"none",borderBottom:`1px solid ${RULE}`,paddingBottom:2,cursor:"pointer"}},"Read Latest Research →")
+          )
+        ),
+        h("div",{style:{paddingTop:"1.8rem",borderTop:`1px solid ${RULE}`,marginTop:"2rem"}},
+          h("div",{style:{fontSize:10,color:"#7a7a72",letterSpacing:"0.08em",textTransform:"uppercase",marginBottom:"0.8rem"}},"Affiliated with"),
+          h("div",{style:{display:"flex",border:`1px solid ${RULE}`,overflow:"hidden"}},
+            [["Harvard University","#A31F34"],["Bloomberg Center","#003087"],["MIT","#A31F34"]].map(([name,color],idx)=>
+              h("div",{key:name,style:{display:"flex",alignItems:"center",justifyContent:"center",padding:"10px 14px",borderRight:idx<2?`1px solid ${RULE}`:"none",flex:1,background:"#fff"}},
+                h("span",{style:{fontSize:11,fontWeight:700,color,letterSpacing:"0.02em"}},name)
+              )
+            )
+          )
+        )
+      ),
+      h("div",{style:{background:WARM,display:"flex",flexDirection:"column",overflow:"hidden"}},
+        h(HeroCarousel,{slides:data.carousel,setPage})
+      )
+    ),
+    h(Ticker,{items:TICKER}),
+    h("section",{style:{padding:"4.5rem 2.5rem",borderBottom:`1px solid ${RULE}`}},
+      h("div",{style:{display:"flex",alignItems:"flex-end",justifyContent:"space-between",marginBottom:"2.5rem"}},
+        h("div",null,h("div",{style:tag},"Latest Research"),h("div",{style:sectionTitle},"Ideas with Consequence")),
+        h("button",{onClick:()=>setPage("research"),style:btnGhost({fontSize:11,padding:"7px 14px"})},"View all →")
+      ),
+      h("div",{style:{display:"grid",gridTemplateColumns:"repeat(3,1fr)",border:`1px solid ${RULE}`}},
+        data.research.filter(r=>r.featured&&r.status==="published").slice(0,3).map((r,i)=>
+          h("div",{key:r.id,onClick:()=>setPage(`research/${r.id}`),style:{cursor:"pointer",overflow:"hidden",display:"flex",flexDirection:"column",borderRight:i<2?`1px solid ${RULE}`:"none",transition:"background .2s"},
+            onMouseEnter:e=>e.currentTarget.style.background=WARM,onMouseLeave:e=>e.currentTarget.style.background="transparent"},
+            h("div",{style:{width:"100%",height:200,overflow:"hidden",borderBottom:`1px solid ${RULE}`,flexShrink:0}},h(ResearchImg,{r,i})),
+            h("div",{style:{padding:"1.5rem",flex:1,display:"flex",flexDirection:"column"}},
+              h("div",{style:{fontSize:10,color:"#7a7a72",letterSpacing:"0.04em",marginBottom:"0.65rem",fontFamily:MONO}},`${r.author} — ${r.affiliation}`),
+              h("div",{style:{fontFamily:SERIF,fontSize:"1rem",fontWeight:700,lineHeight:1.35,color:INK,marginBottom:"0.5rem",flex:1}},r.title),
+              h("div",{style:{fontSize:11,color:"#3a3a36",lineHeight:1.7,marginBottom:"1rem"}},r.excerpt),
+              h("div",{style:{display:"flex",alignItems:"center",justifyContent:"space-between",marginTop:"auto"}},
+                h("span",{style:{fontSize:10,letterSpacing:"0.09em",textTransform:"uppercase",background:"#f5ede9",color:ACCENT,padding:"3px 9px",fontWeight:500}},r.tag),
+                h("span",{style:{fontSize:15,color:"#7a7a72"}},"↗")
+              )
+            )
+          )
+        )
+      )
+    ),
+    h("section",{style:{background:INK,padding:"4.5rem 2.5rem",borderBottom:"1px solid rgba(255,255,255,0.08)"}},
+      h("div",{style:{marginBottom:"2.5rem"}},
+        h("div",{style:{...tag,color:ACCENT}},"Focus Areas"),
+        h("div",{style:{fontFamily:SERIF,fontSize:"clamp(1.8rem,3vw,2.8rem)",fontWeight:700,color:PAPER,lineHeight:1.15,marginTop:6}},"Where We Work")
+      ),
+      [[0,3],[3,6],[6,7]].map(([start,end],rowIdx)=>
+        h("div",{key:rowIdx,style:{display:"grid",gridTemplateColumns:rowIdx===2?"1fr 2fr":"repeat(3,1fr)",border:"1px solid rgba(255,255,255,0.1)",borderTop:rowIdx>0?"none":"1px solid rgba(255,255,255,0.1)"}},
+          data.focusAreas.slice(start,end).map((fa,colIdx)=>
+            h("div",{key:fa.id,style:{padding:"2rem 1.8rem",borderRight:(rowIdx===2?colIdx===0:colIdx<2)?"1px solid rgba(255,255,255,0.1)":"none"}},
+              rowIdx===2&&colIdx===1?
+                h("div",{style:{borderLeft:"2px solid rgba(255,255,255,0.12)",paddingLeft:"1.8rem"}},
+                  h("div",{style:{fontFamily:SERIF,fontSize:"1rem",fontStyle:"italic",color:"rgba(255,255,255,0.52)",lineHeight:1.75}},'"Rooted in the belief that invention and innovation are powerful tools for societal transformation, we support visionary ideas, elevate underrepresented voices, and bridge the gap between emerging technologies and the public systems that shape our everyday lives."'),
+                  h("div",{style:{marginTop:"1rem",fontSize:10,letterSpacing:"0.08em",textTransform:"uppercase",color:"rgba(255,255,255,0.28)"}},"— The Public Innovation Institute Mission")
+                ):
+                h("div",null,
+                  h("div",{style:{fontFamily:MONO,fontSize:10,color:"rgba(255,255,255,0.22)",marginBottom:"0.9rem",letterSpacing:"0.08em"}},`0${fa.id}`),
+                  h("div",{style:{width:32,height:32,background:"rgba(200,64,30,0.15)",borderRadius:4,display:"flex",alignItems:"center",justifyContent:"center",marginBottom:"1rem"}},
+                    h("div",{style:{width:17,height:17}},FICONS[fa.id-1])
+                  ),
+                  h("div",{style:{fontFamily:SERIF,fontSize:"1rem",fontWeight:700,color:PAPER,marginBottom:"0.5rem",lineHeight:1.3}},fa.title),
+                  h("div",{style:{fontSize:11,color:"rgba(255,255,255,0.48)",lineHeight:1.7}},fa.body)
+                )
+            )
+          )
+        )
+      )
+    ),
+    h("section",{style:{padding:"4.5rem 2.5rem",borderBottom:`1px solid ${RULE}`}},
+      h("div",{style:{display:"flex",alignItems:"flex-end",justifyContent:"space-between",marginBottom:"2.5rem"}},
+        h("div",null,h("div",{style:tag},"Academic Programs"),h("div",{style:sectionTitle},"Engines of Imagination")),
+        h("button",{onClick:()=>setPage("programs"),style:btnGhost({fontSize:11,padding:"7px 14px"})},"All programs →")
+      ),
+      data.programs.filter(p=>p.featured).map(prog=>
+        h("div",{key:prog.id,onClick:()=>setPage(`programs/${prog.id}`),style:{border:`2px solid ${ACCENT}`,marginBottom:"1.5rem",cursor:"pointer",overflow:"hidden",display:"grid",gridTemplateColumns:"280px 1fr",transition:"background .2s"},
+          onMouseEnter:e=>e.currentTarget.style.background="#f5ede9",onMouseLeave:e=>e.currentTarget.style.background="transparent"},
+          h("div",{style:{overflow:"hidden",borderRight:`1px solid ${ACCENT}`}},
+            h("svg",{viewBox:"0 0 280 220",preserveAspectRatio:"xMidYMid slice",style:{width:"100%",height:"100%",display:"block"}},
+              h("rect",{width:280,height:220,fill:"#e8e4da"}),
+              h("rect",{x:18,y:112,width:52,height:108,fill:"rgba(14,14,12,0.09)",rx:2}),
+              h("rect",{x:86,y:78,width:52,height:142,fill:"rgba(14,14,12,0.11)",rx:2}),
+              h("rect",{x:154,y:94,width:52,height:126,fill:"rgba(14,14,12,0.1)",rx:2}),
+              h("circle",{cx:44,cy:93,r:13,fill:"rgba(200,64,30,0.18)",stroke:ACCENT,strokeWidth:1.2}),
+              h("circle",{cx:44,cy:93,r:5,fill:ACCENT}),
+              h("text",{x:140,y:210,fontFamily:MONO,fontSize:9,fill:"rgba(14,14,12,0.32)",textAnchor:"middle"},"PII × Cyvl.AI · Summer 2026")
+            )
+          ),
+          h("div",{style:{padding:"1.8rem 2.2rem",display:"flex",flexDirection:"column",justifyContent:"center"}},
+            h("div",{style:{display:"flex",alignItems:"center",gap:9,marginBottom:"0.7rem"}},
+              h("span",{style:{fontSize:10,letterSpacing:"0.12em",textTransform:"uppercase",color:ACCENT,fontWeight:500}},`Featured · Applications Close ${prog.deadline}`),
+              h("span",{style:{background:ACCENT,color:"#fff",fontSize:10,letterSpacing:"0.1em",textTransform:"uppercase",padding:"3px 9px",fontWeight:500}},"Now Open")
+            ),
+            h("div",{style:{fontFamily:SERIF,fontSize:"1.3rem",fontWeight:700,color:INK,marginBottom:"0.65rem"}},prog.name),
+            h("div",{style:{fontSize:12,color:"#7a7a72",lineHeight:1.7}},prog.description),
+            h("div",{style:{marginTop:"1rem",paddingTop:"1rem",borderTop:`1px solid ${RULE}`,display:"flex",justifyContent:"space-between",alignItems:"center"}},
+              h("span",{style:{fontSize:11,color:"#7a7a72"}},prog.format),
+              h("span",{style:{fontSize:11,color:INK,fontWeight:500,borderBottom:`1px solid ${INK}`,paddingBottom:1}},`Apply by ${prog.deadline} →`)
+            )
+          )
+        )
+      ),
+      h("div",{style:{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:"1.25rem"}},
+        data.programs.filter(p=>!p.featured).map((prog,i)=>{
+          const bgs=["#e8ecf0","#e4e8da","#ece8e0"];
+          const progSvgs=[
+            h("svg",{viewBox:"0 0 240 170",preserveAspectRatio:"xMidYMid slice",style:{width:"100%",height:"100%",display:"block"}},h("rect",{width:240,height:170,fill:bgs[0]}),h("rect",{x:0,y:52,width:240,height:76,fill:"rgba(14,14,12,0.05)"}),h("rect",{x:0,y:52,width:4,height:76,fill:ACCENT}),h("text",{x:16,y:82,fontFamily:MONO,fontSize:8,fill:"rgba(14,14,12,0.4)"},"Data · Social Innovation"),h("text",{x:16,y:96,fontFamily:MONO,fontSize:8,fill:"rgba(14,14,12,0.4)"},"Public Policy")),
+            h("svg",{viewBox:"0 0 240 170",preserveAspectRatio:"xMidYMid slice",style:{width:"100%",height:"100%",display:"block"}},h("rect",{width:240,height:170,fill:bgs[1]}),h("line",{x1:0,y1:136,x2:240,y2:136,stroke:"rgba(14,14,12,0.12)",strokeWidth:1}),h("polyline",{points:"24,86 52,62 80,34 108,66 136,16 164,46 208,64",fill:"none",stroke:ACCENT,strokeWidth:1.8,strokeLinecap:"round"})),
+            h("svg",{viewBox:"0 0 240 170",preserveAspectRatio:"xMidYMid slice",style:{width:"100%",height:"100%",display:"block"}},h("rect",{width:240,height:170,fill:bgs[2]}),h("rect",{x:38,y:26,width:164,height:106,rx:2,fill:"rgba(14,14,12,0.06)",stroke:"rgba(14,14,12,0.1)",strokeWidth:1}),h("rect",{x:38,y:26,width:164,height:18,fill:"rgba(14,14,12,0.1)",rx:2}),h("circle",{cx:170,cy:110,r:17,fill:"rgba(200,64,30,0.15)",stroke:ACCENT,strokeWidth:1.2}),h("path",{d:"M163 110l4 4 8-9",stroke:ACCENT,strokeWidth:1.3,strokeLinecap:"round",strokeLinejoin:"round"}))
+          ];
+          return h("div",{key:prog.id,onClick:()=>setPage(`programs/${prog.id}`),style:{border:`1px solid ${RULE}`,cursor:"pointer",overflow:"hidden",display:"flex",flexDirection:"column",transition:"background .2s"},
+            onMouseEnter:e=>{e.currentTarget.style.borderColor=INK;e.currentTarget.style.background=WARM;},onMouseLeave:e=>{e.currentTarget.style.borderColor=RULE;e.currentTarget.style.background="transparent";}},
+            h("div",{style:{width:"100%",height:170,overflow:"hidden",borderBottom:`1px solid ${RULE}`,flexShrink:0}},progSvgs[i%3]),
+            h("div",{style:{padding:"1.25rem",flex:1,display:"flex",flexDirection:"column"}},
+              h("div",{style:{fontSize:10,letterSpacing:"0.12em",textTransform:"uppercase",color:ACCENT,fontWeight:500,marginBottom:"0.6rem"}},`${prog.level} · Summer`),
+              h("div",{style:{fontFamily:SERIF,fontSize:"1rem",fontWeight:700,lineHeight:1.3,color:INK,marginBottom:"0.5rem"}},prog.name),
+              h("div",{style:{fontSize:11,color:"#7a7a72",lineHeight:1.7,flex:1}},prog.description),
+              h("div",{style:{marginTop:"1rem",paddingTop:"1rem",borderTop:`1px solid ${RULE}`,display:"flex",justifyContent:"space-between"}},
+                h("span",{style:{fontSize:10,color:"#7a7a72"}},prog.format),
+                h("span",{style:{fontSize:10,color:INK,fontWeight:500,borderBottom:`1px solid ${INK}`,paddingBottom:1}},"Learn more →")
+              )
+            )
+          );
+        })
+      )
+    ),
+    h("section",{style:{display:"grid",gridTemplateColumns:"1fr 1fr",borderBottom:`1px solid ${RULE}`}},
+      h("div",{style:{background:WARM,padding:"4.5rem 2.5rem",borderRight:`1px solid ${RULE}`,display:"flex",flexDirection:"column",justifyContent:"space-between"}},
+        h("div",null,
+          h("div",{style:{fontFamily:SERIF,fontSize:"3rem",fontWeight:900,letterSpacing:"-0.02em",color:INK,lineHeight:1,marginBottom:"0.4rem"}},"Hyperion"),
+          h("div",{style:{...tag,marginBottom:"1.2rem"}},data.hyperion.tagline),
+          h("p",{style:{fontSize:14,color:"#3a3a36",lineHeight:1.8,marginBottom:"2rem"}},data.hyperion.body),
+          h("button",{onClick:()=>setPage("hyperion"),style:btn()},data.hyperion.cta)
+        ),
+        h("div",{style:{paddingTop:"1.8rem",borderTop:`1px solid ${RULE}`,marginTop:"2rem"}},
+          h("div",{style:{fontSize:10,color:"#7a7a72",letterSpacing:"0.08em",textTransform:"uppercase",marginBottom:"0.8rem"}},"Network Partners"),
+          h("div",{style:{display:"flex",flexWrap:"wrap",gap:"0.5rem"}},
+            data.hyperion.partners.map(p=>h("div",{key:p.name,style:{height:32,padding:"0 12px",display:"flex",alignItems:"center",border:`1px solid ${RULE}`,background:"#fff"}},
+              h("span",{style:{fontSize:11,fontWeight:600,color:p.color,whiteSpace:"nowrap"}},p.name)
+            ))
+          )
+        )
+      ),
+      h("div",{style:{padding:"4.5rem 2.5rem",display:"flex",flexDirection:"column",justifyContent:"center"}},
+        h("div",{style:{...tag,marginBottom:"1.8rem"}},"What Hyperion Offers"),
+        data.hyperion.pillars.map((p,i)=>
+          h("div",{key:i,style:{padding:"1.1rem 0",borderBottom:i<data.hyperion.pillars.length-1?`1px solid ${RULE}`:"none",display:"flex",gap:"1.2rem",alignItems:"flex-start"}},
+            h("div",{style:{fontFamily:MONO,fontSize:10,color:ACCENT,minWidth:20}},p.num),
+            h("div",null,
+              h("div",{style:{fontSize:13,fontWeight:500,color:INK,marginBottom:"0.15rem"}},p.title),
+              h("div",{style:{fontSize:11,color:"#7a7a72",lineHeight:1.6}},p.body)
+            )
+          )
+        )
+      )
+    ),
+    h("section",{style:{background:ACCENT,padding:"4.5rem 2.5rem",borderBottom:"1px solid rgba(0,0,0,0.15)"}},
+      h("div",{style:{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"4rem",alignItems:"center"}},
+        h("div",null,
+          h("div",{style:{fontSize:10,letterSpacing:"0.12em",textTransform:"uppercase",color:"rgba(255,255,255,0.6)",fontWeight:500,marginBottom:"0.9rem"}},"Annual Conference"),
+          h("div",{style:{fontFamily:SERIF,fontSize:"clamp(2.4rem,4.5vw,4.8rem)",fontWeight:900,fontStyle:"italic",color:"#fff",lineHeight:1,marginBottom:"0.6rem"}},"Change.",h("br"),"Enabled"),
+          h("div",{style:{fontSize:11,color:"rgba(255,255,255,0.6)",letterSpacing:"0.06em",textTransform:"uppercase",marginBottom:"1.3rem"}},`${data.conference.date} · ${data.conference.location}`),
+          h("div",{style:{fontSize:13,color:"rgba(255,255,255,0.75)",lineHeight:1.7,marginBottom:"1.8rem"}},data.conference.subtitle),
+          h("button",{onClick:()=>setPage("conference"),style:{background:"#fff",color:ACCENT,fontFamily:SANS,fontSize:11,fontWeight:500,letterSpacing:"0.06em",textTransform:"uppercase",padding:"12px 24px",border:"none",cursor:"pointer"}},`Register for ${data.conference.year}`)
+        ),
+        h("div",null,
+          h("div",{style:{borderLeft:"2px solid rgba(255,255,255,0.3)",paddingLeft:"1.8rem",marginBottom:"1.8rem"}},
+            h("div",{style:{fontSize:10,letterSpacing:"0.08em",textTransform:"uppercase",color:"rgba(255,255,255,0.5)",marginBottom:"0.4rem"}},"2026 Theme"),
+            h("div",{style:{fontFamily:SERIF,fontSize:"1.4rem",fontWeight:700,lineHeight:1.3,color:"#fff"}},data.conference.theme)
+          ),
+          h("div",{style:{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"1.2rem"}},
+            data.conference.tracks.map(t=>h("div",{key:t.name,style:{background:"rgba(0,0,0,0.15)",padding:"1.3rem"}},
+              h("div",{style:{fontFamily:SERIF,fontSize:"1.5rem",fontWeight:700,color:"#fff",lineHeight:1}},t.name),
+              h("div",{style:{fontSize:11,color:"rgba(255,255,255,0.55)",marginTop:"0.4rem"}},t.desc)
+            ))
+          )
+        )
+      )
+    ),
+    h("section",{style:{padding:"4.5rem 2.5rem",borderBottom:`1px solid ${RULE}`}},
+      h("div",{style:{fontFamily:SERIF,fontSize:"clamp(1.5rem,2.8vw,2.6rem)",fontWeight:400,fontStyle:"italic",color:INK,lineHeight:1.4,maxWidth:820}},data.site.pullQuote),
+      h("div",{style:{marginTop:"1.2rem",fontSize:11,color:"#7a7a72",letterSpacing:"0.08em",textTransform:"uppercase"}},"— From the PII Manifesto")
+    ),
+    h("div",{style:{display:"grid",gridTemplateColumns:"repeat(4,1fr)",borderBottom:`1px solid ${RULE}`}},
+      data.stats.map((s,i)=>h("div",{key:i,style:{padding:"2.2rem 1.8rem",borderRight:i<3?`1px solid ${RULE}`:"none",textAlign:"center"}},
+        h("div",{style:{fontFamily:SERIF,fontSize:"clamp(2rem,3vw,3.2rem)",fontWeight:900,color:INK,lineHeight:1}},s.num,h("span",{style:{color:ACCENT}},s.unit)),
+        h("div",{style:{fontSize:10,color:"#7a7a72",marginTop:"0.4rem",lineHeight:1.5}},s.desc)
+      ))
+    )
+  );
+}
+
+function ResearchPage({data,setPage}){
+  const [filter,setFilter]=useState("all");
+  const getTag=r=>r.tag||(r.tags&&r.tags[0])||'';
+  const tags=["all",...new Set(data.research.map(r=>getTag(r)).filter(Boolean))];
+  const filtered=data.research.filter(r=>r.status==="published"&&(filter==="all"||getTag(r)===filter));
+  return h("div",{style:{fontFamily:SANS}},
+    h("div",{style:{padding:"4rem 2.5rem",borderBottom:`1px solid ${RULE}`}},
+      h("div",{style:tag},"The Public Innovation Institute"),
+      h("h1",{style:{fontFamily:SERIF,fontSize:"clamp(2.5rem,5vw,5rem)",fontWeight:900,lineHeight:1.05,margin:"8px 0 1.5rem"}},"Research & ",h("em",{style:{fontStyle:"italic",color:ACCENT}},"Publications")),
+      h("p",{style:{fontSize:15,color:"#3a3a36",lineHeight:1.8,maxWidth:560}},"Empirical research, policy analysis, and working papers on AI in government, urban health equity, and civic data infrastructure."),
+      h("div",{style:{display:"flex",gap:8,marginTop:"2rem",flexWrap:"wrap"}},
+        tags.map(t=>h("button",{key:t,onClick:()=>setFilter(t),style:{padding:"7px 16px",fontSize:11,letterSpacing:"0.06em",textTransform:"uppercase",fontFamily:SANS,fontWeight:500,cursor:"pointer",border:`1px solid ${filter===t?INK:RULE}`,background:filter===t?INK:"transparent",color:filter===t?"#fff":"#3a3a36"}},t==="all"?"All":t))
+      )
+    ),
+    h("div",{style:{padding:"0 2.5rem"}},
+      filtered.map((r,i)=>h("div",{key:r.id,onClick:()=>setPage(`research/${r.id}`),style:{display:"grid",gridTemplateColumns:"1fr 2fr",gap:"2.5rem",padding:"2.5rem 0",borderBottom:`1px solid ${RULE}`,cursor:"pointer",transition:"background .2s"},
+        onMouseEnter:e=>e.currentTarget.style.background=WARM,onMouseLeave:e=>e.currentTarget.style.background="transparent"},
+        h("div",{style:{display:"flex",flexDirection:"column",gap:6}},
+          h("span",{style:{fontSize:10,letterSpacing:"0.09em",textTransform:"uppercase",background:"#f5ede9",color:ACCENT,padding:"3px 9px",fontWeight:500,alignSelf:"flex-start"}},getTag(r)),
+          h("div",{style:{fontSize:11,color:"#7a7a72",fontFamily:MONO}},r.date),
+          h("div",{style:{fontSize:12,color:"#3a3a36",fontFamily:MONO}},r.author)
+        ),
+        h("div",null,
+          h("h2",{style:{fontFamily:SERIF,fontSize:"1.25rem",fontWeight:700,lineHeight:1.35,color:INK,marginBottom:"0.6rem"}},r.title),
+          h("p",{style:{fontSize:13,color:"#3a3a36",lineHeight:1.7,marginBottom:"1rem"}},r.excerpt),
+          h("span",{style:{fontSize:11,color:INK,fontWeight:500,borderBottom:`1px solid ${INK}`,paddingBottom:1}},"Read paper ↗")
+        )
+      ))
+    )
+  );
+}
+
+function ArticlePage({article,setPage,data}){
+  if(!article){setPage("research");return null;}
+  const others=data.research.filter(r=>r.id!==article.id&&r.status==="published").slice(0,2);
+  return h("div",{style:{fontFamily:SANS}},
+    h("div",{style:{padding:"3rem 2.5rem",borderBottom:`1px solid ${RULE}`,background:WARM}},
+      h("button",{onClick:()=>setPage("research"),style:{fontSize:12,color:"#7a7a72",background:"none",border:"none",cursor:"pointer",marginBottom:"1.5rem",display:"block"}},"← Back to Research"),
+      h("span",{style:{fontSize:10,letterSpacing:"0.1em",textTransform:"uppercase",background:"#f5ede9",color:ACCENT,padding:"3px 9px",fontWeight:500}},article.tag),
+      h("h1",{style:{fontFamily:SERIF,fontSize:"clamp(1.8rem,4vw,3.5rem)",fontWeight:900,lineHeight:1.1,margin:"1.2rem 0",color:INK}},article.title),
+      h("div",{style:{display:"flex",gap:"2rem",alignItems:"center"}},
+        h("div",{style:{fontSize:13,color:"#3a3a36"}},article.author),
+        h("div",{style:{fontSize:12,color:"#7a7a72",fontFamily:MONO}},article.affiliation),
+        h("div",{style:{fontSize:12,color:"#7a7a72",fontFamily:MONO}},article.date)
+      )
+    ),
+    (article.media||article.image)&&h("div",{style:{width:"100%",maxHeight:420,overflow:"hidden",borderBottom:`1px solid ${RULE}`}},
+      article.mediaType==="video"
+        ? h("video",{src:article.media,controls:true,style:{width:"100%",maxHeight:420,objectFit:"cover",display:"block"}})
+        : h("img",{src:article.media||article.image,style:{width:"100%",maxHeight:420,objectFit:"cover",display:"block"},alt:article.title})
+    ),
+    h("div",{style:{display:"grid",gridTemplateColumns:"2fr 1fr",gap:"4rem",padding:"3rem 2.5rem",alignItems:"start"}},
+      h("div",null,
+        h("p",{style:{fontSize:16,color:"#3a3a36",lineHeight:1.85,marginBottom:"1.5rem",fontStyle:"italic",borderLeft:`3px solid ${ACCENT}`,paddingLeft:"1.5rem"}},article.excerpt),
+        h(BodyText,{text:article.body})
+      ),
+      h("div",{style:{position:"sticky",top:"1.5rem"}},
+        h("div",{style:{background:WARM,border:`1px solid ${RULE}`,padding:"1.5rem",marginBottom:"1.5rem"}},
+          h("div",{style:{fontSize:11,letterSpacing:"0.08em",textTransform:"uppercase",color:"#7a7a72",marginBottom:"1rem",fontWeight:500}},"About the Author"),
+          h("div",{style:{fontFamily:SERIF,fontSize:"1rem",fontWeight:700,color:INK,marginBottom:"0.3rem"}},article.author),
+          h("div",{style:{fontSize:12,color:"#7a7a72"}},article.affiliation),
+          h("div",{style:{fontSize:12,color:"#7a7a72",marginTop:"0.75rem",lineHeight:1.6}},"Founder and Director of The Public Innovation Institute. Research affiliate at the Bloomberg Center for Cities, Harvard Kennedy School.")
+        ),
+        h("div",{style:{background:WARM,border:`1px solid ${RULE}`,padding:"1.5rem",marginBottom:"1.5rem"}},
+          h("div",{style:{fontSize:11,letterSpacing:"0.08em",textTransform:"uppercase",color:"#7a7a72",marginBottom:"1rem",fontWeight:500}},"Cite This Work"),
+          h("div",{style:{fontSize:11,color:"#3a3a36",fontFamily:MONO,lineHeight:1.7,background:"#fff",padding:"0.75rem",border:`1px solid ${RULE}`}},`${article.author} (${article.date.split(",")[1]?.trim()||"2026"}). "${article.title}." The Public Innovation Institute.`)
+        ),
+        others.length>0&&h("div",null,
+          h("div",{style:{fontSize:11,letterSpacing:"0.08em",textTransform:"uppercase",color:"#7a7a72",marginBottom:"1rem",fontWeight:500}},"Related Research"),
+          others.map(r=>h("div",{key:r.id,onClick:()=>setPage(`research/${r.id}`),style:{padding:"1rem 0",borderBottom:`1px solid ${RULE}`,cursor:"pointer"},
+            onMouseEnter:e=>e.currentTarget.style.color=ACCENT,onMouseLeave:e=>e.currentTarget.style.color=INK},
+            h("div",{style:{fontFamily:SERIF,fontSize:"0.9rem",fontWeight:700,lineHeight:1.3,marginBottom:"0.3rem"}},r.title),
+            h("div",{style:{fontSize:11,color:"#7a7a72"}},`${r.author} · ${r.date}`)
+          ))
+        )
+      )
+    )
+  );
+}
+
+function ProgramsPage({data,setPage}){
+  return h("div",{style:{fontFamily:SANS}},
+    h("div",{style:{padding:"4rem 2.5rem",borderBottom:`1px solid ${RULE}`,background:WARM}},
+      h("div",{style:tag},"The Public Innovation Institute"),
+      h("h1",{style:{fontFamily:SERIF,fontSize:"clamp(2.5rem,5vw,5rem)",fontWeight:900,lineHeight:1.05,margin:"8px 0 1.5rem"}},"Programs & ",h("em",{style:{color:ACCENT,fontStyle:"italic"}},"Opportunities")),
+      h("p",{style:{fontSize:15,color:"#3a3a36",lineHeight:1.8,maxWidth:560}},"From summer intensives to graduate fellowships, our programs prepare the next generation of civic technologists and public innovators.")
+    ),
+    h("div",{style:{padding:"3rem 2.5rem"}},
+      data.programs.map((prog,i)=>h("div",{key:prog.id,onClick:()=>setPage(`programs/${prog.id}`),style:{display:"grid",gridTemplateColumns:"auto 1fr auto",gap:"2rem",padding:"2rem 0",borderBottom:`1px solid ${RULE}`,cursor:"pointer",alignItems:"center",transition:"background .2s"},
+        onMouseEnter:e=>e.currentTarget.style.background=WARM,onMouseLeave:e=>e.currentTarget.style.background="transparent"},
+        h("div",{style:{fontFamily:MONO,fontSize:"1.5rem",color:"rgba(14,14,12,0.15)",fontWeight:400,minWidth:40}},`0${i+1}`),
+        h("div",null,
+          h("div",{style:{display:"flex",gap:8,alignItems:"center",marginBottom:"0.5rem"}},
+            h("span",{style:{fontSize:10,letterSpacing:"0.1em",textTransform:"uppercase",background:"#f5ede9",color:ACCENT,padding:"3px 9px",fontWeight:500}},prog.level),
+            prog.status==="open"&&h("span",{style:{fontSize:10,letterSpacing:"0.1em",textTransform:"uppercase",background:"rgba(15,110,86,0.1)",color:"#0F6E56",padding:"3px 9px",fontWeight:500}},"Open")
+          ),
+          h("h2",{style:{fontFamily:SERIF,fontSize:"1.3rem",fontWeight:700,color:INK,lineHeight:1.3,marginBottom:"0.4rem"}},prog.name),
+          h("div",{style:{fontSize:12,color:"#7a7a72"}},prog.format+(prog.deadline!=="TBD"?` · Deadline: ${prog.deadline}`:""))
+        ),
+        h("div",{style:{fontSize:12,fontWeight:500,color:INK,whiteSpace:"nowrap",borderBottom:`1px solid ${INK}`,paddingBottom:2}},"Learn more →")
+      ))
+    )
+  );
+}
+
+function ProgramDetail({program,setPage}){
+  if(!program){setPage("programs");return null;}
+  return h("div",{style:{fontFamily:SANS}},
+    h("div",{style:{padding:"3rem 2.5rem",borderBottom:`1px solid ${RULE}`,background:program.featured?"#f5ede9":WARM}},
+      h("button",{onClick:()=>setPage("programs"),style:{fontSize:12,color:"#7a7a72",background:"none",border:"none",cursor:"pointer",marginBottom:"1.5rem",display:"block"}},"← Back to Programs"),
+      h("div",{style:{display:"flex",gap:8,marginBottom:"1rem"}},
+        h("span",{style:{fontSize:10,letterSpacing:"0.1em",textTransform:"uppercase",background:"#f5ede9",color:ACCENT,padding:"3px 9px",fontWeight:500}},program.level),
+        program.status==="open"&&h("span",{style:{fontSize:10,letterSpacing:"0.1em",textTransform:"uppercase",background:"rgba(15,110,86,0.1)",color:"#0F6E56",padding:"3px 9px",fontWeight:500}},"Applications Open")
+      ),
+      h("h1",{style:{fontFamily:SERIF,fontSize:"clamp(1.8rem,4vw,3.5rem)",fontWeight:900,lineHeight:1.1,marginBottom:"1rem",color:INK}},program.name),
+      h("div",{style:{fontSize:14,color:"#3a3a36"}},program.format+(program.deadline!=="TBD"?` · Applications close: ${program.deadline}`:""))
+    ),
+    h("div",{style:{display:"grid",gridTemplateColumns:"2fr 1fr",gap:"4rem",padding:"3rem 2.5rem",alignItems:"start"}},
+      h("div",null,h(BodyText,{text:program.fullDescription})),
+      h("div",{style:{position:"sticky",top:"1.5rem"}},
+        h("div",{style:{background:INK,padding:"1.5rem",marginBottom:"1.5rem",color:"#fff"}},
+          h("div",{style:{fontFamily:SERIF,fontSize:"1.1rem",fontWeight:700,marginBottom:"1rem"}},"Apply Now"),
+          program.deadline!=="TBD"&&h("div",{style:{fontSize:12,color:"rgba(255,255,255,0.65)",marginBottom:"1.5rem"}},`Deadline: ${program.deadline}`),
+          h("a",{href:program.applyUrl,style:{display:"block",background:ACCENT,color:"#fff",textDecoration:"none",textAlign:"center",padding:"12px 24px",fontFamily:SANS,fontSize:12,fontWeight:500,letterSpacing:"0.06em",textTransform:"uppercase"}},"Start Application ↗")
+        ),
+        h("div",{style:{background:WARM,border:`1px solid ${RULE}`,padding:"1.5rem"}},
+          h("div",{style:{fontSize:11,letterSpacing:"0.08em",textTransform:"uppercase",color:"#7a7a72",marginBottom:"1rem",fontWeight:500}},"Quick Facts"),
+          [["Format",program.format],["Level",program.level],["Status",program.status==="open"?"Open":"Closed"]].map(([k,v])=>
+            h("div",{key:k,style:{display:"flex",justifyContent:"space-between",padding:"0.6rem 0",borderBottom:`1px solid ${RULE}`,fontSize:13}},
+              h("span",{style:{color:"#7a7a72"}},k),
+              h("span",{style:{color:INK,fontWeight:500}},v)
+            )
+          )
+        )
+      )
+    )
+  );
+}
+
+function HyperionPage({data}){
+  return h("div",{style:{fontFamily:SANS}},
+    h("div",{style:{display:"grid",gridTemplateColumns:"1fr 1fr",minHeight:"55vh",borderBottom:`1px solid ${RULE}`}},
+      h("div",{style:{padding:"4.5rem 2.5rem",borderRight:`1px solid ${RULE}`}},
+        h("div",{style:tag},data.hyperion.tagline),
+        h("h1",{style:{fontFamily:SERIF,fontSize:"clamp(3rem,6vw,6rem)",fontWeight:900,letterSpacing:"-0.02em",lineHeight:1,margin:"0.8rem 0 1.5rem",color:INK}},"Hyperion"),
+        h("p",{style:{fontSize:16,color:"#3a3a36",lineHeight:1.8,marginBottom:"2.5rem",maxWidth:480}},data.hyperion.body),
+        h("a",{href:"mailto:info@thepii.org",style:{...btn(),textDecoration:"none",display:"inline-block"}},data.hyperion.cta)
+      ),
+      h("div",{style:{background:WARM,padding:"4.5rem 2.5rem"}},
+        h("div",{style:{fontFamily:SERIF,fontSize:"1.2rem",fontStyle:"italic",color:"#3a3a36",lineHeight:1.7,marginBottom:"2rem"}},'"We believe the next generation of civic infrastructure will be built by entrepreneurs who understand that technology and community accountability are not in tension — they are the same project."'),
+        h("div",{style:{fontSize:12,color:"#7a7a72",letterSpacing:"0.06em",textTransform:"uppercase"}},"— Hyperion Founding Principles")
+      )
+    ),
+    h("section",{style:{padding:"4.5rem 2.5rem",borderBottom:`1px solid ${RULE}`}},
+      h("div",{style:tag},"What Hyperion Offers"),
+      h("div",{style:{display:"grid",gridTemplateColumns:"1fr 1fr",gap:0,border:`1px solid ${RULE}`,marginTop:"2rem"}},
+        data.hyperion.pillars.map((p,i)=>h("div",{key:i,style:{padding:"2rem",borderRight:i%2===0?`1px solid ${RULE}`:"none",borderBottom:i<2?`1px solid ${RULE}`:"none"}},
+          h("div",{style:{fontFamily:MONO,fontSize:11,color:ACCENT,marginBottom:"0.75rem"}},p.num),
+          h("div",{style:{fontFamily:SERIF,fontSize:"1.15rem",fontWeight:700,color:INK,marginBottom:"0.5rem"}},p.title),
+          h("div",{style:{fontSize:13,color:"#3a3a36",lineHeight:1.7}},p.body)
+        ))
+      )
+    ),
+    h("section",{style:{padding:"4.5rem 2.5rem",borderBottom:`1px solid ${RULE}`}},
+      h("div",{style:tag},"Network Partners"),
+      h("div",{style:{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:"1rem",marginTop:"2rem"}},
+        data.hyperion.partners.map(p=>h("div",{key:p.name,style:{border:`1px solid ${RULE}`,padding:"1.5rem",display:"flex",alignItems:"flex-start",gap:"1rem"}},
+          h("div",{style:{width:36,height:36,background:`${p.color}15`,border:`1px solid ${p.color}30`,borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}},
+            h("span",{style:{fontSize:11,fontWeight:700,color:p.color}},p.name[0])
+          ),
+          h("div",null,
+            h("div",{style:{fontSize:14,fontWeight:600,color:INK,marginBottom:"0.2rem"}},p.name),
+            h("div",{style:{fontSize:11,color:"#7a7a72"}},p.type)
+          )
+        ))
+      )
+    )
+  );
+}
+
+function ConferencePage({data}){
+  return h("div",{style:{fontFamily:SANS}},
+    h("div",{style:{background:ACCENT,padding:"5rem 2.5rem",color:"#fff"}},
+      h("div",{style:{fontSize:10,letterSpacing:"0.12em",textTransform:"uppercase",color:"rgba(255,255,255,0.6)",marginBottom:"1rem",fontWeight:500}},"Annual Conference"),
+      h("div",{style:{fontFamily:SERIF,fontSize:"clamp(3rem,8vw,8rem)",fontWeight:900,fontStyle:"italic",lineHeight:1}},"Change.",h("br"),"Enabled"),
+      h("div",{style:{marginTop:"1.5rem",fontSize:14,color:"rgba(255,255,255,0.7)",letterSpacing:"0.06em",textTransform:"uppercase"}},`${data.conference.year} · ${data.conference.date} · ${data.conference.location}`)
+    ),
+    h("div",{style:{display:"grid",gridTemplateColumns:"2fr 1fr",gap:"4rem",padding:"4.5rem 2.5rem",borderBottom:`1px solid ${RULE}`}},
+      h("div",null,
+        h("div",{style:tag},"2026 Theme"),
+        h("h2",{style:{fontFamily:SERIF,fontSize:"2.5rem",fontWeight:700,color:INK,lineHeight:1.2,margin:"0.75rem 0 1.5rem"}},data.conference.theme),
+        h("p",{style:{fontSize:15,color:"#3a3a36",lineHeight:1.8}},data.conference.subtitle),
+        h("p",{style:{fontSize:15,color:"#3a3a36",lineHeight:1.8,marginTop:"1rem"}},"Change.Enabled is The Public Innovation Institute's annual convening for leaders working at the intersection of technology, policy, and civic life.")
+      ),
+      h("div",null,
+        h("div",{style:{background:INK,padding:"2rem",color:"#fff",marginBottom:"1rem"}},
+          h("div",{style:{fontFamily:SERIF,fontSize:"1.5rem",fontWeight:700,marginBottom:"0.5rem"}},"Register Now"),
+          h("div",{style:{fontSize:12,color:"rgba(255,255,255,0.6)",marginBottom:"1.5rem"}},`${data.conference.date} · ${data.conference.location}`),
+          h("a",{href:data.conference.regUrl,style:{display:"block",background:"#fff",color:INK,textDecoration:"none",textAlign:"center",fontFamily:SANS,fontSize:12,fontWeight:500,letterSpacing:"0.06em",textTransform:"uppercase",padding:"12px 24px"}},"Register →")
+        ),
+        h("div",{style:{background:WARM,border:`1px solid ${RULE}`,padding:"1.5rem"}},
+          h("div",{style:{fontSize:11,letterSpacing:"0.08em",textTransform:"uppercase",color:"#7a7a72",fontWeight:500,marginBottom:"1rem"}},"Conference Tracks"),
+          data.conference.tracks.map(t=>h("div",{key:t.name,style:{padding:"0.75rem 0",borderBottom:`1px solid ${RULE}`}},
+            h("div",{style:{fontFamily:SERIF,fontSize:"1rem",fontWeight:700,color:INK,marginBottom:"0.25rem"}},t.name),
+            h("div",{style:{fontSize:12,color:"#7a7a72"}},t.desc)
+          ))
+        )
+      )
+    )
+  );
+}
+
+function AboutPage({data,setPage}){
+  return h("div",{style:{fontFamily:SANS}},
+    h("div",{style:{padding:"4.5rem 2.5rem",borderBottom:`1px solid ${RULE}`}},
+      h("div",{style:tag},"About"),
+      h("h1",{style:{fontFamily:SERIF,fontSize:"clamp(2.5rem,5vw,5rem)",fontWeight:900,lineHeight:1.05,margin:"8px 0 1.5rem"}},"The Public",h("br"),h("em",{style:{color:ACCENT,fontStyle:"italic"}},"Innovation Institute")),
+      h("p",{style:{fontSize:16,color:"#3a3a36",lineHeight:1.85,maxWidth:640}},"The Public Innovation Institute works at the intersection of technology, public policy, and community leadership to design, test, and scale innovations that improve lives and strengthen the common good.")
+    ),
+    h("div",{style:{display:"grid",gridTemplateColumns:"1fr 1fr",borderBottom:`1px solid ${RULE}`}},
+      h("div",{style:{padding:"4rem 2.5rem",borderRight:`1px solid ${RULE}`}},
+        h("div",{style:tag},"Our Mission"),
+        h("div",{style:{fontFamily:SERIF,fontSize:"1.5rem",fontWeight:700,lineHeight:1.4,margin:"0.75rem 0 1.5rem",color:INK}},"Rooted in the belief that invention and innovation are powerful tools for societal transformation."),
+        h("p",{style:{fontSize:14,color:"#3a3a36",lineHeight:1.8}},"We support visionary ideas, elevate underrepresented voices, and bridge the gap between emerging technologies and the public systems that shape our everyday lives."),
+        h("p",{style:{fontSize:14,color:"#3a3a36",lineHeight:1.8,marginTop:"1rem"}},"The PII is a Massachusetts 501(c)(3) nonprofit headquartered in Boston, with research affiliations at Harvard Kennedy School's Bloomberg Center for Cities and MIT.")
+      ),
+      h("div",{style:{padding:"4rem 2.5rem",background:WARM}},
+        h("div",{style:tag},"Our Approach"),
+        h("div",{style:{marginTop:"0.75rem"}},
+          ["Research-driven — we anchor every intervention in rigorous evidence.","City-centered — we work alongside municipal government, not around it.","Equity-first — we measure success by outcomes in the most vulnerable communities.","Open — we publish our methods and findings for the field to build on."].map((item,i)=>
+            h("div",{key:i,style:{display:"flex",gap:"1rem",padding:"1rem 0",borderBottom:`1px solid ${RULE}`}},
+              h("span",{style:{fontFamily:MONO,fontSize:11,color:ACCENT,minWidth:20}},`0${i+1}`),
+              h("span",{style:{fontSize:14,color:"#3a3a36",lineHeight:1.7}},item)
+            )
+          )
+        )
+      )
+    ),
+    h("div",{style:{padding:"4.5rem 2.5rem",borderBottom:`1px solid ${RULE}`}},
+      h("div",{style:tag},"Leadership"),
+      h("div",{style:{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:"2rem",marginTop:"2rem"}},
+        h("div",{style:{border:`1px solid ${RULE}`,padding:"2rem"}},
+          h("div",{style:{width:48,height:48,borderRadius:"50%",background:INK,display:"flex",alignItems:"center",justifyContent:"center",marginBottom:"1rem"}},
+            h("span",{style:{fontSize:14,fontWeight:700,color:"#fff"}},"KL")
+          ),
+          h("div",{style:{fontFamily:SERIF,fontSize:"1.1rem",fontWeight:700,color:INK,marginBottom:"0.25rem"}},"Khahlil Louisy"),
+          h("div",{style:{fontSize:11,color:ACCENT,letterSpacing:"0.06em",textTransform:"uppercase",marginBottom:"0.75rem",fontWeight:500}},"Founder & Director"),
+          h("div",{style:{fontSize:12,color:"#3a3a36",lineHeight:1.7}},"Founder and director of The PII. Research affiliate at Harvard's Bloomberg Center for Cities. MIT DEDP candidate.")
+        )
+      )
+    ),
+    h("div",{style:{padding:"4.5rem 2.5rem"}},
+      h("div",{style:tag},"Contact"),
+      h("div",{style:{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"4rem",marginTop:"1.5rem"}},
+        h("div",null,
+          h("h2",{style:{fontFamily:SERIF,fontSize:"2rem",fontWeight:700,color:INK,marginBottom:"1.5rem"}},"Get in Touch"),
+          h("div",{style:{fontFamily:MONO,fontSize:13,color:"#3a3a36",lineHeight:2}},
+            h("div",null,data.site.address.split("\n").join(", ")),
+            h("div",null,data.site.email)
+          )
+        ),
+        h("div",null,h("button",{onClick:()=>setPage("contact"),style:{...btn(),marginTop:"2.5rem"}},"Partner With Us →"))
+      )
+    )
+  );
+}
+
+function ContactPage({data}){
+  const [sent,setSent]=useState(false);
+  const [form,setForm]=useState({name:"",org:"",email:"",interest:"research",message:""});
+  return h("div",{style:{fontFamily:SANS}},
+    h("div",{style:{padding:"4rem 2.5rem",borderBottom:`1px solid ${RULE}`,background:WARM}},
+      h("div",{style:tag},"Partner With Us"),
+      h("h1",{style:{fontFamily:SERIF,fontSize:"clamp(2.5rem,5vw,5rem)",fontWeight:900,lineHeight:1.05,margin:"8px 0 1.2rem"}},"Let's Build ",h("em",{style:{color:ACCENT,fontStyle:"italic"}},"Together")),
+      h("p",{style:{fontSize:15,color:"#3a3a36",lineHeight:1.8,maxWidth:560}},"Whether you're a city government, foundation, academic institution, or emerging venture — we'd love to hear about your work.")
+    ),
+    h("div",{style:{display:"grid",gridTemplateColumns:"2fr 1fr",gap:"4rem",padding:"4rem 2.5rem"}},
+      sent?h("div",{style:{padding:"3rem",background:WARM,border:`1px solid ${RULE}`,textAlign:"center"}},
+        h("div",{style:{fontFamily:SERIF,fontSize:"2rem",fontWeight:700,color:INK,marginBottom:"1rem"}},"Message received."),
+        h("div",{style:{fontSize:14,color:"#3a3a36",lineHeight:1.8}},"Thank you for reaching out. A member of our team will be in touch within 3–5 business days.")
+      ):h("div",null,
+        h("div",{style:{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"1.2rem",marginBottom:"1.2rem"}},
+          ["name","org"].map(key=>h("div",{key},
+            h("label",{style:{display:"block",fontSize:11,fontWeight:500,letterSpacing:"0.06em",textTransform:"uppercase",color:"#3a3a36",marginBottom:"0.5rem"}},{name:"Full Name",org:"Organization"}[key]),
+            h("input",{value:form[key],onChange:e=>setForm(f=>({...f,[key]:e.target.value})),style:{width:"100%",padding:"10px 12px",border:`1px solid ${RULE}`,background:"#fff",fontFamily:SANS,fontSize:14,color:INK,outline:"none",boxSizing:"border-box"}})
+          ))
+        ),
+        h("div",{style:{marginBottom:"1.2rem"}},
+          h("label",{style:{display:"block",fontSize:11,fontWeight:500,letterSpacing:"0.06em",textTransform:"uppercase",color:"#3a3a36",marginBottom:"0.5rem"}},"Email Address"),
+          h("input",{type:"email",value:form.email,onChange:e=>setForm(f=>({...f,email:e.target.value})),style:{width:"100%",padding:"10px 12px",border:`1px solid ${RULE}`,background:"#fff",fontFamily:SANS,fontSize:14,color:INK,outline:"none",boxSizing:"border-box"}})
+        ),
+        h("div",{style:{marginBottom:"1.2rem"}},
+          h("label",{style:{display:"block",fontSize:11,fontWeight:500,letterSpacing:"0.06em",textTransform:"uppercase",color:"#3a3a36",marginBottom:"0.5rem"}},"Area of Interest"),
+          h("select",{value:form.interest,onChange:e=>setForm(f=>({...f,interest:e.target.value})),style:{width:"100%",padding:"10px 12px",border:`1px solid ${RULE}`,background:"#fff",fontFamily:SANS,fontSize:14,color:INK}},
+            ["research","programs","hyperion","conference","other"].map(v=>h("option",{key:v,value:v},v.charAt(0).toUpperCase()+v.slice(1)))
+          )
+        ),
+        h("div",{style:{marginBottom:"1.5rem"}},
+          h("label",{style:{display:"block",fontSize:11,fontWeight:500,letterSpacing:"0.06em",textTransform:"uppercase",color:"#3a3a36",marginBottom:"0.5rem"}},"Message"),
+          h("textarea",{value:form.message,onChange:e=>setForm(f=>({...f,message:e.target.value})),rows:5,style:{width:"100%",padding:"10px 12px",border:`1px solid ${RULE}`,background:"#fff",fontFamily:SANS,fontSize:14,color:INK,resize:"vertical",boxSizing:"border-box"}})
+        ),
+        h("button",{onClick:()=>setSent(true),style:btn()},"Send Message →")
+      ),
+      h("div",null,
+        [["General Inquiries",data.site.email],["Boston Office",data.site.address]].map(([label,val])=>
+          h("div",{key:label,style:{padding:"1.5rem 0",borderBottom:`1px solid ${RULE}`}},
+            h("div",{style:{fontSize:11,letterSpacing:"0.08em",textTransform:"uppercase",color:"#7a7a72",marginBottom:"0.5rem",fontWeight:500}},label),
+            h("div",{style:{fontSize:13,color:INK,fontFamily:MONO,lineHeight:1.8}},val)
+          )
+        )
+      )
+    )
+  );
+}
+
+function CAILPostPage({post,setPage}){
+  if(!post)return h("div",{style:{padding:"4rem 2.5rem",fontFamily:SANS}},"Post not found.");
+  const isEvent=post.type==="event";
+  return h("div",{style:{fontFamily:SANS}},
+    h("div",{style:{padding:"3rem 2.5rem",borderBottom:`1px solid ${RULE}`,background:WARM}},
+      h("div",{style:{display:"flex",gap:8,alignItems:"center",marginBottom:"1rem"}},
+        h("button",{onClick:()=>setPage("cail"),style:{background:"none",border:"none",fontSize:12,color:"#7a7a72",cursor:"pointer",fontFamily:SANS,letterSpacing:"0.06em",textTransform:"uppercase",paddingLeft:0}},"← CAIL"),
+        h("span",{style:{color:RULE}},"·"),
+        h("span",{style:{fontSize:10,letterSpacing:"0.1em",textTransform:"uppercase",color:ACCENT,fontWeight:500}},isEvent?"Event":"Article")
+      ),
+      h("h1",{style:{fontFamily:SERIF,fontSize:"clamp(2rem,4vw,3.5rem)",fontWeight:900,lineHeight:1.1,color:INK,marginBottom:"1rem"}},post.title),
+      h("div",{style:{display:"flex",gap:"1.5rem",fontSize:12,color:"#7a7a72",fontFamily:MONO}},
+        h("span",null,post.date),
+        h("span",null,post.author)
+      )
+    ),
+    (post.media||post.image)&&h("div",{style:{width:"100%",maxHeight:420,overflow:"hidden",borderBottom:`1px solid ${RULE}`}},
+      post.mediaType==="video"
+        ? h("video",{src:post.media,controls:true,style:{width:"100%",maxHeight:420,objectFit:"cover",display:"block"}})
+        : h("img",{src:post.media||post.image,style:{width:"100%",maxHeight:420,objectFit:"cover",display:"block"},alt:post.title})
+    ),
+    h("div",{style:{padding:"3rem 2.5rem",maxWidth:760}},
+      h(BodyText,{text:post.body})
+    ),
+    h("div",{style:{padding:"2rem 2.5rem",borderTop:`1px solid ${RULE}`,background:WARM}},
+      h("button",{onClick:()=>setPage("cail"),style:{...btnGhost(),fontSize:12}},"← Back to CAIL")
+    )
+  );
+}
+
+function CAILPage({data,setPage}){
+  const [filter,setFilter]=useState("all");
+  const posts=(data.cailPosts||[]).filter(p=>p.status==="published");
+  const filtered=filter==="all"?posts:posts.filter(p=>p.type===filter);
+  const focusAreas=["AI & Civic Infrastructure","Housing & Public Health","Climate & Energy Futures","Education, Entrepreneurship & Workforce","Built Environment & Construction","Water & Marine Resilience","Mobility & Smart Transportation"];
+  const pillars=[
+    {icon:"\u2697",title:"Pilots & Deployments",body:"Cities and companies co-develop and test solutions in real-world urban settings."},
+    {icon:"\u27b3",title:"Research & Evaluation",body:"Rigorous, independent measurement of outcomes, scalability, and public impact."},
+    {icon:"\u26ad",title:"Cross-Sector Collaboration",body:"Partnerships that structurally align civic priorities with private sector capacity."},
+    {icon:"\u25ce",title:"Scaling Proven Models",body:"Lessons and frameworks shared across a global network of participating cities."},
+    {icon:"\u2192",title:"Policy & Pathway Development",body:"Regulatory, financing, and governance mechanisms that move pilots to permanent adoption."}
+  ];
+  const cityBenefits=["Access cutting-edge technologies tailored to urgent urban needs","De-risk innovation with research-backed evidence before scaling citywide","Ensure new products and services are built around equity, resilience, and sustainability","Develop regulatory and financing pathways for long-term adoption","Equip city teams with tools and frameworks to sustain innovation beyond pilots","Learn from peer cities and contribute to a global body of knowledge","Position your city as a national leader in public-interest innovation"];
+  const companyBenefits=["Pilot and refine products in diverse urban environments","Generate independent, research-backed proof points for investors","Build strategic relationships with city procurement decision-makers","Understand regulatory contexts that accelerate or hinder adoption","Demonstrate commitment to public-interest innovation and equitable impact","Leverage multi-city pilots to expand into new markets","Co-create with cities and researchers to shape next-generation products"];
+  const [tab,setTab]=useState("cities");
+  return h("div",{style:{fontFamily:SANS}},
+    h("div",{style:{padding:"4.5rem 2.5rem 3.5rem",borderBottom:`1px solid ${RULE}`,background:WARM}},
+      h("div",{style:{maxWidth:720}},
+        h("div",{style:{...{fontSize:10,letterSpacing:"0.12em",textTransform:"uppercase",color:ACCENT,fontWeight:500},marginBottom:"0.6rem"}},"Initiative"),
+        h("h1",{style:{fontFamily:SERIF,fontSize:"clamp(2.8rem,5vw,5rem)",fontWeight:900,lineHeight:1.05,color:INK,marginBottom:"1.2rem"}},"City as ",h("em",{style:{fontStyle:"italic",color:ACCENT}},"Innovation Lab")),
+        h("p",{style:{fontSize:15,color:"#3a3a36",lineHeight:1.85,maxWidth:620,marginBottom:"2rem"}},"Working with cities, companies, and researchers to design, test, and scale solutions in real-world urban environments. Cities are the laboratories; we build the infrastructure for innovation."),
+        h("div",{style:{display:"flex",gap:"0.8rem"}},
+          h("button",{onClick:()=>setPage("contact"),style:btn()},"Partner With CAIL \u2192"),
+          h("button",{onClick:()=>setPage("hyperion"),style:btnGhost()},"Explore Hyperion")
+        )
+      )
+    ),
+    h("div",{style:{padding:"3.5rem 2.5rem",borderBottom:`1px solid ${RULE}`}},
+      h("div",{style:{fontSize:10,letterSpacing:"0.12em",textTransform:"uppercase",color:ACCENT,fontWeight:500,marginBottom:"1.5rem"}},"What CAIL Does"),
+      h("div",{style:{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(200px,1fr))",gap:"1.2rem"}},
+        pillars.map(p=>h("div",{key:p.title,style:{padding:"1.6rem",border:`1px solid ${RULE}`,background:"#fff"}},
+          h("div",{style:{fontSize:"1.4rem",marginBottom:"0.6rem"}},p.icon),
+          h("div",{style:{fontFamily:SERIF,fontSize:"0.95rem",fontWeight:700,color:INK,marginBottom:"0.4rem"}},p.title),
+          h("p",{style:{fontSize:12,color:"#3a3a36",lineHeight:1.7}},p.body)
+        ))
+      )
+    ),
+    h("div",{style:{padding:"3.5rem 2.5rem",background:INK,borderBottom:`1px solid rgba(255,255,255,0.06)`}},
+      h("div",{style:{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"4rem",alignItems:"center"}},
+        h("div",null,
+          h("div",{style:{fontSize:10,letterSpacing:"0.12em",textTransform:"uppercase",color:"rgba(255,255,255,0.35)",fontWeight:500,marginBottom:"0.9rem"}},"Why CAIL, Why Now"),
+          h("h2",{style:{fontFamily:SERIF,fontSize:"clamp(1.8rem,3vw,2.8rem)",fontWeight:700,color:"#fff",lineHeight:1.2,marginBottom:"1.2rem"}},"Cities sit at the intersection of mounting challenges and unprecedented opportunity.")
+        ),
+        h("div",null,
+          h("p",{style:{fontSize:14,color:"rgba(255,255,255,0.6)",lineHeight:1.9,marginBottom:"1.2rem"}},"Climate change, aging infrastructure, digital inequities, housing shortages, and mobility demands are testing civic systems like never before. At the same time, advances in AI, data, and sustainable infrastructure offer powerful new tools."),
+          h("p",{style:{fontSize:14,color:"rgba(255,255,255,0.6)",lineHeight:1.9}},h("strong",{style:{color:"rgba(255,255,255,0.85)"}},"What\u2019s missing "),"is a structured way to align civic priorities with private sector innovation and to test, evaluate, and scale solutions in real-world conditions. CAIL fills this gap.")
+        )
+      )
+    ),
+    h("div",{style:{padding:"3.5rem 2.5rem",background:WARM,borderBottom:`1px solid ${RULE}`}},
+      h("div",{style:{fontSize:10,letterSpacing:"0.12em",textTransform:"uppercase",color:ACCENT,fontWeight:500,marginBottom:"1.2rem"}},"Seven Core Focus Areas"),
+      h("div",{style:{display:"flex",flexWrap:"wrap",gap:"0.5rem"}},
+        focusAreas.map(a=>h("div",{key:a,style:{padding:"7px 14px",border:`1px solid ${RULE}`,background:"#fff",fontSize:12,fontWeight:500,color:INK}},a))
+      )
+    ),
+    h("div",{style:{padding:"3.5rem 2.5rem",borderBottom:`1px solid ${RULE}`}},
+      h("div",{style:{fontSize:10,letterSpacing:"0.12em",textTransform:"uppercase",color:ACCENT,fontWeight:500,marginBottom:"1.5rem"}},"Why Partner With CAIL"),
+      h("div",{style:{display:"flex",gap:"0.5rem",marginBottom:"2rem"}},
+        ["cities","companies"].map(t=>h("button",{key:t,onClick:()=>setTab(t),style:{padding:"7px 18px",fontFamily:SANS,fontSize:12,fontWeight:500,letterSpacing:"0.06em",textTransform:"uppercase",cursor:"pointer",border:`1px solid ${RULE}`,background:tab===t?INK:"#fff",color:tab===t?"#fff":INK}},"For "+(t==="cities"?"Cities":"Companies")))
+      ),
+      h("div",{style:{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(280px,1fr))",gap:"0"}},
+        (tab==="cities"?cityBenefits:companyBenefits).map((b,i,arr)=>h("div",{key:i,style:{display:"flex",gap:"0.8rem",alignItems:"flex-start",padding:"0.9rem 0",borderBottom:i<arr.length-1?`1px solid ${RULE}`:"none"}},
+          h("span",{style:{color:ACCENT,fontWeight:700,flexShrink:0,fontSize:14}},"→"),
+          h("span",{style:{fontSize:13,color:"#3a3a36",lineHeight:1.6}},b)
+        ))
+      )
+    ),
+    posts.length>0&&h("div",{style:{padding:"3.5rem 2.5rem",borderBottom:`1px solid ${RULE}`}},
+      h("div",{style:{display:"flex",alignItems:"flex-end",justifyContent:"space-between",marginBottom:"1.5rem"}},
+        h("div",null,
+          h("div",{style:{fontSize:10,letterSpacing:"0.12em",textTransform:"uppercase",color:ACCENT,fontWeight:500,marginBottom:"0.4rem"}},"CAIL Updates"),
+          h("h2",{style:{fontFamily:SERIF,fontSize:"clamp(1.5rem,2.5vw,2.2rem)",fontWeight:700,color:INK}},"Events & Articles")
+        ),
+        h("div",{style:{display:"flex",gap:"0.4rem"}},
+          ["all","event","article"].map(f=>h("button",{key:f,onClick:()=>setFilter(f),style:{padding:"6px 14px",fontSize:11,letterSpacing:"0.06em",textTransform:"uppercase",fontFamily:SANS,fontWeight:500,cursor:"pointer",border:`1px solid ${filter===f?INK:RULE}`,background:filter===f?INK:"transparent",color:filter===f?"#fff":"#3a3a36"}},{all:"All",event:"Events",article:"Articles"}[f]))
+        )
+      ),
+      filtered.length===0?h("p",{style:{fontSize:13,color:"#7a7a72",padding:"2rem 0"}},"No posts in this category yet."):
+      h("div",{style:{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(300px,1fr))",gap:"1.2rem"}},
+        filtered.map(p=>h("div",{key:p.id,onClick:()=>setPage("cail/"+p.id),style:{cursor:"pointer",border:`1px solid ${RULE}`,background:"#fff",padding:"1.5rem",transition:"background .2s"},
+          onMouseEnter:e=>e.currentTarget.style.background=WARM,onMouseLeave:e=>e.currentTarget.style.background="#fff"},
+          h("div",{style:{display:"flex",gap:8,alignItems:"center",marginBottom:"0.8rem"}},
+            h("span",{style:{fontSize:10,letterSpacing:"0.1em",textTransform:"uppercase",background:p.type==="event"?"#e8f0fe":"#f5ede9",color:p.type==="event"?"#1a56db":ACCENT,padding:"3px 8px",fontWeight:500}},p.type==="event"?"Event":"Article"),
+            h("span",{style:{fontSize:11,color:"#7a7a72",fontFamily:MONO}},p.date)
+          ),
+          h("div",{style:{fontFamily:SERIF,fontSize:"1.05rem",fontWeight:700,color:INK,lineHeight:1.3,marginBottom:"0.6rem"}},p.title),
+          h("p",{style:{fontSize:12,color:"#3a3a36",lineHeight:1.7,marginBottom:"1rem"}},p.excerpt),
+          h("div",{style:{fontSize:11,color:ACCENT,fontWeight:500,letterSpacing:"0.04em"}},"Read more \u2197")
+        ))
+      )
+    ),
+    h("div",{style:{padding:"3.5rem 2.5rem",background:WARM,textAlign:"center"}},
+      h("div",{style:{fontSize:10,letterSpacing:"0.12em",textTransform:"uppercase",color:ACCENT,fontWeight:500,marginBottom:"0.7rem"}},"Get Involved"),
+      h("h2",{style:{fontFamily:SERIF,fontSize:"clamp(1.6rem,3vw,2.5rem)",fontWeight:700,color:INK,marginBottom:"0.9rem",lineHeight:1.2}},"Are you a city, company, or research organization?"),
+      h("p",{style:{fontSize:14,color:"#3a3a36",lineHeight:1.8,maxWidth:500,margin:"0 auto 2rem"}},"Connect with us to explore how your organization can participate in City as Innovation Lab."),
+      h("button",{onClick:()=>setPage("contact"),style:btn({padding:"13px 28px"})},"Connect With Us \u2192")
+    )
+  );
+}
+
+function TeamPage({data,setPage}){
+  const team=(data.team||[]).slice().sort((a,b)=>(a.order||0)-(b.order||0));
+  const groups=["Leadership","Team","Advisors","Fellows"];
+  const grouped=groups.reduce((acc,g)=>{
+    const members=team.filter(m=>m.group===g);
+    if(members.length) acc.push({group:g,members});
+    return acc;
+  },{});
+  // Also catch any uncategorized
+  const known=new Set(groups);
+  const other=team.filter(m=>!known.has(m.group));
+  if(other.length) grouped.push({group:"Other",members:other});
+
+  const AvatarPlaceholder=({name,size=120})=>{
+    const initials=name.split(" ").map(w=>w[0]).join("").slice(0,2).toUpperCase();
+    return h("div",{style:{width:size,height:size,background:`hsl(${name.charCodeAt(0)*5%360},20%,88%)`,borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",fontFamily:SANS,fontSize:size*0.32,fontWeight:700,color:INK,flexShrink:0,letterSpacing:"0.02em"}},initials);
+  };
+
+  return h("div",{style:{fontFamily:SANS}},
+    h("div",{style:{padding:"4.5rem 2.5rem 3rem",background:WARM,borderBottom:`1px solid ${RULE}`}},
+      h("div",{style:{fontSize:10,letterSpacing:"0.12em",textTransform:"uppercase",color:ACCENT,fontWeight:500,marginBottom:"0.6rem"}},"Our People"),
+      h("h1",{style:{fontFamily:SERIF,fontSize:"clamp(2.5rem,5vw,4.5rem)",fontWeight:900,lineHeight:1.05,color:INK,marginBottom:"1.2rem"}},"The Team Behind the Work"),
+      h("p",{style:{fontSize:15,color:"#3a3a36",lineHeight:1.85,maxWidth:580}})
+    ),
+    grouped.map(({group,members})=>
+      h("div",{key:group,style:{padding:"3.5rem 2.5rem",borderBottom:`1px solid ${RULE}`,background:group==="Advisors"?WARM:"#fff"}},
+        h("div",{style:{fontSize:10,letterSpacing:"0.12em",textTransform:"uppercase",color:ACCENT,fontWeight:500,marginBottom:"2rem"}},[group==="Leadership"?"Institute Leadership":group==="Team"?"Core Team":group==="Advisors"?"Advisors & Board":group==="Fellows"?"Fellows & Researchers":group].join("")),
+        group==="Leadership"
+          ? h("div",{style:{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(300px,1fr))",gap:"2rem"}},
+              members.map(m=>h("div",{key:m.id,style:{display:"flex",gap:"1.5rem",alignItems:"flex-start",padding:"1.5rem",border:`1px solid ${RULE}`,background:"#fff"}},
+                m.photo
+                  ? h("img",{src:m.photo,style:{width:100,height:100,borderRadius:"50%",objectFit:"cover",flexShrink:0,border:`2px solid ${RULE}`}})
+                  : h(AvatarPlaceholder,{name:m.name,size:100}),
+                h("div",{style:{flex:1,minWidth:0}},
+                  h("div",{style:{fontFamily:SERIF,fontSize:"1.1rem",fontWeight:700,color:INK,marginBottom:"0.2rem"}},m.name),
+                  h("div",{style:{fontSize:11,letterSpacing:"0.08em",textTransform:"uppercase",color:ACCENT,fontWeight:500,marginBottom:"0.7rem"}},m.title),
+                  h("p",{style:{fontSize:12,color:"#3a3a36",lineHeight:1.75}},m.bio),
+                  (m.linkedin||m.twitter)&&h("div",{style:{display:"flex",gap:"0.6rem",marginTop:"0.8rem"}},
+                    m.linkedin&&h("a",{href:m.linkedin,target:"_blank",rel:"noopener",style:{fontSize:11,color:ACCENT,textDecoration:"none",border:`1px solid ${RULE}`,padding:"3px 10px",fontWeight:500}},"LinkedIn ↗"),
+                    m.twitter&&h("a",{href:m.twitter,target:"_blank",rel:"noopener",style:{fontSize:11,color:ACCENT,textDecoration:"none",border:`1px solid ${RULE}`,padding:"3px 10px",fontWeight:500}},"Twitter ↗")
+                  )
+                )
+              ))
+            )
+          : h("div",{style:{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(180px,1fr))",gap:"1.5rem"}},
+              members.map(m=>h("div",{key:m.id,style:{textAlign:"center"}},
+                m.photo
+                  ? h("img",{src:m.photo,style:{width:90,height:90,borderRadius:"50%",objectFit:"cover",border:`2px solid ${RULE}`,marginBottom:"0.8rem"}})
+                  : h("div",{style:{display:"flex",justifyContent:"center",marginBottom:"0.8rem"}},h(AvatarPlaceholder,{name:m.name,size:90})),
+                h("div",{style:{fontFamily:SERIF,fontSize:"0.95rem",fontWeight:700,color:INK,marginBottom:"0.2rem"}},m.name),
+                h("div",{style:{fontSize:10,letterSpacing:"0.07em",textTransform:"uppercase",color:ACCENT,fontWeight:500,marginBottom:m.bio?"0.5rem":0}},m.title),
+                m.bio&&h("p",{style:{fontSize:11,color:"#7a7a72",lineHeight:1.65}},m.bio.length>120?m.bio.slice(0,120)+"…":m.bio),
+                (m.linkedin||m.twitter)&&h("div",{style:{display:"flex",gap:"0.4rem",marginTop:"0.5rem",justifyContent:"center"}},
+                  m.linkedin&&h("a",{href:m.linkedin,target:"_blank",rel:"noopener",style:{fontSize:10,color:ACCENT,textDecoration:"none"}},"LI"),
+                  m.twitter&&h("a",{href:m.twitter,target:"_blank",rel:"noopener",style:{fontSize:10,color:ACCENT,textDecoration:"none"}},"X")
+                )
+              ))
+            )
+      )
+    ),
+    h("div",{style:{padding:"3.5rem 2.5rem",background:INK,textAlign:"center"}},
+      h("h2",{style:{fontFamily:SERIF,fontSize:"clamp(1.5rem,3vw,2.2rem)",fontWeight:700,color:"#fff",marginBottom:"0.9rem"}},"Join the PII Network"),
+      h("p",{style:{fontSize:14,color:"rgba(255,255,255,0.6)",lineHeight:1.8,maxWidth:480,margin:"0 auto 1.8rem"}},"We work with researchers, city leaders, technologists, and civic entrepreneurs. See how you can get involved."),
+      h("div",{style:{display:"flex",gap:"0.8rem",justifyContent:"center"}},
+        h("button",{onClick:()=>setPage("opportunities"),style:btn()},"See Opportunities →"),
+        h("button",{onClick:()=>setPage("contact"),style:{...btnGhost(),color:"#fff",borderColor:"rgba(255,255,255,0.3)"}},"Contact Us")
+      )
+    )
+  );
+}
+
+function OpportunitiesPage({data,setPage}){
+  const opps=(data.opportunities||[]);
+  const [filter,setFilter]=useState("all");
+  const typeLabels={volunteer:"Volunteer",fellowship:"Fellowship",job:"Job Opening",partnership:"Partnership",other:"Other"};
+  const typeColors={volunteer:"#e8f0fe",fellowship:"#f5ede9",job:"#e8f5e9",partnership:"#fff3cd",other:"#f3f0e8"};
+  const typeText={volunteer:"#1a56db",fellowship:ACCENT,job:"#2d7a3a",partnership:"#856404",other:INK};
+  const types=["all",...new Set(opps.map(o=>o.type))];
+  const open=opps.filter(o=>o.status==="open"&&(filter==="all"||o.type===filter));
+  const closed=opps.filter(o=>o.status!=="open"&&(filter==="all"||o.type===filter));
+
+  return h("div",{style:{fontFamily:SANS}},
+    h("div",{style:{padding:"4.5rem 2.5rem 3rem",background:WARM,borderBottom:`1px solid ${RULE}`}},
+      h("div",{style:{fontSize:10,letterSpacing:"0.12em",textTransform:"uppercase",color:ACCENT,fontWeight:500,marginBottom:"0.6rem"}},"Get Involved"),
+      h("h1",{style:{fontFamily:SERIF,fontSize:"clamp(2.5rem,5vw,4.5rem)",fontWeight:900,lineHeight:1.05,color:INK,marginBottom:"1.2rem"}},"Opportunities"),
+      h("p",{style:{fontSize:15,color:"#3a3a36",lineHeight:1.85,maxWidth:600,marginBottom:"2rem"}},"At the Public Innovation Institute, we bring together researchers, practitioners, and policymakers to design solutions for the public good. We\u2019re looking for creative, mission-driven individuals and organizations ready to shape the future of public innovation."),
+      types.length>2&&h("div",{style:{display:"flex",gap:"0.4rem",flexWrap:"wrap"}},
+        types.map(t=>h("button",{key:t,onClick:()=>setFilter(t),style:{padding:"7px 16px",fontSize:11,letterSpacing:"0.06em",textTransform:"uppercase",fontFamily:SANS,fontWeight:500,cursor:"pointer",border:`1px solid ${filter===t?INK:RULE}`,background:filter===t?INK:"transparent",color:filter===t?"#fff":INK}},t==="all"?"All":typeLabels[t]||t))
+      )
+    ),
+    open.length>0&&h("div",{style:{padding:"3.5rem 2.5rem",borderBottom:`1px solid ${RULE}`}},
+      h("div",{style:{fontSize:10,letterSpacing:"0.12em",textTransform:"uppercase",color:ACCENT,fontWeight:500,marginBottom:"1.5rem"}},"Open Now"),
+      h("div",{style:{display:"grid",gap:"1.2rem"}},
+        open.map(o=>h("div",{key:o.id,style:{border:`1px solid ${RULE}`,background:"#fff",padding:"1.8rem"}},
+          h("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:"1rem",flexWrap:"wrap",gap:"0.8rem"}},
+            h("div",null,
+              h("div",{style:{display:"flex",gap:8,alignItems:"center",marginBottom:"0.5rem"}},
+                h("span",{style:{fontSize:10,letterSpacing:"0.1em",textTransform:"uppercase",background:typeColors[o.type]||"#f3f0e8",color:typeText[o.type]||INK,padding:"3px 8px",fontWeight:500}},typeLabels[o.type]||o.type),
+                o.location&&h("span",{style:{fontSize:11,color:"#7a7a72",fontFamily:MONO}},o.location)
+              ),
+              h("h2",{style:{fontFamily:SERIF,fontSize:"clamp(1.2rem,2vw,1.6rem)",fontWeight:700,color:INK,lineHeight:1.2}},o.title)
+            ),
+            h("div",{style:{textAlign:"right",flexShrink:0}},
+              o.deadline&&o.deadline!=="Rolling"&&h("div",{style:{fontSize:11,color:"#7a7a72",marginBottom:"0.4rem"}},"Deadline: ",h("strong",{style:{color:INK}},o.deadline)),
+              o.deadline==="Rolling"&&h("div",{style:{fontSize:11,color:"#7a7a72",marginBottom:"0.4rem"}},"Rolling applications"),
+              o.applyUrl&&h("a",{href:o.applyUrl,target:o.applyUrl.startsWith("#")?"_self":"_blank",rel:"noopener",onClick:o.applyUrl==="#contact"?e=>{e.preventDefault();setPage("contact");}:undefined,style:{display:"inline-block",padding:"10px 20px",background:INK,color:"#fff",fontSize:12,fontWeight:500,letterSpacing:"0.05em",textTransform:"uppercase",textDecoration:"none",fontFamily:SANS}},"Apply →")
+            )
+          ),
+          h(BodyText,{text:o.description})
+        ))
+      )
+    ),
+    open.length===0&&h("div",{style:{padding:"3.5rem 2.5rem",borderBottom:`1px solid ${RULE}`}},
+      h("div",{style:{fontSize:10,letterSpacing:"0.12em",textTransform:"uppercase",color:ACCENT,fontWeight:500,marginBottom:"1rem"}},"Current Openings"),
+      h("div",{style:{padding:"3rem",border:`1px solid ${RULE}`,textAlign:"center",background:"#fff"}},
+        h("p",{style:{fontSize:14,color:"#7a7a72",lineHeight:1.8}},
+          "There are no open positions at this time. Check back regularly or reach out to share your interest in joining our work."
+        ),
+        h("button",{onClick:()=>setPage("contact"),style:{...btn(),marginTop:"1.5rem"}})
+      )
+    ),
+    closed.length>0&&h("div",{style:{padding:"2.5rem 2.5rem",background:WARM,borderBottom:`1px solid ${RULE}`}},
+      h("div",{style:{fontSize:10,letterSpacing:"0.12em",textTransform:"uppercase",color:"#7a7a72",fontWeight:500,marginBottom:"1rem"}},"Closed / Coming Soon"),
+      h("div",{style:{display:"grid",gap:"0.8rem"}},
+        closed.map(o=>h("div",{key:o.id,style:{border:`1px solid ${RULE}`,background:"rgba(255,255,255,0.5)",padding:"1.2rem 1.5rem",display:"flex",justifyContent:"space-between",alignItems:"center",flexWrap:"wrap",gap:"0.8rem",opacity:0.65}},
+          h("div",null,
+            h("div",{style:{fontFamily:SERIF,fontSize:"1rem",fontWeight:700,color:INK}},o.title),
+            h("div",{style:{fontSize:11,color:"#7a7a72",marginTop:3}},typeLabels[o.type]||o.type)
+          ),
+          h("span",{style:{fontSize:11,letterSpacing:"0.08em",textTransform:"uppercase",color:"#7a7a72",border:`1px solid ${RULE}`,padding:"4px 10px"}},o.status==="closed"?"Closed":"Coming Soon")
+        ))
+      )
+    ),
+    h("div",{style:{padding:"3.5rem 2.5rem",textAlign:"center"}},
+      h("h2",{style:{fontFamily:SERIF,fontSize:"clamp(1.5rem,3vw,2.2rem)",fontWeight:700,color:INK,marginBottom:"0.9rem"}},"Don\u2019t see what you\u2019re looking for?"),
+      h("p",{style:{fontSize:14,color:"#3a3a36",lineHeight:1.8,maxWidth:480,margin:"0 auto 1.8rem"}},"We\u2019re always interested in hearing from talented researchers, practitioners, and mission-driven organizations. Reach out to start a conversation."),
+      h("button",{onClick:()=>setPage("contact"),style:btn({padding:"13px 28px"})},"Contact Us →")
+    )
+  );
+}
+
+function App(){
+  const [page,setPage]=useState("home");
+  const [data,setData]=useState(()=>loadData());
+
+  // Listen for storage changes (CMS updates in same browser)
+  useEffect(()=>{
+    const handler=e=>{if(e.key===STORAGE_KEY)setData(loadData());};
+    window.addEventListener("storage",handler);
+    return()=>window.removeEventListener("storage",handler);
+  },[]);
+
+  // Dynamic SEO meta + GA4 page tracking on route change
+  useEffect(()=>{
+    const [root,sub]=page.split("/");
+    let title="The Public Innovation Institute";
+    let desc="Working at the intersection of AI, public policy, and urban systems.";
+    let url="https://www.thepii.org/";
+
+    if(root==="research"&&sub){
+      const a=data.research.find(r=>r.id===sub);
+      if(a){title=a.title+" — PII";desc=a.excerpt||desc;url="https://www.thepii.org/research/"+sub;}
+    } else if(root==="research"){
+      title="Research — The Public Innovation Institute";desc="Publications, working papers, and data-driven policy research from PII.";url="https://www.thepii.org/research";
+    } else if(root==="cail"&&sub){
+      const p=(data.cailPosts||[]).find(p=>p.id===sub);
+      if(p){title=p.title+" — CAIL · PII";desc=p.excerpt||desc;url="https://www.thepii.org/cail/"+sub;}
+    } else if(root==="cail"){
+      title="City as Innovation Lab — The Public Innovation Institute";desc="Transforming cities into real-world testbeds for public-interest innovation.";url="https://www.thepii.org/cail";
+    } else if(root==="hyperion"){
+      title="Hyperion — The Public Innovation Institute";desc="PII's flagship urban resilience initiative.";url="https://www.thepii.org/hyperion";
+    } else if(root==="programs"){
+      title="Programs — The Public Innovation Institute";desc="Academic and professional programs at the intersection of AI, policy, and urban systems.";url="https://www.thepii.org/programs";
+    } else if(root==="conference"){
+      title="Change.Enabled — The Public Innovation Institute";desc="The annual conference on public-interest innovation and invention.";url="https://www.thepii.org/conference";
+    } else if(root==="team"){
+      title="People — The Public Innovation Institute";desc="Meet the team behind PII's research, programs, and initiatives.";url="https://www.thepii.org/team";
+    } else if(root==="opportunities"){
+      title="Opportunities — The Public Innovation Institute";desc="Fellowships, volunteer positions, city partnerships, and company partnerships at PII.";url="https://www.thepii.org/opportunities";
+    } else if(root==="about"){
+      title="About — The Public Innovation Institute";desc="PII is a Boston-based nonprofit working at the intersection of AI, public policy, and urban systems.";url="https://www.thepii.org/about";
+    } else if(root==="contact"){
+      title="Contact — The Public Innovation Institute";url="https://www.thepii.org/contact";
+    }
+
+    // Update <title>
+    document.title=title;
+    // Update meta tags
+    const setMeta=(sel,val)=>{const el=document.querySelector(sel);if(el)el.setAttribute("content",val);};
+    setMeta('meta[name="description"]',desc);
+    setMeta('meta[property="og:title"]',title);
+    setMeta('meta[property="og:description"]',desc);
+    setMeta('meta[property="og:url"]',url);
+    setMeta('meta[property="twitter:title"]',title);
+    setMeta('meta[property="twitter:description"]',desc);
+    const canon=document.querySelector('link[rel="canonical"]');
+    if(canon)canon.setAttribute("href",url);
+
+    // Fire GA4 page_view
+    if(window.gtag&&(data.site||{}).ga4Id){
+      window.gtag('event','page_view',{page_title:title,page_location:url,page_path:"/"+page});
+    }
+  },[page,data]);
+
+  const go=pg=>{window.scrollTo&&window.scrollTo(0,0);setPage(pg);};
+  const [rootPage,subId]=page.split("/");
+  const article=rootPage==="research"&&subId?data.research.find(r=>r.id===subId):null;
+  const program=rootPage==="programs"&&subId?data.programs.find(p=>p.id===subId):null;
+  const cailPost=rootPage==="cail"&&subId?(data.cailPosts||[]).find(p=>p.id===subId):null;
+
+  return h("div",{style:{background:PAPER,minHeight:"100vh"}},
+    h(Nav,{page:rootPage==="cail"||rootPage==="hyperion"?"initiatives":rootPage==="team"?"about":rootPage,setPage:go,data}),
+    rootPage==="home"&&h(HomePage,{data,setPage:go}),
+    rootPage==="research"&&!subId&&h(ResearchPage,{data,setPage:go}),
+    rootPage==="research"&&subId&&h(ArticlePage,{article,setPage:go,data}),
+    rootPage==="programs"&&!subId&&h(ProgramsPage,{data,setPage:go}),
+    rootPage==="programs"&&subId&&h(ProgramDetail,{program,setPage:go}),
+    rootPage==="hyperion"&&h(HyperionPage,{data}),
+    rootPage==="cail"&&!subId&&h(CAILPage,{data,setPage:go}),
+    rootPage==="cail"&&subId&&h(CAILPostPage,{post:cailPost,setPage:go}),
+    rootPage==="conference"&&h(ConferencePage,{data}),
+    rootPage==="about"&&h(AboutPage,{data,setPage:go}),
+    rootPage==="team"&&h(TeamPage,{data,setPage:go}),
+    rootPage==="opportunities"&&h(OpportunitiesPage,{data,setPage:go}),
+    rootPage==="contact"&&h(ContactPage,{data}),
+    rootPage!=="home"&&h("div",{style:{borderTop:`1px solid ${RULE}`}}),
+    h(Footer,{data,setPage:go})
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("pii-root")).render(h(App));
+</script>
+</body>
+</html>
