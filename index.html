@@ -497,7 +497,7 @@ function HomePage({data,setPage}){
     h(Ticker,{items:TICKER}),
     h("section",{style:{padding:"4.5rem 2.5rem",borderBottom:`1px solid ${RULE}`}},
       h("div",{style:{display:"flex",alignItems:"flex-end",justifyContent:"space-between",marginBottom:"2.5rem"}},
-        h("div",null,h("div",{style:tag},"Latest Research"),h("div",{style:sectionTitle},"Ideas with Consequence")),
+        h("div",null,h("div",{style:tag},"Latest Publications"),h("div",{style:sectionTitle},"Ideas with Consequence")),
         h("button",{onClick:()=>setPage("research"),style:btnGhost({fontSize:11,padding:"7px 14px"})},"View all →")
       ),
       h("div",{style:{display:"grid",gridTemplateColumns:"repeat(3,1fr)",border:`1px solid ${RULE}`}},
