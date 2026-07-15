@@ -1,0 +1,51 @@
+name: Generate static post pages
+
+# Keeps per-post static HTML (with real OG/meta tags) in sync with
+# whatever's in Supabase, so shared links to articles/programs/CAIL
+# posts get correct link previews on LinkedIn, Facebook, etc. even
+# though this is otherwise a client-rendered SPA on GitHub Pages.
+#
+# Runs:
+#   - on every push to main that touches index.html (the template) or
+#     the generator script itself
+#   - on a schedule, to pick up posts published from the CMS without a
+#     git push (CMS writes straight to Supabase)
+#   - manually, via the Actions tab ("Run workflow")
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "index.html"
+      - "scripts/generate-static-pages.js"
+  schedule:
+    - cron: "0 */6 * * *" # every 6 hours
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Generate static pages
+        run: node scripts/generate-static-pages.js
+
+      - name: Commit changes if any
+        run: |
+          git config user.name "pii-static-pages-bot"
+          git config user.email "actions@github.com"
+          git add research publications programs cail sitemap.xml
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "Regenerate static post pages [automated]"
+            git push
+          fi
