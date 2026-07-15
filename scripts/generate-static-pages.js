@@ -174,6 +174,83 @@ async function main() {
     count++;
   }
 
+  // Fixed top-level content pages. These never had per-post dynamism, but
+  // they suffer the exact same problem: nothing exists at these paths as a
+  // real file, so any bot/crawler hitting them directly gets the generic
+  // 404.html shell instead of real content. Same fix, static copies with
+  // the right <head> baked in.
+  const staticPages = [
+    {
+      path: "research",
+      title: "Research — The Public Innovation Institute",
+      description:
+        "Publications, working papers, and data-driven policy research from PII.",
+    },
+    {
+      path: "publications",
+      title: "Publications — The Public Innovation Institute",
+      description:
+        "Articles, white papers, policy briefs, and news from PII.",
+    },
+    {
+      path: "programs",
+      title: "Programs — The Public Innovation Institute",
+      description:
+        "Academic and professional programs at the intersection of AI, policy, and urban systems.",
+    },
+    {
+      path: "cail",
+      title: "City as Innovation Lab — The Public Innovation Institute",
+      description:
+        "Transforming cities into real-world testbeds for public-interest innovation.",
+    },
+    {
+      path: "hyperion",
+      title: "Hyperion — The Public Innovation Institute",
+      description: "PII's flagship urban resilience initiative.",
+    },
+    {
+      path: "conference",
+      title: "Change.Enabled — The Public Innovation Institute",
+      description:
+        "The annual conference on public-interest innovation and invention.",
+    },
+    {
+      path: "about",
+      title: "About — The Public Innovation Institute",
+      description:
+        "PII is a Boston-based nonprofit working at the intersection of AI, public policy, and urban systems.",
+    },
+    {
+      path: "team",
+      title: "People — The Public Innovation Institute",
+      description:
+        "Meet the team behind PII's research, programs, and initiatives.",
+    },
+    {
+      path: "opportunities",
+      title: "Opportunities — The Public Innovation Institute",
+      description:
+        "Fellowships, volunteer positions, city partnerships, and company partnerships at PII.",
+    },
+    {
+      path: "contact",
+      title: "Contact — The Public Innovation Institute",
+      description:
+        "Working at the intersection of AI, public policy, and urban systems.",
+    },
+  ];
+
+  for (const page of staticPages) {
+    writeStaticPage(template, `/${page.path}`, {
+      title: page.title,
+      description: page.description,
+      image: DEFAULT_OG_IMAGE,
+      url: `${SITE_URL}/${page.path}`,
+    });
+    count++;
+  }
+
   console.log(`Done. Generated ${count} static page(s).`);
 
   writeSitemap(data);
