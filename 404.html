@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>The Public Innovation Institute</title>
+<!--
+  GitHub Pages SPA redirect (encoder half). Pairs with the decoder script
+  already in index.html's <head>. GitHub Pages has no server-side routing,
+  so any URL without a matching physical file (e.g. /research/some-slug)
+  lands here. This encodes that path into a query string and redirects to
+  the site root, where index.html's decoder restores it and the app's own
+  router takes over.
+
+  pathSegmentsToKeep is 0 because this site is served from a custom domain
+  at the root (thepii.org), not from a github.io/<repo-name>/ subpath.
+  If this is ever moved to a project-pages subpath instead, this must be
+  changed to 1 (and the decoder's slice logic revisited to match).
+-->
+<script>
+  var pathSegmentsToKeep = 0;
+  var l = window.location;
+  l.replace(
+    l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
+    l.pathname.split('/').slice(0, 1 + pathSegmentsToKeep).join('/') + '/?/' +
+    l.pathname.slice(1).split('/').slice(pathSegmentsToKeep).join('/').replace(/&/g, '~and~') +
+    (l.search ? '&' + l.search.slice(1).replace(/&/g, '~and~') : '') +
+    l.hash
+  );
+</script>
+</head>
+<body></body>
+</html>
