@@ -42,6 +42,16 @@
     <priority>0.5</priority>
   </url>
   <url>
+    <loc>https://www.thepii.org/research/post-1784823514011</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.thepii.org/publications/post-1784823514011</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://www.thepii.org/research/post-1784218320253</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
