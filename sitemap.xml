@@ -162,16 +162,6 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.thepii.org/research/justhealth-eu-funded-ai-healthcare</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.thepii.org/publications/justhealth-eu-funded-ai-healthcare</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://www.thepii.org/research/unga-80-climate-week-recap</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
