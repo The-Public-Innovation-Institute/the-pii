@@ -1313,7 +1313,7 @@ function CounterweightPage({data,setPage}){
         h("div",{style:{...tag,marginBottom:"1.2rem"}},"What we’re building"),
         h("p",{style:{...p,maxWidth:720,marginBottom:"2rem"}},"Each part feeds the next: the problems our government partners face shape what fellows research, what students learn and what we discuss when we convene.")
       ),
-      h("div",{style:{border:`3px solid ${INK}`,background:"#fff"}},
+      h("div",{style:{border:`3px solid ${INK}`}},
         activities.map((item,i)=>h("div",{key:item.title,style:{display:"flex",gap:"1.5rem",alignItems:"flex-start",padding:"1.4rem 2.5rem",borderBottom:i<activities.length-1?`1px solid ${INK}`:"none"}},
           h("div",{style:{fontFamily:MONO,fontSize:11,color:ACCENT,minWidth:24,paddingTop:3}},`0${i+1}`),
           h("div",{style:{maxWidth:780}},
