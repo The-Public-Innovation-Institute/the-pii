@@ -1121,14 +1121,149 @@ function HyperionPage({data}){
   );
 }
 
+// ── Counterweight visuals ─────────────────────────────────────────────────────
+// Hero: horizontal field lines bent by a drifting concentration of mass, with a
+// counterweight (accent) pulling the other way. Respects prefers-reduced-motion.
+function CounterweightHero({title,subtitle}){
+  const wrap=useRef(null),cvs=useRef(null);
+  useEffect(()=>{
+    const canvas=cvs.current,box=wrap.current;
+    if(!canvas||!box||!canvas.getContext)return;
+    const ctx=canvas.getContext("2d");
+    const reduce=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let W=0,H=0,raf=0,running=true;
+    const resize=()=>{
+      const dpr=Math.min(window.devicePixelRatio||1,2);
+      W=box.clientWidth;H=box.clientHeight;
+      canvas.width=W*dpr;canvas.height=H*dpr;
+      canvas.style.width=W+"px";canvas.style.height=H+"px";
+      ctx.setTransform(dpr,0,0,dpr,0,0);
+    };
+    resize();
+    const ro=window.ResizeObserver?new ResizeObserver(()=>{resize();if(reduce)draw(0);}):null;
+    if(ro)ro.observe(box);else window.addEventListener("resize",resize);
+    const draw=t=>{
+      const s=t/1000;
+      ctx.fillStyle="#0e0e0c";ctx.fillRect(0,0,W,H);
+      const unit=Math.min(W,H);
+      // concentration of power, drifting slowly
+      const mx=W*(0.62+0.18*Math.sin(s*0.21)),my=H*(0.5+0.22*Math.sin(s*0.33+1.1));
+      // counterweight, moving to oppose it
+      const cx=W*(0.38-0.16*Math.sin(s*0.21+0.6)),cy=H*(0.5-0.2*Math.sin(s*0.33+1.4));
+      const R1=unit*0.36,R2=unit*0.2;
+      const lines=Math.max(28,Math.round(H/14)),gap=H/(lines+1),step=Math.max(5,W/220);
+      for(let i=1;i<=lines;i++){
+        const y0=i*gap;
+        let near=0;
+        ctx.beginPath();
+        for(let x=-step;x<=W+step;x+=step){
+          const pull=Math.exp(-((x-mx)**2+(y0-my)**2)/(R1*R1));
+          const push=Math.exp(-((x-cx)**2+(y0-cy)**2)/(R2*R2));
+          const wob=Math.sin(x*0.011+s*0.8+i*0.7)*1.8+Math.sin(x*0.029-s*1.2+i)*0.9;
+          // lines are drawn in toward the concentration and bow away around the counterweight
+          const y=y0+(my-y0)*pull*0.82+Math.sign(y0-cy||1)*push*unit*0.07+wob*(1-pull*0.7);
+          near=Math.max(near,push);
+          x<0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+        }
+        if(near>0.78){ctx.strokeStyle=`rgba(200,64,30,${0.45+0.5*(near-0.78)/0.22})`;ctx.lineWidth=1.3;}
+        else{ctx.strokeStyle=`rgba(250,249,245,${0.12+0.18*near})`;ctx.lineWidth=1;}
+        ctx.stroke();
+      }
+      // glow at the concentration
+      const g=ctx.createRadialGradient(mx,my,0,mx,my,unit*0.22);
+      g.addColorStop(0,"rgba(250,249,245,0.16)");g.addColorStop(1,"rgba(250,249,245,0)");
+      ctx.fillStyle=g;ctx.beginPath();ctx.arc(mx,my,unit*0.22,0,Math.PI*2);ctx.fill();
+      // markers
+      ctx.fillStyle="rgba(250,249,245,0.95)";ctx.beginPath();ctx.arc(mx,my,4.5,0,Math.PI*2);ctx.fill();
+      ctx.strokeStyle="rgba(250,249,245,0.35)";ctx.beginPath();ctx.arc(mx,my,14+3*Math.sin(s*1.6),0,Math.PI*2);ctx.stroke();
+      ctx.strokeStyle="#c8401e";ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(cx,cy,9,0,Math.PI*2);ctx.stroke();
+      ctx.fillStyle="#c8401e";ctx.beginPath();ctx.arc(cx,cy,3,0,Math.PI*2);ctx.fill();
+    };
+    if(reduce){draw(4000);}
+    else{
+      const loop=t=>{if(!running)return;draw(t);raf=requestAnimationFrame(loop);};
+      raf=requestAnimationFrame(loop);
+    }
+    const vis=()=>{if(document.hidden){running=false;cancelAnimationFrame(raf);}else if(!reduce&&!running){running=true;raf=requestAnimationFrame(function loop(t){if(!running)return;draw(t);raf=requestAnimationFrame(loop);});}};
+    document.addEventListener("visibilitychange",vis);
+    return()=>{running=false;cancelAnimationFrame(raf);document.removeEventListener("visibilitychange",vis);if(ro)ro.disconnect();else window.removeEventListener("resize",resize);};
+  },[]);
+  return h("div",{ref:wrap,className:"cw-hero",style:{position:"relative",overflow:"hidden",background:INK,minHeight:"min(78vh,640px)",height:"min(78vh,640px)",borderBottom:`1px solid ${RULE}`}},
+    h("canvas",{ref:cvs,"aria-hidden":"true",style:{position:"absolute",inset:0,display:"block"}}),
+    h("div",{style:{position:"absolute",inset:0,background:"linear-gradient(to top,rgba(14,14,12,0.92) 0%,rgba(14,14,12,0.35) 45%,rgba(14,14,12,0) 75%)",pointerEvents:"none"}}),
+    h("div",{style:{position:"absolute",left:0,right:0,bottom:0,padding:"0 2.5rem 3.5rem",zIndex:1}},
+      h("div",{style:{fontSize:10,letterSpacing:"0.12em",textTransform:"uppercase",color:"rgba(255,255,255,0.6)",fontWeight:500,marginBottom:"0.8rem"}},"A Public Innovation Institute initiative"),
+      h("h1",{style:{fontFamily:SERIF,fontSize:"clamp(3rem,9vw,7.5rem)",fontWeight:900,lineHeight:0.95,letterSpacing:"-0.02em",color:"#fff",marginBottom:"1.1rem"}},title||"Counterweight"),
+      subtitle&&h("p",{style:{fontSize:"clamp(15px,1.6vw,18px)",color:"rgba(255,255,255,0.78)",lineHeight:1.7,maxWidth:680}},subtitle)
+    )
+  );
+}
+
+// Seeded random so each illustration is identical on every load.
+function cwRand(seed){let s=seed>>>0;return()=>{s=(s*1664525+1013904223)>>>0;return s/4294967296;};}
+
+// 01 · Government teams: a mesh of many institutions, held in place by each other.
+function CwArtGovernment(){
+  const W=400,H=250,cols=13,rows=8,mx=250,my=128,r=cwRand(7),pts=[];
+  for(let j=0;j<rows;j++)for(let i=0;i<cols;i++){
+    let x=40+i*(320/(cols-1)),y=35+j*(180/(rows-1));
+    const dx=mx-x,dy=my-y,d=Math.sqrt(dx*dx+dy*dy),k=Math.exp(-(d*d)/(2*70*70))*0.42;
+    x+=dx*k+(r()-0.5)*3;y+=dy*k+(r()-0.5)*3;pts.push([x,y]);
+  }
+  const P=(i,j)=>pts[j*cols+i],edges=[];
+  for(let j=0;j<rows;j++)for(let i=0;i<cols;i++){
+    if(i<cols-1)edges.push([P(i,j),P(i+1,j)]);
+    if(j<rows-1)edges.push([P(i,j),P(i,j+1)]);
+  }
+  return h("svg",{viewBox:`0 0 ${W} ${H}`,role:"img","aria-label":"A mesh of connected nodes, drawn toward a single point but held in place by the network",style:{display:"block",width:"100%",height:"auto",background:"#fff"}},
+    edges.map((e,i)=>h("line",{key:"e"+i,x1:e[0][0],y1:e[0][1],x2:e[1][0],y2:e[1][1],stroke:INK,strokeOpacity:0.28,strokeWidth:0.8})),
+    pts.map((p,i)=>h("circle",{key:"p"+i,cx:p[0],cy:p[1],r:1.6,fill:INK,fillOpacity:0.55})),
+    h("circle",{cx:mx,cy:my,r:12,fill:"none",stroke:INK,strokeOpacity:0.4}),
+    h("circle",{cx:mx,cy:my,r:4,fill:INK}),
+    h("circle",{cx:P(3,5)[0],cy:P(3,5)[1],r:6,fill:"none",stroke:ACCENT,strokeWidth:1.4}),
+    h("circle",{cx:P(3,5)[0],cy:P(3,5)[1],r:2.2,fill:ACCENT})
+  );
+}
+
+// 02 · Professionals and researchers: ripples from different fields, overlapping.
+function CwArtResearchers(){
+  const W=400,H=250,sources=[[135,140],[265,140],[200,70]],rings=[];
+  sources.forEach((c,si)=>{for(let k=1;k<=16;k++)rings.push({cx:c[0],cy:c[1],r:k*9,o:0.06+0.22*(1-k/16),key:si+"-"+k});});
+  return h("svg",{viewBox:`0 0 ${W} ${H}`,role:"img","aria-label":"Three sets of concentric rings overlapping, with their meeting point highlighted",style:{display:"block",width:"100%",height:"auto",background:INK}},
+    h("defs",null,h("clipPath",{id:"cwclip2"},h("rect",{x:0,y:0,width:W,height:H}))),
+    h("g",{clipPath:"url(#cwclip2)"},
+      rings.map(c=>h("circle",{key:c.key,cx:c.cx,cy:c.cy,r:c.r,fill:"none",stroke:PAPER,strokeOpacity:c.o,strokeWidth:0.9}))
+    ),
+    sources.map((c,i)=>h("circle",{key:"s"+i,cx:c[0],cy:c[1],r:2.4,fill:PAPER,fillOpacity:0.85})),
+    h("circle",{cx:200,cy:117,r:7,fill:"none",stroke:ACCENT,strokeWidth:1.5}),
+    h("circle",{cx:200,cy:117,r:2.6,fill:ACCENT})
+  );
+}
+
+// 03 · Students: many paths opening out from a single starting point.
+function CwArtStudents(){
+  const W=400,H=250,r=cwRand(21),paths=[],ox=50,oy=125;
+  for(let i=0;i<34;i++){
+    const ty=20+i*(210/33)+(r()-0.5)*4,c1x=130+r()*40,c1y=oy+(ty-oy)*(0.1+r()*0.15),c2x=230+r()*40,c2y=ty+(r()-0.5)*18;
+    paths.push(`M${ox},${oy} C${c1x.toFixed(1)},${c1y.toFixed(1)} ${c2x.toFixed(1)},${c2y.toFixed(1)} 360,${ty.toFixed(1)}`);
+  }
+  const hi=`M${ox},${oy} C150,${oy-4} 240,62 360,58`;
+  return h("svg",{viewBox:`0 0 ${W} ${H}`,role:"img","aria-label":"Many curved paths fanning out from a single point, one highlighted",style:{display:"block",width:"100%",height:"auto",background:"#efe7dc"}},
+    paths.map((d,i)=>h("path",{key:i,d,fill:"none",stroke:INK,strokeOpacity:0.26,strokeWidth:0.85})),
+    h("path",{d:hi,fill:"none",stroke:ACCENT,strokeWidth:1.8}),
+    h("circle",{cx:ox,cy:oy,r:4,fill:INK}),
+    h("circle",{cx:360,cy:58,r:3.4,fill:ACCENT})
+  );
+}
+
 function CounterweightPage({data,setPage}){
   const hero=(data.pageHeroes||{}).counterweight||{};
   const p={fontSize:15,color:"#3a3a36",lineHeight:1.85,marginBottom:"1.2rem"};
   const h2s={fontFamily:SERIF,fontSize:"clamp(1.6rem,2.8vw,2.3rem)",fontWeight:700,color:INK,lineHeight:1.25,marginBottom:"1.5rem"};
   const audiences=[
-    {title:"Government teams",body:"The technical and policy teams inside city and state government who are making decisions about AI now: in procurement, oversight, election administration and digital services."},
-    {title:"Early-career professionals and researchers",body:"People from policy, economics, law, philosophy and beyond who want to work on how AI could concentrate power, and what public institutions can do about it."},
-    {title:"Students",body:"Students who are just starting to think about where they can contribute, and who want to learn alongside the people doing the work."}
+    {art:CwArtGovernment,title:"Government teams",body:"The technical and policy teams inside city and state government who are making decisions about AI now: in procurement, oversight, election administration and digital services."},
+    {art:CwArtResearchers,title:"Early-career professionals and researchers",body:"People from policy, economics, law, philosophy and beyond who want to work on how AI could concentrate power, and what public institutions can do about it."},
+    {art:CwArtStudents,title:"Students",body:"Students who are just starting to think about where they can contribute, and who want to learn alongside the people doing the work."}
   ];
   const activities=[
     {title:"Government engagements",body:"Ongoing partnerships with a small number of state and local teams, each built around a specific problem they face as AI enters their work. A spring convening sets the year’s priorities, and a fall convening reviews what happened and what we learned."},
@@ -1139,7 +1274,7 @@ function CounterweightPage({data,setPage}){
     {title:"A shared library",body:"A home for the research, playbooks and lessons the initiative produces, so others can build on them."}
   ];
   return h("div",{style:{fontFamily:SANS}},
-    h(PageHero,{hero,pageName:"Counterweight"}),
+    h(CounterweightHero,{title:hero.title,subtitle:hero.subtitle}),
 
     // Why this matters
     h("section",{style:{padding:"4.5rem 2.5rem",borderBottom:`1px solid ${RULE}`}},
@@ -1163,11 +1298,12 @@ function CounterweightPage({data,setPage}){
       h("div",{style:{...tag,marginBottom:"1rem"}},"Who it’s for"),
       h("h2",{style:{...h2s,maxWidth:720}},"People who rarely share a room, working on the same problem."),
       h("p",{style:{...p,maxWidth:680,marginBottom:"2.5rem"}},"We believe this problem needs all of them, and that each sees something the others miss."),
-      h("div",{className:"pii-g3",style:{gap:0,border:`1px solid ${RULE}`,background:"#fff"}},
-        audiences.map((a,i)=>h("div",{key:a.title,style:{padding:"2rem",borderRight:i<audiences.length-1?`1px solid ${RULE}`:"none"}},
-          h("div",{style:{fontFamily:MONO,fontSize:11,color:ACCENT,marginBottom:"0.75rem"}},`0${i+1}`),
-          h("div",{style:{fontFamily:SERIF,fontSize:"1.15rem",fontWeight:700,color:INK,marginBottom:"0.6rem"}},a.title),
-          h("div",{style:{fontSize:13,color:"#3a3a36",lineHeight:1.75}},a.body)
+      h("div",{className:"pii-g3",style:{gap:"1.75rem"}},
+        audiences.map((a,i)=>h("div",{key:a.title},
+          h("div",{style:{border:`1px solid ${RULE}`,overflow:"hidden",marginBottom:"1.25rem"}},h(a.art)),
+          h("div",{style:{fontFamily:MONO,fontSize:11,color:ACCENT,marginBottom:"0.6rem"}},`0${i+1}`),
+          h("div",{style:{fontFamily:SERIF,fontSize:"1.25rem",fontWeight:700,color:INK,marginBottom:"0.6rem",lineHeight:1.3}},a.title),
+          h("div",{style:{fontSize:13.5,color:"#3a3a36",lineHeight:1.75}},a.body)
         ))
       )
     ),
@@ -1176,7 +1312,6 @@ function CounterweightPage({data,setPage}){
     h("section",{style:{padding:"4.5rem 2.5rem",background:INK,borderBottom:"1px solid rgba(255,255,255,0.08)"}},
       h("div",{style:{maxWidth:760}},
         h("div",{style:{...tag,color:ACCENT,marginBottom:"1.2rem"}},"What we’re building"),
-        h("h2",{style:{fontFamily:SERIF,fontSize:"clamp(1.6rem,2.8vw,2.3rem)",fontWeight:700,color:"#fff",lineHeight:1.25,marginBottom:"1rem"}},"Starting in Cambridge, a connected set of activities."),
         h("p",{style:{fontSize:14,color:"rgba(255,255,255,0.6)",lineHeight:1.8,marginBottom:"2rem"}},"Each part feeds the next: the problems our government partners face shape what fellows research, what students learn and what we discuss when we convene."),
         activities.map((item,i)=>h("div",{key:item.title,style:{display:"flex",gap:"1.5rem",alignItems:"flex-start",padding:"1.25rem 0",borderBottom:i<activities.length-1?"1px solid rgba(255,255,255,0.08)":"none"}},
           h("div",{style:{fontFamily:MONO,fontSize:10,color:ACCENT,minWidth:24,paddingTop:3}},`0${i+1}`),
