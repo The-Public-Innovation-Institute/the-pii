@@ -1124,7 +1124,7 @@ function HyperionPage({data}){
 // ── Counterweight visuals ─────────────────────────────────────────────────────
 // Hero: horizontal field lines bent by a drifting concentration of mass, with a
 // counterweight (accent) pulling the other way. Respects prefers-reduced-motion.
-function CounterweightHero({title,subtitle}){
+function CounterweightHero({title}){
   const wrap=useRef(null),cvs=useRef(null);
   useEffect(()=>{
     const canvas=cvs.current,box=wrap.current;
@@ -1190,11 +1190,10 @@ function CounterweightHero({title,subtitle}){
   },[]);
   return h("div",{ref:wrap,className:"cw-hero",style:{position:"relative",overflow:"hidden",background:INK,minHeight:"min(78vh,640px)",height:"min(78vh,640px)",borderBottom:`1px solid ${RULE}`}},
     h("canvas",{ref:cvs,"aria-hidden":"true",style:{position:"absolute",inset:0,display:"block"}}),
-    h("div",{style:{position:"absolute",inset:0,background:"linear-gradient(to top,rgba(14,14,12,0.92) 0%,rgba(14,14,12,0.35) 45%,rgba(14,14,12,0) 75%)",pointerEvents:"none"}}),
-    h("div",{style:{position:"absolute",left:0,right:0,bottom:0,padding:"0 2.5rem 3.5rem",zIndex:1}},
-      h("div",{style:{fontSize:10,letterSpacing:"0.12em",textTransform:"uppercase",color:"rgba(255,255,255,0.6)",fontWeight:500,marginBottom:"0.8rem"}},"A Public Innovation Institute initiative"),
-      h("h1",{style:{fontFamily:SERIF,fontSize:"clamp(3rem,9vw,7.5rem)",fontWeight:900,lineHeight:0.95,letterSpacing:"-0.02em",color:"#fff",marginBottom:"1.1rem"}},title||"Counterweight"),
-      subtitle&&h("p",{style:{fontSize:"clamp(15px,1.6vw,18px)",color:"rgba(255,255,255,0.78)",lineHeight:1.7,maxWidth:680}},subtitle)
+    h("div",{style:{position:"absolute",inset:0,background:"linear-gradient(90deg,rgba(14,14,12,0.78) 0%,rgba(14,14,12,0.35) 50%,rgba(14,14,12,0) 80%)",pointerEvents:"none"}}),
+    h("div",{style:{position:"absolute",inset:0,display:"flex",flexDirection:"column",justifyContent:"center",padding:"0 2.5rem 4rem",zIndex:1}},
+      h("h1",{style:{fontFamily:SERIF,fontSize:"clamp(3rem,9vw,7.5rem)",fontWeight:900,lineHeight:0.95,letterSpacing:"-0.02em",color:"#fff",marginBottom:"1.4rem"}},title||"Counterweight"),
+      h("div",{style:{fontSize:"clamp(11px,1.1vw,13px)",letterSpacing:"0.12em",textTransform:"uppercase",color:"rgba(255,255,255,0.72)",fontWeight:500,lineHeight:1.8,maxWidth:640}},"A Public Innovation Institute initiative on AI, power and the public institutions that check it")
     )
   );
 }
@@ -1274,12 +1273,12 @@ function CounterweightPage({data,setPage}){
     {title:"A shared library",body:"A home for the research, playbooks and lessons the initiative produces, so others can build on them."}
   ];
   return h("div",{style:{fontFamily:SANS}},
-    h(CounterweightHero,{title:hero.title,subtitle:hero.subtitle}),
+    h(CounterweightHero,{title:hero.title}),
 
     // Why this matters
     h("section",{style:{padding:"4.5rem 2.5rem",borderBottom:`1px solid ${RULE}`}},
       h("div",{className:"pii-g21",style:{gap:"3rem",alignItems:"start"}},
-        h("div",{style:{maxWidth:680}},
+        h("div",null,
           h("div",{style:{...tag,marginBottom:"1.2rem"}},"Why Counterweight"),
           h("h2",{style:h2s},"The checks on concentrated power are spread across thousands of local institutions. As AI enters government, they need to hold."),
           h("p",{style:p},"Most of the conversation about the risks of advanced AI is aimed at the frontier: the companies building the most capable systems and the national governments that might regulate them. That focus makes sense, but it misses something. Many of the tools that could be used to entrench power, from surveillance and policing systems to the infrastructure that runs elections, are bought and deployed by state and local governments. Many of the most important checks on concentrated power sit there too, spread across thousands of election offices, oversight bodies, procurement teams and city councils."),
@@ -1309,19 +1308,19 @@ function CounterweightPage({data,setPage}){
     ),
 
     // What we're building
-    h("section",{style:{padding:"4.5rem 2.5rem",background:INK,borderBottom:"1px solid rgba(255,255,255,0.08)"}},
-      h("div",{style:{maxWidth:760}},
-        h("div",{style:{...tag,color:ACCENT,marginBottom:"1.2rem"}},"What we’re building"),
-        h("p",{style:{fontSize:14,color:"rgba(255,255,255,0.6)",lineHeight:1.8,marginBottom:"2rem"}},"Each part feeds the next: the problems our government partners face shape what fellows research, what students learn and what we discuss when we convene."),
-        activities.map((item,i)=>h("div",{key:item.title,style:{display:"flex",gap:"1.5rem",alignItems:"flex-start",padding:"1.25rem 0",borderBottom:i<activities.length-1?"1px solid rgba(255,255,255,0.08)":"none"}},
-          h("div",{style:{fontFamily:MONO,fontSize:10,color:ACCENT,minWidth:24,paddingTop:3}},`0${i+1}`),
-          h("div",null,
-            h("div",{style:{fontSize:14,fontWeight:600,color:"#fff",marginBottom:"0.3rem"}},item.title),
-            h("div",{style:{fontSize:13,color:"rgba(255,255,255,0.6)",lineHeight:1.75}},item.body)
+    h("section",{style:{padding:"4.5rem 2.5rem",borderBottom:`1px solid ${RULE}`}},
+      h("div",{style:{...tag,marginBottom:"1.2rem"}},"What we’re building"),
+      h("p",{style:{...p,maxWidth:720,marginBottom:"2rem"}},"Each part feeds the next: the problems our government partners face shape what fellows research, what students learn and what we discuss when we convene."),
+      h("div",{style:{border:`3px solid ${INK}`,background:"#fff"}},
+        activities.map((item,i)=>h("div",{key:item.title,style:{display:"flex",gap:"1.5rem",alignItems:"flex-start",padding:"1.4rem 1.75rem",borderBottom:i<activities.length-1?`1px solid ${INK}`:"none"}},
+          h("div",{style:{fontFamily:MONO,fontSize:11,color:ACCENT,minWidth:24,paddingTop:3}},`0${i+1}`),
+          h("div",{style:{maxWidth:780}},
+            h("div",{style:{fontFamily:SERIF,fontSize:"1.1rem",fontWeight:700,color:INK,marginBottom:"0.35rem"}},item.title),
+            h("div",{style:{fontSize:13.5,color:"#3a3a36",lineHeight:1.75}},item.body)
           )
-        )),
-        h("p",{style:{fontSize:14,color:"rgba(255,255,255,0.6)",lineHeight:1.8,marginTop:"2rem"}},"Over time, we hope to take Counterweight beyond Cambridge, wherever the work proves its value.")
-      )
+        ))
+      ),
+      h("p",{style:{...p,marginTop:"2rem",marginBottom:0}},"Over time, we hope to take Counterweight beyond Cambridge, wherever the work proves its value.")
     ),
 
     // Get involved
