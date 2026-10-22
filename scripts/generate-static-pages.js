@@ -210,6 +210,12 @@ async function main() {
       description: "PII's flagship urban resilience initiative.",
     },
     {
+      path: "counterweight",
+      title: "Counterweight — The Public Innovation Institute",
+      description:
+        "A PII initiative building the capacity of state and local government to keep checks on concentrated power working as AI enters government.",
+    },
+    {
       path: "conference",
       title: "Change.Enabled — The Public Innovation Institute",
       description:
@@ -263,6 +269,7 @@ function writeSitemap(data) {
     { loc: "/programs", freq: "monthly", priority: "0.8" },
     { loc: "/cail", freq: "weekly", priority: "0.9" },
     { loc: "/hyperion", freq: "monthly", priority: "0.7" },
+    { loc: "/counterweight", freq: "monthly", priority: "0.8" },
     { loc: "/conference", freq: "monthly", priority: "0.7" },
     { loc: "/about", freq: "monthly", priority: "0.6" },
     { loc: "/contact", freq: "yearly", priority: "0.5" },
