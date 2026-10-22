@@ -391,16 +391,27 @@ function Footer({data,setPage}){
   );
 }
 
+const COUNTERWEIGHT_SLIDE={id:"counterweight-intro",visual:"counterweight",tag:"New Initiative",title:"AI, power and the public institutions that check it",sub:"Building the capacity of state and local government to keep checks on concentrated power working as AI enters government.",link:"counterweight",status:"active"};
+
 function HeroCarousel({slides,setPage}){
   const [cur,setCur]=useState(0);
   const timerRef=useRef(null);
-  const active=slides.filter(s=>s.status==="active");
+  const cms=slides.filter(s=>s.status==="active").map(s=>s.link==="counterweight"&&!s.image?{...s,visual:"counterweight"}:s);
+  const active=cms.some(s=>s.link==="counterweight")?cms:[COUNTERWEIGHT_SLIDE,...cms];
   useEffect(()=>{if(!active.length)return;timerRef.current=setInterval(()=>setCur(c=>(c+1)%active.length),5000);return()=>clearInterval(timerRef.current);},[active.length]);
   const BG=["#e8e4da","#e4e8ec","#f0ece2"];
   if(!active.length)return null;
   return h("div",{style:{flex:1,position:"relative",cursor:"pointer",overflow:"hidden",minHeight:400},onClick:()=>{const s=active[cur];if(s?.link)setPage(s.link);}},
     active.map((slide,i)=>h("div",{key:slide.id,style:{position:"absolute",inset:0,opacity:i===cur?1:0,transition:"opacity .6s ease"}},
-      slide.image
+      slide.visual==="counterweight"
+        ? h("div",{style:{position:"absolute",inset:0}},
+            h(CounterweightField,{paused:i!==cur}),
+            h("div",{style:{position:"absolute",top:0,left:0,right:0,padding:"2.2rem 2rem 0",zIndex:1}},
+              h("div",{style:{fontSize:11,letterSpacing:"0.14em",textTransform:"uppercase",color:"rgba(255,255,255,0.7)",fontWeight:500,marginBottom:"0.4rem"}},"Introducing"),
+              h("div",{style:{fontFamily:SERIF,fontSize:"clamp(2.4rem,4.5vw,3.6rem)",fontWeight:900,lineHeight:0.95,letterSpacing:"-0.02em",color:"#fff"}},"Counterweight")
+            )
+          )
+        : slide.image
         ? h("img",{src:slide.image,alt:slide.title||"",style:{width:"100%",height:"100%",objectFit:"cover",display:"block"}})
         : h("svg",{viewBox:"0 0 560 480",preserveAspectRatio:"xMidYMid slice",style:{width:"100%",height:"100%",display:"block"}},
         h("rect",{width:560,height:480,fill:BG[i%3]}),
@@ -1124,8 +1135,11 @@ function HyperionPage({data}){
 // ── Counterweight visuals ─────────────────────────────────────────────────────
 // Hero: horizontal field lines bent by a drifting concentration of mass, with a
 // counterweight (accent) pulling the other way. Respects prefers-reduced-motion.
-function CounterweightHero({title}){
-  const wrap=useRef(null),cvs=useRef(null);
+// The animated Counterweight field, used by the page hero and the homepage slide.
+// `paused` stops the animation loop (e.g. while its carousel slide is hidden).
+function CounterweightField({paused}){
+  const wrap=useRef(null),cvs=useRef(null),pausedRef=useRef(!!paused),kick=useRef(null);
+  useEffect(()=>{pausedRef.current=!!paused;if(!paused&&kick.current)kick.current();},[paused]);
   useEffect(()=>{
     const canvas=cvs.current,box=wrap.current;
     if(!canvas||!box||!canvas.getContext)return;
@@ -1179,17 +1193,26 @@ function CounterweightHero({title}){
       ctx.strokeStyle="#c8401e";ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(cx,cy,9,0,Math.PI*2);ctx.stroke();
       ctx.fillStyle="#c8401e";ctx.beginPath();ctx.arc(cx,cy,3,0,Math.PI*2);ctx.fill();
     };
-    if(reduce){draw(4000);}
-    else{
-      const loop=t=>{if(!running)return;draw(t);raf=requestAnimationFrame(loop);};
-      raf=requestAnimationFrame(loop);
-    }
-    const vis=()=>{if(document.hidden){running=false;cancelAnimationFrame(raf);}else if(!reduce&&!running){running=true;raf=requestAnimationFrame(function loop(t){if(!running)return;draw(t);raf=requestAnimationFrame(loop);});}};
-    document.addEventListener("visibilitychange",vis);
-    return()=>{running=false;cancelAnimationFrame(raf);document.removeEventListener("visibilitychange",vis);if(ro)ro.disconnect();else window.removeEventListener("resize",resize);};
+    const loop=t=>{
+      if(!running)return;
+      if(document.hidden||pausedRef.current){running=false;return;}
+      draw(t);raf=requestAnimationFrame(loop);
+    };
+    const start=()=>{if(reduce||running||document.hidden||pausedRef.current)return;running=true;raf=requestAnimationFrame(loop);};
+    draw(reduce?4000:performance.now());
+    running=false;start();
+    kick.current=start;
+    document.addEventListener("visibilitychange",start);
+    return()=>{running=false;kick.current=null;cancelAnimationFrame(raf);document.removeEventListener("visibilitychange",start);if(ro)ro.disconnect();else window.removeEventListener("resize",resize);};
   },[]);
-  return h("div",{ref:wrap,className:"cw-hero",style:{position:"relative",overflow:"hidden",background:INK,minHeight:"min(78vh,640px)",height:"min(78vh,640px)",borderBottom:`1px solid ${RULE}`}},
-    h("canvas",{ref:cvs,"aria-hidden":"true",style:{position:"absolute",inset:0,display:"block"}}),
+  return h("div",{ref:wrap,style:{position:"absolute",inset:0,background:INK}},
+    h("canvas",{ref:cvs,"aria-hidden":"true",style:{position:"absolute",inset:0,display:"block"}})
+  );
+}
+
+function CounterweightHero({title}){
+  return h("div",{className:"cw-hero",style:{position:"relative",overflow:"hidden",background:INK,minHeight:"min(78vh,640px)",height:"min(78vh,640px)",borderBottom:`1px solid ${RULE}`}},
+    h(CounterweightField),
     h("div",{style:{position:"absolute",inset:0,background:"linear-gradient(90deg,rgba(14,14,12,0.78) 0%,rgba(14,14,12,0.35) 50%,rgba(14,14,12,0) 80%)",pointerEvents:"none"}}),
     h("div",{style:{position:"absolute",inset:0,display:"flex",flexDirection:"column",justifyContent:"center",padding:"0 2.5rem 4rem",zIndex:1}},
       h("h1",{style:{fontFamily:SERIF,fontSize:"clamp(3rem,9vw,7.5rem)",fontWeight:900,lineHeight:0.95,letterSpacing:"-0.02em",color:"#fff",marginBottom:"1.4rem"}},title||"Counterweight"),
