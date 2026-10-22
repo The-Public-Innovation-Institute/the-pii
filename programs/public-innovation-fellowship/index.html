@@ -406,8 +406,8 @@ function HeroCarousel({slides,setPage}){
       slide.visual==="counterweight"
         ? h("div",{style:{position:"absolute",inset:0}},
             h(CounterweightField,{paused:i!==cur}),
-            h("div",{style:{position:"absolute",top:0,left:0,right:0,padding:"2.2rem 2rem 0",zIndex:1}},
-              h("div",{style:{fontSize:11,letterSpacing:"0.14em",textTransform:"uppercase",color:"rgba(255,255,255,0.7)",fontWeight:500,marginBottom:"0.4rem"}},"Introducing"),
+            h("div",{style:{position:"absolute",inset:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",textAlign:"center",padding:"0 2rem 5rem",zIndex:1,pointerEvents:"none"}},
+              h("div",{style:{fontSize:11,letterSpacing:"0.14em",textTransform:"uppercase",color:"rgba(255,255,255,0.7)",fontWeight:500,marginBottom:"0.5rem"}},"Introducing"),
               h("div",{style:{fontFamily:SERIF,fontSize:"clamp(2.4rem,4.5vw,3.6rem)",fontWeight:900,lineHeight:0.95,letterSpacing:"-0.02em",color:"#fff"}},"Counterweight")
             )
           )
