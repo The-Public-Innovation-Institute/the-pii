@@ -27,6 +27,11 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://www.thepii.org/counterweight</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://www.thepii.org/conference</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>

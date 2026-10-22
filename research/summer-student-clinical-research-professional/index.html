@@ -163,6 +163,7 @@ const DEFAULT_DATA={
     research:{image:"",title:"Research & Publications",subtitle:"Empirical research, policy analysis, and working papers on AI in government, urban health equity, and civic data infrastructure."},
     programs:{image:"",title:"Programs & Opportunities",subtitle:"From summer intensives to graduate fellowships, our programs prepare the next generation of civic technologists and public innovators."},
     hyperion:{image:"",title:"Hyperion",subtitle:"A venture program designed for founders tackling the most complex challenges of our time."},
+    counterweight:{image:"",title:"Counterweight",subtitle:"A PII initiative on AI, power and the public institutions that check it."},
     cail:{image:"",title:"City as Innovation Lab",subtitle:"Working with cities, companies, and researchers to design, test, and scale solutions in real-world urban environments."},
     conference:{image:"",title:"Change.Enabled",subtitle:"The annual conference on public-interest innovation and invention."},
     about:{image:"",title:"The Public Innovation Institute",subtitle:"Working at the intersection of technology, public policy, and community leadership to design, test, and scale innovations that improve lives."},
@@ -297,7 +298,7 @@ function Nav({page,setPage,data}){
   const [initOpen,setInitOpen]=useState(false);
   const [aboutOpen,setAboutOpen]=useState(false);
   const [mobileOpen,setMobileOpen]=useState(false);
-  const isInitActive=page==="initiatives"||page==="cail"||page==="hyperion";
+  const isInitActive=page==="initiatives"||page==="cail"||page==="hyperion"||page==="counterweight";
   const isAboutActive=page==="about"||page==="team";
   // Mobile menu closes automatically whenever the route changes.
   useEffect(()=>{setMobileOpen(false);},[page]);
@@ -325,7 +326,8 @@ function Nav({page,setPage,data}){
             h("div",{style:{fontSize:13,color:isInitActive?ACCENT:INK,cursor:"pointer",fontWeight:isInitActive?500:400,borderBottom:isInitActive?`2px solid ${ACCENT}`:"2px solid transparent",paddingBottom:2,userSelect:"none"}},label," ▾"),
             initOpen&&h("div",{style:{position:"absolute",top:"100%",left:0,background:"#fff",border:`1px solid ${RULE}`,boxShadow:"0 4px 16px rgba(0,0,0,0.08)",minWidth:210,zIndex:200}},
               h("div",{onClick:()=>{setPage("hyperion");setInitOpen(false);},style:{padding:"10px 16px",fontSize:13,cursor:"pointer",color:page==="hyperion"?ACCENT:INK,borderBottom:`1px solid ${RULE}`}},"Hyperion"),
-              h("div",{onClick:()=>{setPage("cail");setInitOpen(false);},style:{padding:"10px 16px",fontSize:13,cursor:"pointer",color:page==="cail"?ACCENT:INK}},"City as Innovation Lab")
+              h("div",{onClick:()=>{setPage("cail");setInitOpen(false);},style:{padding:"10px 16px",fontSize:13,cursor:"pointer",color:page==="cail"?ACCENT:INK,borderBottom:`1px solid ${RULE}`}},"City as Innovation Lab"),
+              h("div",{onClick:()=>{setPage("counterweight");setInitOpen(false);},style:{padding:"10px 16px",fontSize:13,cursor:"pointer",color:page==="counterweight"?ACCENT:INK}},"Counterweight")
             )
           );
         }
@@ -352,7 +354,7 @@ function Nav({page,setPage,data}){
       )
     ),
     mobileOpen&&h("div",{style:{position:"absolute",top:"100%",left:0,right:0,background:PAPER,borderBottom:`1px solid ${RULE}`,boxShadow:"0 8px 20px rgba(0,0,0,0.08)",zIndex:150,maxHeight:"calc(100vh - 60px)",overflowY:"auto"}},
-      [["home","Home"],["research","Research"],["programs","Programs"],["hyperion","Hyperion"],["cail","City as Innovation Lab"],["conference","Change.Enabled"],["opportunities","Opportunities"],["about","About PII"],["team","People"]].map(([p,label])=>
+      [["home","Home"],["research","Research"],["programs","Programs"],["hyperion","Hyperion"],["cail","City as Innovation Lab"],["counterweight","Counterweight"],["conference","Change.Enabled"],["opportunities","Opportunities"],["about","About PII"],["team","People"]].map(([p,label])=>
         h("div",{key:p,onClick:()=>goMobile(p),style:{padding:"14px 1.5rem",fontSize:14,color:page===p?ACCENT:INK,fontWeight:page===p?600:400,borderBottom:`1px solid ${RULE}`,cursor:"pointer"}},label)
       ),
       h("div",{style:{padding:"1.2rem 1.5rem"}},
@@ -373,7 +375,7 @@ function Footer({data,setPage}){
           h("div",null,data.site.email)
         )
       ),
-      ...[ ["Research",[["Research","research"],["Publications","publications"],["Working Papers","publications"]]],["Initiatives",[["City as Innovation Lab","cail"],["Hyperion","hyperion"],["Change.Enabled","conference"]]],["Institute",[["About","about"],["People","team"],["Opportunities","opportunities"],["Contact","contact"]]] ].map(([label,links])=>
+      ...[ ["Research",[["Research","research"],["Publications","publications"],["Working Papers","publications"]]],["Initiatives",[["City as Innovation Lab","cail"],["Hyperion","hyperion"],["Counterweight","counterweight"],["Change.Enabled","conference"]]],["Institute",[["About","about"],["People","team"],["Opportunities","opportunities"],["Contact","contact"]]] ].map(([label,links])=>
         h("div",{key:label},
           h("div",{style:{fontSize:10,letterSpacing:"0.1em",textTransform:"uppercase",color:"rgba(255,255,255,0.28)",marginBottom:"0.9rem",fontWeight:500}},label),
           links.map(([name,pg])=>h("div",{key:name,onClick:()=>setPage(pg),style:{fontSize:12,color:"rgba(255,255,255,0.45)",marginBottom:"0.5rem",cursor:"pointer"}},name))
@@ -1119,6 +1121,86 @@ function HyperionPage({data}){
   );
 }
 
+function CounterweightPage({data,setPage}){
+  const hero=(data.pageHeroes||{}).counterweight||{};
+  const p={fontSize:15,color:"#3a3a36",lineHeight:1.85,marginBottom:"1.2rem"};
+  const h2s={fontFamily:SERIF,fontSize:"clamp(1.6rem,2.8vw,2.3rem)",fontWeight:700,color:INK,lineHeight:1.25,marginBottom:"1.5rem"};
+  const audiences=[
+    {title:"Government teams",body:"The technical and policy teams inside city and state government who are making decisions about AI now: in procurement, oversight, election administration and digital services."},
+    {title:"Early-career professionals and researchers",body:"People from policy, economics, law, philosophy and beyond who want to work on how AI could concentrate power, and what public institutions can do about it."},
+    {title:"Students",body:"Students who are just starting to think about where they can contribute, and who want to learn alongside the people doing the work."}
+  ];
+  const activities=[
+    {title:"Government engagements",body:"Ongoing partnerships with a small number of state and local teams, each built around a specific problem they face as AI enters their work. A spring convening sets the year’s priorities, and a fall convening reviews what happened and what we learned."},
+    {title:"Fellowship",body:"Early-career professionals and researchers will spend a semester or a year in Cambridge, working on problems drawn directly from our government partnerships."},
+    {title:"Student programming",body:"A summer program focused on power concentration and state capacity, building on the education programs PII has run since 2021."},
+    {title:"Seminars and workshops",body:"Technical workshops for government teams, and seminars led by invited experts and by our fellows."},
+    {title:"Cross-disciplinary convenings",body:"Regular gatherings that bring economists, legal scholars, philosophers and practitioners together around shared questions."},
+    {title:"A shared library",body:"A home for the research, playbooks and lessons the initiative produces, so others can build on them."}
+  ];
+  return h("div",{style:{fontFamily:SANS}},
+    h(PageHero,{hero,pageName:"Counterweight"}),
+
+    // Why this matters
+    h("section",{style:{padding:"4.5rem 2.5rem",borderBottom:`1px solid ${RULE}`}},
+      h("div",{className:"pii-g21",style:{gap:"3rem",alignItems:"start"}},
+        h("div",{style:{maxWidth:680}},
+          h("div",{style:{...tag,marginBottom:"1.2rem"}},"Why Counterweight"),
+          h("h2",{style:h2s},"The checks on concentrated power are spread across thousands of local institutions. As AI enters government, they need to hold."),
+          h("p",{style:p},"Most of the conversation about the risks of advanced AI is aimed at the frontier: the companies building the most capable systems and the national governments that might regulate them. That focus makes sense, but it misses something. Many of the tools that could be used to entrench power, from surveillance and policing systems to the infrastructure that runs elections, are bought and deployed by state and local governments. Many of the most important checks on concentrated power sit there too, spread across thousands of election offices, oversight bodies, procurement teams and city councils."),
+          h("p",{style:{...p,marginBottom:0}},"Those checks are easy to overlook precisely because everyone is looking at national capitals. As AI moves into government, they can erode quietly, through a procurement decision made without the right questions, a growing dependence on a handful of vendors, or an oversight body that lacks the technical capacity to see what is changing. Counterweight exists to help them hold.")
+        ),
+        h("div",{style:{background:INK,padding:"2rem",color:"#fff"}},
+          h("div",{style:{fontSize:10,letterSpacing:"0.12em",textTransform:"uppercase",color:ACCENT,fontWeight:500,marginBottom:"1rem"}},"Our focus"),
+          h("p",{style:{fontFamily:SERIF,fontSize:"1.15rem",lineHeight:1.65,color:"rgba(255,255,255,0.9)",marginBottom:"1.2rem"}},"AI-enabled concentration of power, and the capacity of state and local government to manage it."),
+          h("p",{style:{fontSize:13,lineHeight:1.75,color:"rgba(255,255,255,0.6)"}},"We look at how AI changes the way public institutions buy technology, oversee its use, run elections and stay independent of the systems they depend on. Our aim is not to strengthen any particular government or party, but the institutions that keep power accountable, whoever holds it.")
+        )
+      )
+    ),
+
+    // Who it's for
+    h("section",{style:{padding:"4.5rem 2.5rem",background:WARM,borderBottom:`1px solid ${RULE}`}},
+      h("div",{style:{...tag,marginBottom:"1rem"}},"Who it’s for"),
+      h("h2",{style:{...h2s,maxWidth:720}},"People who rarely share a room, working on the same problem."),
+      h("p",{style:{...p,maxWidth:680,marginBottom:"2.5rem"}},"We believe this problem needs all of them, and that each sees something the others miss."),
+      h("div",{className:"pii-g3",style:{gap:0,border:`1px solid ${RULE}`,background:"#fff"}},
+        audiences.map((a,i)=>h("div",{key:a.title,style:{padding:"2rem",borderRight:i<audiences.length-1?`1px solid ${RULE}`:"none"}},
+          h("div",{style:{fontFamily:MONO,fontSize:11,color:ACCENT,marginBottom:"0.75rem"}},`0${i+1}`),
+          h("div",{style:{fontFamily:SERIF,fontSize:"1.15rem",fontWeight:700,color:INK,marginBottom:"0.6rem"}},a.title),
+          h("div",{style:{fontSize:13,color:"#3a3a36",lineHeight:1.75}},a.body)
+        ))
+      )
+    ),
+
+    // What we're building
+    h("section",{style:{padding:"4.5rem 2.5rem",background:INK,borderBottom:"1px solid rgba(255,255,255,0.08)"}},
+      h("div",{style:{maxWidth:760}},
+        h("div",{style:{...tag,color:ACCENT,marginBottom:"1.2rem"}},"What we’re building"),
+        h("h2",{style:{fontFamily:SERIF,fontSize:"clamp(1.6rem,2.8vw,2.3rem)",fontWeight:700,color:"#fff",lineHeight:1.25,marginBottom:"1rem"}},"Starting in Cambridge, a connected set of activities."),
+        h("p",{style:{fontSize:14,color:"rgba(255,255,255,0.6)",lineHeight:1.8,marginBottom:"2rem"}},"Each part feeds the next: the problems our government partners face shape what fellows research, what students learn and what we discuss when we convene."),
+        activities.map((item,i)=>h("div",{key:item.title,style:{display:"flex",gap:"1.5rem",alignItems:"flex-start",padding:"1.25rem 0",borderBottom:i<activities.length-1?"1px solid rgba(255,255,255,0.08)":"none"}},
+          h("div",{style:{fontFamily:MONO,fontSize:10,color:ACCENT,minWidth:24,paddingTop:3}},`0${i+1}`),
+          h("div",null,
+            h("div",{style:{fontSize:14,fontWeight:600,color:"#fff",marginBottom:"0.3rem"}},item.title),
+            h("div",{style:{fontSize:13,color:"rgba(255,255,255,0.6)",lineHeight:1.75}},item.body)
+          )
+        )),
+        h("p",{style:{fontSize:14,color:"rgba(255,255,255,0.6)",lineHeight:1.8,marginTop:"2rem"}},"Over time, we hope to take Counterweight beyond Cambridge, wherever the work proves its value.")
+      )
+    ),
+
+    // Get involved
+    h("section",{style:{padding:"4.5rem 2.5rem",borderBottom:`1px solid ${RULE}`}},
+      h("div",{style:{maxWidth:640}},
+        h("div",{style:{...tag,marginBottom:"1rem"}},"Get involved"),
+        h("h2",{style:h2s},"Help shape this work from the start."),
+        h("p",{style:{...p,marginBottom:"2rem"}},"We are looking for government teams, researchers and practitioners who want to be part of Counterweight as it takes shape. If that’s you, we’d like to hear from you."),
+        h("button",{onClick:()=>setPage("contact"),style:btn()},"Get in touch")
+      )
+    )
+  );
+}
+
 function ConferencePage({data}){
   return h("div",{style:{fontFamily:SANS}},
     h("div",{style:{background:ACCENT,padding:"5rem 2.5rem",color:"#fff"}},
@@ -1612,6 +1694,8 @@ function App(){
       title="City as Innovation Lab — The Public Innovation Institute";desc="Transforming cities into real-world testbeds for public-interest innovation.";url="https://www.thepii.org/cail";
     } else if(root==="hyperion"){
       title="Hyperion — The Public Innovation Institute";desc="PII's flagship urban resilience initiative.";url="https://www.thepii.org/hyperion";
+    } else if(root==="counterweight"){
+      title="Counterweight — The Public Innovation Institute";desc="A PII initiative building the capacity of state and local government to keep checks on concentrated power working as AI enters government.";url="https://www.thepii.org/counterweight";
     } else if(root==="programs"){
       title="Programs — The Public Innovation Institute";desc="Academic and professional programs at the intersection of AI, policy, and urban systems.";url="https://www.thepii.org/programs";
     } else if(root==="conference"){
@@ -1659,7 +1743,7 @@ function App(){
   const cailPost=rootPage==="cail"&&subId?(data.cailPosts||[]).find(p=>p.id===subId):null;
 
   return h("div",{style:{background:PAPER,minHeight:"100vh"}},
-    h(Nav,{page:rootPage==="cail"||rootPage==="hyperion"?"initiatives":rootPage==="team"?"about":rootPage==="publications"?"research":rootPage,setPage:go,data}),
+    h(Nav,{page:rootPage==="cail"||rootPage==="hyperion"||rootPage==="counterweight"?"initiatives":rootPage==="team"?"about":rootPage==="publications"?"research":rootPage,setPage:go,data}),
     rootPage==="home"&&h(HomePage,{data,setPage:go}),
     rootPage==="research"&&!subId&&h(ResearchPage,{data,setPage:go,initialSection:"research"}),
     rootPage==="research"&&subId&&h(ArticlePage,{article,setPage:go,data}),
@@ -1668,6 +1752,7 @@ function App(){
     rootPage==="programs"&&!subId&&h(ProgramsPage,{data,setPage:go}),
     rootPage==="programs"&&subId&&h(ProgramDetail,{program,setPage:go}),
     rootPage==="hyperion"&&h(HyperionPage,{data}),
+    rootPage==="counterweight"&&h(CounterweightPage,{data,setPage:go}),
     rootPage==="cail"&&!subId&&h(CAILPage,{data,setPage:go}),
     rootPage==="cail"&&subId&&h(CAILPostPage,{post:cailPost,setPage:go}),
     rootPage==="conference"&&h(ConferencePage,{data}),
