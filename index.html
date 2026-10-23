@@ -391,13 +391,14 @@ function Footer({data,setPage}){
   );
 }
 
-const COUNTERWEIGHT_SLIDE={id:"counterweight-intro",visual:"counterweight",tag:"New Initiative",title:"AI, power and the public institutions that check it",sub:"Building the capacity of state and local government to keep checks on concentrated power working as AI enters government.",link:"counterweight",status:"active"};
+// A CMS slide that links to the Counterweight page and has no image uses the
+// animated Counterweight background instead.
+const isCounterweightSlide=s=>(s.link||"").replace(/^\//,"")==="counterweight"&&!s.image;
 
 function HeroCarousel({slides,setPage}){
   const [cur,setCur]=useState(0);
   const timerRef=useRef(null);
-  const cms=slides.filter(s=>s.status==="active").map(s=>s.link==="counterweight"&&!s.image?{...s,visual:"counterweight"}:s);
-  const active=cms.some(s=>s.link==="counterweight")?cms:[COUNTERWEIGHT_SLIDE,...cms];
+  const active=slides.filter(s=>s.status==="active").map(s=>isCounterweightSlide(s)?{...s,visual:"counterweight"}:s);
   useEffect(()=>{if(!active.length)return;timerRef.current=setInterval(()=>setCur(c=>(c+1)%active.length),5000);return()=>clearInterval(timerRef.current);},[active.length]);
   const BG=["#e8e4da","#e4e8ec","#f0ece2"];
   if(!active.length)return null;
