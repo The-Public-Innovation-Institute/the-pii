@@ -47,6 +47,16 @@
     <priority>0.5</priority>
   </url>
   <url>
+    <loc>https://www.thepii.org/research/introducing-counterweight</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.thepii.org/publications/introducing-counterweight</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://www.thepii.org/research/post-1787688992764</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
