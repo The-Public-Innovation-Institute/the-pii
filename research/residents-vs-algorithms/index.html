@@ -1141,6 +1141,21 @@ function HyperionPage({data}){
 // ── Counterweight visuals ─────────────────────────────────────────────────────
 // Hero: horizontal field lines bent by a drifting concentration of mass, with a
 // counterweight (accent) pulling the other way. Respects prefers-reduced-motion.
+// Calls cb whenever the screen's pixel density changes (browser zoom, or moving the
+// window to another display) so canvases can redraw at the new resolution.
+function watchPixelRatio(cb){
+  let mq=null,off=false;
+  const arm=()=>{
+    if(off||!window.matchMedia)return;
+    mq=window.matchMedia(`(resolution: ${window.devicePixelRatio||1}dppx)`);
+    const h=()=>{if(mq.removeEventListener)mq.removeEventListener("change",h);else if(mq.removeListener)mq.removeListener(h);cb();arm();};
+    if(mq.addEventListener)mq.addEventListener("change",h);else if(mq.addListener)mq.addListener(h);
+    mq._h=h;
+  };
+  arm();
+  return()=>{off=true;if(mq&&mq._h){if(mq.removeEventListener)mq.removeEventListener("change",mq._h);else if(mq.removeListener)mq.removeListener(mq._h);}};
+}
+
 // The animated Counterweight field, used by the page hero and the homepage slide.
 // `paused` stops the animation loop (e.g. while its carousel slide is hidden).
 function CounterweightField({paused}){
@@ -1161,6 +1176,7 @@ function CounterweightField({paused}){
     };
     resize();
     const ro=window.ResizeObserver?new ResizeObserver(()=>{resize();if(reduce)draw(0);}):null;
+    const unwatch=watchPixelRatio(()=>{resize();draw(reduce?4000:performance.now());});
     if(ro)ro.observe(box);else window.addEventListener("resize",resize);
     const draw=t=>{
       const s=t/1000;
@@ -1209,7 +1225,7 @@ function CounterweightField({paused}){
     running=false;start();
     kick.current=start;
     document.addEventListener("visibilitychange",start);
-    return()=>{running=false;kick.current=null;cancelAnimationFrame(raf);document.removeEventListener("visibilitychange",start);if(ro)ro.disconnect();else window.removeEventListener("resize",resize);};
+    return()=>{unwatch();running=false;kick.current=null;cancelAnimationFrame(raf);document.removeEventListener("visibilitychange",start);if(ro)ro.disconnect();else window.removeEventListener("resize",resize);};
   },[]);
   return h("div",{ref:wrap,style:{position:"absolute",inset:0,background:INK}},
     h("canvas",{ref:cvs,"aria-hidden":"true",style:{position:"absolute",inset:0,display:"block"}})
@@ -1274,9 +1290,10 @@ function CounterweightMesh(){
     const start=()=>{if(reduce||running||document.hidden)return;running=true;raf=requestAnimationFrame(loop);};
     resize();draw(reduce?9000:performance.now());start();
     const ro=window.ResizeObserver?new ResizeObserver(()=>{resize();draw(reduce?9000:performance.now());}):null;
+    const unwatch=watchPixelRatio(()=>{resize();draw(reduce?9000:performance.now());});
     if(ro)ro.observe(box);else window.addEventListener("resize",resize);
     document.addEventListener("visibilitychange",start);
-    return()=>{running=false;cancelAnimationFrame(raf);document.removeEventListener("visibilitychange",start);if(ro)ro.disconnect();else window.removeEventListener("resize",resize);};
+    return()=>{unwatch();running=false;cancelAnimationFrame(raf);document.removeEventListener("visibilitychange",start);if(ro)ro.disconnect();else window.removeEventListener("resize",resize);};
   },[]);
   return h("div",{ref:wrap,role:"img","aria-label":"A mesh of connected points pulled by a drifting mass and held in place by orange anchor points",style:{position:"absolute",inset:0,background:INK}},
     h("canvas",{ref:cvs,style:{position:"absolute",inset:0,display:"block"}})
