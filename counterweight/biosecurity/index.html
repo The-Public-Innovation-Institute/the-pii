@@ -14,7 +14,7 @@
 }(window.location));
 </script>
 <title>Biosecurity · Counterweight — The Public Innovation Institute</title>
-<meta name="description" content="Counterweight’s biosecurity work prepares state, local and small-island governments for biological risk as AI changes the life sciences, through simulations with officials, expert interviews and practical playbooks.">
+<meta name="description" content="Counterweight’s biosecurity work prepares state and local governments, especially in resource-constrained jurisdictions, for biological risk as AI changes the life sciences, through simulations with officials, expert interviews and practical playbooks.">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://www.thepii.org/counterweight/biosecurity">
 
@@ -22,7 +22,7 @@
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="The Public Innovation Institute">
 <meta property="og:title" content="Biosecurity · Counterweight — The Public Innovation Institute">
-<meta property="og:description" content="Counterweight’s biosecurity work prepares state, local and small-island governments for biological risk as AI changes the life sciences, through simulations with officials, expert interviews and practical playbooks.">
+<meta property="og:description" content="Counterweight’s biosecurity work prepares state and local governments, especially in resource-constrained jurisdictions, for biological risk as AI changes the life sciences, through simulations with officials, expert interviews and practical playbooks.">
 <meta property="og:url" content="https://www.thepii.org/counterweight/biosecurity">
 <meta property="og:image" content="https://www.thepii.org/og-default.png">
 
@@ -30,7 +30,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:site" content="@thepii_org">
 <meta name="twitter:title" content="Biosecurity · Counterweight — The Public Innovation Institute">
-<meta name="twitter:description" content="Counterweight’s biosecurity work prepares state, local and small-island governments for biological risk as AI changes the life sciences, through simulations with officials, expert interviews and practical playbooks.">
+<meta name="twitter:description" content="Counterweight’s biosecurity work prepares state and local governments, especially in resource-constrained jurisdictions, for biological risk as AI changes the life sciences, through simulations with officials, expert interviews and practical playbooks.">
 <meta name="twitter:image" content="https://www.thepii.org/og-default.png">
 
 <!-- Google Analytics 4 — ID is set dynamically from CMS settings -->
@@ -1423,17 +1423,17 @@ const CW_DEFAULTS={
     involvedBody:"We are looking for government teams, researchers and practitioners who want to be part of Counterweight as it takes shape. If that’s you, we’d like to hear from you."
   },
   focusAreas:[
-    {page:"counterweight/biosecurity",title:"Biosecurity",body:"AI is changing what is possible in the life sciences, and with it the biological risks that state, local and small-island governments may one day have to face. We work with officials to rehearse those decisions before they are needed."}
+    {page:"counterweight/biosecurity",title:"Biosecurity",body:"AI is changing what is possible in the life sciences, and with it the biological risks that state and local governments, especially in resource-constrained jurisdictions, may one day have to face. We work with officials to rehearse those decisions before they are needed."}
   ],
   biosecurity:{
-    heroSubtitle:"Preparing state, local and small-island governments for biological risk as AI changes the life sciences",
+    heroSubtitle:"Preparing state and local governments for biological risk as AI changes the life sciences",
     whyHeading:"When a biological threat emerges, many of the first decisions are made far from national capitals.",
     whyParas:[
       "AI is beginning to change what is possible in the life sciences. The same tools that can speed up research and drug discovery could also lower the barriers for someone who wants to cause harm, and the companies building the most capable models now publish safeguards aimed specifically at biological misuse. Most of the policy conversation, understandably, is about those models and the national governments that oversee them.",
       "But when something goes wrong, much of the response falls to state and city health departments, to emergency managers, and in significantly resource-constrained jurisdictions to a handful of officials who often carry several roles at once. These are the institutions with the least room to rehearse, and the places where a slow or poorly coordinated decision can cost the most.",
       "Counterweight’s biosecurity work is aimed at them. We want the officials who would face these decisions to have worked through them before, with the right people around the table, and to leave with something they can use."
     ],
-    focusBox:"The capacity of state, local and small-island governments to anticipate and respond to AI-enabled biological risk.",
+    focusBox:"The capacity of state and local governments, especially in resource-constrained jurisdictions, to anticipate and respond to AI-enabled biological risk.",
     focusBoxNote:"Our scenarios are built around policy, coordination and response decisions. We do not develop or publish technical information that could help someone cause harm.",
     workIntro:"The red teaming and simulations sit at the centre of this work, and everything else either feeds into them or carries what they teach us further.",
     work:[
@@ -1444,7 +1444,7 @@ const CW_DEFAULTS={
     ],
     whoHeading:"The people who would be in the room if it happened for real.",
     who:[
-      {title:"Government officials",body:"People in city, state and national government, and especially in small island states and smaller US cities, whose institutions would carry the first response to a biological event."},
+      {title:"Government officials",body:"People in city, state and national government, and especially in resource-constrained jurisdictions and smaller US cities, whose institutions would carry the first response to a biological event."},
       {title:"Public health and biosecurity practitioners",body:"Epidemiologists, emergency managers, laboratory leaders and biosecurity specialists who can bring realism to the scenarios and help officials see what is coming."},
       {title:"Industry and research",body:"Biotech and biosecurity firms, and researchers in AI governance, who want to understand the institutional realities their work will meet."},
       {title:"Newcomers from other fields",body:"Anyone interested in this work, including people transitioning into biosecurity, students, and people from fields that rarely take part in it, such as law, economics, computer science and urban planning."}
@@ -1570,7 +1570,7 @@ function CounterweightPage({data,setPage}){
 // pii_cw_submit_signup RPC (validated server-side, insert-only), and are read
 // in the CMS's Counterweight tab.
 const CW_SECTORS=[["government","Government"],["practice","Public health or biosecurity practice"],["industry","Industry"],["research","Research or academia"],["other","Other"]];
-const CW_GOV_LEVELS=[["local","City or local"],["state","State, provincial or territorial"],["national","National"],["island","Small island state"],["intl","International or multilateral"]];
+const CW_GOV_LEVELS=[["local","City or local"],["state","State, provincial or territorial"],["national","National"],["intl","International or multilateral"]];
 const CW_PARTICIPATION=[["player","Play in a simulation"],["expert","Contribute as an expert voice"],["events","Join conversations and events"]];
 
 function CwSignupForm({cw,data,setPage}){
@@ -2182,7 +2182,7 @@ function App(){
     } else if(root==="hyperion"){
       title="Hyperion — The Public Innovation Institute";desc="PII's flagship urban resilience initiative.";url="https://www.thepii.org/hyperion";
     } else if(root==="counterweight"&&sub==="biosecurity"){
-      title="Biosecurity · Counterweight — The Public Innovation Institute";desc="Counterweight’s biosecurity work prepares state, local and small-island governments for biological risk as AI changes the life sciences, through simulations with officials, expert interviews and practical playbooks.";url="https://www.thepii.org/counterweight/biosecurity";
+      title="Biosecurity · Counterweight — The Public Innovation Institute";desc="Counterweight’s biosecurity work prepares state and local governments, especially in resource-constrained jurisdictions, for biological risk as AI changes the life sciences, through simulations with officials, expert interviews and practical playbooks.";url="https://www.thepii.org/counterweight/biosecurity";
     } else if(root==="counterweight"){
       title="Counterweight — The Public Innovation Institute";desc="A PII initiative building the capacity of state and local government to keep checks on concentrated power working as AI enters government.";url="https://www.thepii.org/counterweight";
     } else if(root==="programs"){
