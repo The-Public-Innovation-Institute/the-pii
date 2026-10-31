@@ -956,7 +956,7 @@ const CW_DEFAULTS={
       {title:"Cross-disciplinary convenings",body:"Regular gatherings that bring economists, legal scholars, philosophers and practitioners together around shared questions."},
       {title:"A shared library",body:"A home for the research, playbooks and lessons the initiative produces, so others can build on them."}
     ],
-    buildingOutro:"Over time, we hope to take Counterweight beyond Cambridge, wherever the work proves its value.",
+    buildingOutro:"",
     involvedHeading:"Help shape this work from the start.",
     involvedBody:"We are looking for government teams, researchers and practitioners who want to be part of Counterweight as it takes shape. If that’s you, we’d like to hear from you."
   },
@@ -1182,7 +1182,7 @@ function renderCounterweight(){
       ${cwField('Heading','main.audiencesHeading',2)}${cwField('Intro','main.audiencesIntro',2)}
       ${cwItems('Audiences','main.audiences','The three illustrations repeat in order if you add more than three.')}</div>
     <div class="card"><div class="section-sub">What we’re building</div>
-      ${cwField('Intro','main.buildingIntro',2)}${cwItems('Activities','main.activities')}${cwField('Closing line','main.buildingOutro',2)}</div>
+      ${cwField('Intro','main.buildingIntro',2)}${cwItems('Activities','main.activities')}${cwField('Closing line (optional, shown under the list)','main.buildingOutro',2)}</div>
     <div class="card"><div class="section-sub">Get involved</div>
       ${cwField('Heading','main.involvedHeading')}${cwField('Body','main.involvedBody',3)}</div>
     <button class="btn" onclick="save()">Save Changes</button>`;
