@@ -1430,23 +1430,24 @@ const CW_DEFAULTS={
     whyHeading:"When a biological threat emerges, many of the first decisions are made far from national capitals.",
     whyParas:[
       "AI is beginning to change what is possible in the life sciences. The same tools that can speed up research and drug discovery could also lower the barriers for someone who wants to cause harm, and the companies building the most capable models now publish safeguards aimed specifically at biological misuse. Most of the policy conversation, understandably, is about those models and the national governments that oversee them.",
-      "But when something goes wrong, much of the response falls to state and city health departments, to emergency managers, and in small island states to a handful of officials who often carry several roles at once. These are the institutions with the least room to rehearse, and the places where a slow or poorly coordinated decision can cost the most.",
+      "But when something goes wrong, much of the response falls to state and city health departments, to emergency managers, and in significantly resource-constrained jurisdictions to a handful of officials who often carry several roles at once. These are the institutions with the least room to rehearse, and the places where a slow or poorly coordinated decision can cost the most.",
       "Counterweight’s biosecurity work is aimed at them. We want the officials who would face these decisions to have worked through them before, with the right people around the table, and to leave with something they can use."
     ],
     focusBox:"The capacity of state, local and small-island governments to anticipate and respond to AI-enabled biological risk.",
     focusBoxNote:"Our scenarios are built around policy, coordination and response decisions. We do not develop or publish technical information that could help someone cause harm.",
-    workIntro:"The simulations sit at the centre of this work, and everything else either feeds into them or carries what they teach us further.",
+    workIntro:"The red teaming and simulations sit at the centre of this work, and everything else either feeds into them or carries what they teach us further.",
     work:[
-      {title:"Simulations with government officials",body:"A series of simulations that bring officials together with public health, biosecurity and AI experts to work through how a biological event might unfold and where their institutions would come under strain. Where it helps, we invite biotech and biosecurity firms into the room, so officials hear what industry can offer and firms see the policy constraints their solutions will meet. The first simulation is planned for spring 2027 in Cambridge, and a second in the fall will build on what the first reveals."},
+      {title:"Simulations with government officials",body:"A series of simulations that bring officials together with public health, biosecurity and AI experts to work through how a biological event might unfold and where their institutions would come under strain. Where it helps, we invite biotech and biosecurity firms into the room, so officials hear what industry can offer and firms see the policy constraints their solutions will meet."},
       {title:"Conversations with experts",body:"Interviews with people working across biosecurity, public health, emergency management and AI governance, published through Counterweight so that what they know reaches the officials who need it."},
-      {title:"Briefs and playbooks",body:"What we learn in each simulation becomes practical material that governments can use once the room has emptied: briefs on what we found, and playbooks for the decisions that proved hardest."},
+      {title:"Briefs and playbooks",body:"What we learn in each simulation becomes practical material that governments can use: briefs on what we found, and playbooks for the decisions that proved hardest."},
       {title:"Learning that follows the work",body:"Findings from the officials’ simulations go on to shape what we teach students and early-career professionals. The order matters to us, because it means what we teach reflects the decisions governments actually face."}
     ],
     whoHeading:"The people who would be in the room if it happened for real.",
     who:[
       {title:"Government officials",body:"People in city, state and national government, and especially in small island states and smaller US cities, whose institutions would carry the first response to a biological event."},
       {title:"Public health and biosecurity practitioners",body:"Epidemiologists, emergency managers, laboratory leaders and biosecurity specialists who can bring realism to the scenarios and help officials see what is coming."},
-      {title:"Industry and research",body:"Biotech and biosecurity firms, and researchers in AI governance, who want to understand the institutional realities their work will meet."}
+      {title:"Industry and research",body:"Biotech and biosecurity firms, and researchers in AI governance, who want to understand the institutional realities their work will meet."},
+      {title:"Newcomers from other fields",body:"Anyone interested in this work, including people transitioning into biosecurity, students, and people from fields that rarely take part in it, such as law, economics, computer science and urban planning."}
     ],
     involvedHeading:"Take part in the simulations.",
     involvedBody:"We are looking for people in government, public health and biosecurity who want to take part, whether as players, as expert voices within the scenarios, or in the conversations and events around them. Tell us a little about yourself and we’ll be in touch as plans firm up.",
@@ -1663,7 +1664,7 @@ function CounterweightBiosecurityPage({data,setPage}){
     h("section",{style:{padding:"4.5rem 2.5rem",background:WARM,borderBottom:`1px solid ${RULE}`}},
       h("div",{style:{...tag,marginBottom:"1rem"}},"Who takes part"),
       h("h2",{style:{...cwH2,maxWidth:720}},b.whoHeading),
-      h("div",{className:"pii-g3",style:{gap:"1.75rem",marginTop:"1rem"}},
+      h("div",{className:b.who.length%4===0?"pii-g4":"pii-g3",style:{gap:"1.75rem",marginTop:"1rem"}},
         b.who.map((a,i)=>h("div",{key:i,style:{borderTop:`2px solid ${INK}`,paddingTop:"1.1rem"}},
           h("div",{style:{fontFamily:MONO,fontSize:11,color:ACCENT,marginBottom:"0.6rem"}},String(i+1).padStart(2,"0")),
           h("div",{style:{fontFamily:SERIF,fontSize:"1.25rem",fontWeight:700,color:INK,marginBottom:"0.6rem",lineHeight:1.3}},a.title),
