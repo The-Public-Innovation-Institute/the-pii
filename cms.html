@@ -1727,6 +1727,7 @@ function renderUsers(){
           <select onchange="updateUser(${i},'role',this.value)" style="width:auto;padding:4px 8px;font-size:12px">
             <option ${u.role==='editor'?'selected':''} value="editor">Editor</option>
             <option ${u.role==='contributor'?'selected':''} value="contributor">Contributor</option>
+            <option ${u.role==='superadmin'?'selected':''} value="superadmin">Superadmin</option>
           </select>
           <button class="btn-ghost" style="font-size:11px;padding:5px 10px" onclick="toggleUser(${i})">${u.active?'Suspend':'Activate'}</button>
           <button class="btn-danger" onclick="deleteUser(${i})">Remove</button>
@@ -1744,7 +1745,7 @@ function renderUsers(){
       </div>
       <div class="grid2">
         <div class="field"><label>Temporary Password</label><input type="password" id="nu-pw" placeholder="They should change this"><div style="font-size:11px;color:#7a7a72;margin-top:4px">Share this with them securely. They cannot change it themselves in the CMS.</div></div>
-        <div class="field"><label>Role</label><select id="nu-role" style="width:100%"><option value="contributor">Contributor</option><option value="editor">Editor</option></select></div>
+        <div class="field"><label>Role</label><select id="nu-role" style="width:100%"><option value="contributor">Contributor</option><option value="editor">Editor</option><option value="superadmin">Superadmin</option></select></div>
       </div>
       <button class="btn" onclick="addUser()">Add Team Member</button>
       <div id="nu-err" style="display:none;margin-top:.75rem" class="err-box"></div>
@@ -1805,7 +1806,7 @@ async function addUser(){
   const errEl=document.getElementById('nu-err');
   if(!name||!email||!pw){errEl.textContent='Please fill in all fields.';errEl.style.display='block';return;}
   if(pw.length<6){errEl.textContent='Password must be at least 6 characters.';errEl.style.display='block';return;}
-  if(sha256(email)===EH){errEl.textContent='That email is already in use.';errEl.style.display='block';return;}
+  if(role==='superadmin'&&pw.length<12){errEl.textContent='Superadmin passwords must be at least 12 characters.';errEl.style.display='block';return;}
   USERS=await loadUsers();
   if(USERS.find(u=>u.email===email)){errEl.textContent='A user with that email already exists.';errEl.style.display='block';return;}
   const newUser={id:'u-'+Date.now(),name,email,emailHash:sha256(email),pwHash:sha256(pw),role,active:true};
