@@ -219,7 +219,7 @@ async function main() {
       path: "counterweight/biosecurity",
       title: "Biosecurity · Counterweight — The Public Innovation Institute",
       description:
-        "Counterweight’s biosecurity work prepares state, local and small-island governments for biological risk as AI changes the life sciences, through simulations with officials, expert interviews and practical playbooks.",
+        "Counterweight’s biosecurity work prepares state and local governments, especially in resource-constrained jurisdictions, for biological risk as AI changes the life sciences, through simulations with officials, expert interviews and practical playbooks.",
     },
     {
       path: "conference",
