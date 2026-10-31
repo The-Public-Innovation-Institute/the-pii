@@ -216,6 +216,12 @@ async function main() {
         "A PII initiative building the capacity of state and local government to keep checks on concentrated power working as AI enters government.",
     },
     {
+      path: "counterweight/biosecurity",
+      title: "Biosecurity · Counterweight — The Public Innovation Institute",
+      description:
+        "Counterweight’s biosecurity work prepares state, local and small-island governments for biological risk as AI changes the life sciences, through simulations with officials, expert interviews and practical playbooks.",
+    },
+    {
       path: "conference",
       title: "Change.Enabled — The Public Innovation Institute",
       description:
@@ -270,6 +276,7 @@ function writeSitemap(data) {
     { loc: "/cail", freq: "weekly", priority: "0.9" },
     { loc: "/hyperion", freq: "monthly", priority: "0.7" },
     { loc: "/counterweight", freq: "monthly", priority: "0.8" },
+    { loc: "/counterweight/biosecurity", freq: "monthly", priority: "0.7" },
     { loc: "/conference", freq: "monthly", priority: "0.7" },
     { loc: "/about", freq: "monthly", priority: "0.6" },
     { loc: "/contact", freq: "yearly", priority: "0.5" },

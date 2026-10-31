@@ -45,7 +45,7 @@ jobs:
         run: |
           git config user.name "pii-static-pages-bot"
           git config user.email "actions@github.com"
-          git add research publications programs cail hyperion conference about team opportunities contact sitemap.xml
+          git add research publications programs cail hyperion counterweight conference about team opportunities contact sitemap.xml
           if git diff --cached --quiet; then
             echo "No changes to commit."
           else
