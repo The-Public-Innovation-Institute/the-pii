@@ -1384,103 +1384,180 @@ function CwArtBiosecurity(){
   );
 }
 
-function CounterweightPage({data,setPage}){
-  const hero=(data.pageHeroes||{}).counterweight||{};
-  const p={fontSize:15,color:"#3a3a36",lineHeight:1.85,marginBottom:"1.2rem"};
-  const h2s={fontFamily:SERIF,fontSize:"clamp(1.6rem,2.8vw,2.3rem)",fontWeight:700,color:INK,lineHeight:1.25,marginBottom:"1.5rem"};
-  const audiences=[
-    {art:CwArtGovernment,title:"Government teams",body:"The technical and policy teams inside city and state government who are making decisions about AI now: in procurement, oversight, election administration and digital services."},
-    {art:CwArtResearchers,title:"Early-career professionals and researchers",body:"People from policy, economics, law, philosophy and beyond who want to work on how AI could concentrate power, and what public institutions can do about it."},
-    {art:CwArtStudents,title:"Students",body:"Students who are just starting to think about where they can contribute, and who want to learn alongside the people doing the work."}
-  ];
-  const focusAreas=[
-    {page:"counterweight/biosecurity",art:CwArtBiosecurity,title:"Biosecurity",body:"AI is changing what is possible in the life sciences, and with it the biological risks that state, local and small-island governments may one day have to face. We work with officials to rehearse those decisions before they are needed."}
-  ];
-  const activities=[
-    {title:"Government engagements",body:"Ongoing partnerships with a small number of state and local teams, each built around a specific problem they face as AI enters their work. A spring convening sets the year’s priorities, and a fall convening reviews what happened and what we learned."},
-    {title:"Fellowship",body:"Early-career professionals and researchers will spend a semester or a year in Cambridge, working on problems drawn directly from our government partnerships."},
-    {title:"Student programming",body:"A summer program focused on power concentration and state capacity, building on the education programs PII has run since 2021."},
-    {title:"Seminars and workshops",body:"Technical workshops for government teams, and seminars led by invited experts and by our fellows."},
-    {title:"Cross-disciplinary convenings",body:"Regular gatherings that bring economists, legal scholars, philosophers and practitioners together around shared questions."},
-    {title:"A shared library",body:"A home for the research, playbooks and lessons the initiative produces, so others can build on them."}
-  ];
-  return h("div",{style:{fontFamily:SANS}},
-    h(CounterweightHero,{title:hero.title}),
+// ── Counterweight content defaults ───────────────────────────────────────────
+// Counterweight and Biosecurity page copy is edited in the CMS (Counterweight
+// tab) and stored at data.counterweight. These defaults are what shows until
+// something is saved there, and fill any field the CMS leaves empty.
+// KEEP IN SYNC with CW_DEFAULTS in cms.html.
+const CW_DEFAULTS={
+  signupsOpen:true,
+  main:{
+    heroSubtitle:"A Public Innovation Institute initiative on AI, power and the public institutions that check it",
+    whyHeading:"The checks on concentrated power are spread across thousands of local institutions. As AI enters government, they need to hold.",
+    whyParas:[
+      "Most of the conversation about the risks of advanced AI is aimed at the frontier: the companies building the most capable systems and the national governments that might regulate them. That focus makes sense, but it misses something. Many of the tools that could be used to entrench power, from surveillance and policing systems to the infrastructure that runs elections, are bought and deployed by state and local governments. Many of the most important checks on concentrated power sit there too, spread across thousands of election offices, oversight bodies, procurement teams and city councils.",
+      "Those checks are easy to overlook precisely because everyone is looking at national capitals. As AI moves into government, they can erode quietly, through a procurement decision made without the right questions, a growing dependence on a handful of vendors, or an oversight body that lacks the technical capacity to see what is changing. Counterweight exists to help them hold."
+    ],
+    focusBox:"AI-enabled concentration of power, and the capacity of state and local government to manage it.",
+    focusBoxNote:"We look at how AI changes the way public institutions buy technology, oversee its use, run elections and stay independent of the systems they depend on. Our aim is not to strengthen any particular government or party, but the institutions that keep power accountable, whoever holds it.",
+    focusAreasHeading:"Where the stakes for local institutions are already clear.",
+    focusAreasIntro:"Counterweight’s work is organised around focus areas, each one a place where AI is changing what state and local governments have to be ready for.",
+    audiencesHeading:"People who rarely share a room, working on the same problem.",
+    audiencesIntro:"We believe this problem needs all of them, and that each sees something the others miss.",
+    audiences:[
+      {title:"Government teams",body:"The technical and policy teams inside city and state government who are making decisions about AI now: in procurement, oversight, election administration and digital services."},
+      {title:"Early-career professionals and researchers",body:"People from policy, economics, law, philosophy and beyond who want to work on how AI could concentrate power, and what public institutions can do about it."},
+      {title:"Students",body:"Students who are just starting to think about where they can contribute, and who want to learn alongside the people doing the work."}
+    ],
+    buildingIntro:"Each part feeds the next: the problems our government partners face shape what fellows research, what students learn and what we discuss when we convene.",
+    activities:[
+      {title:"Government engagements",body:"Ongoing partnerships with a small number of state and local teams, each built around a specific problem they face as AI enters their work. A spring convening sets the year’s priorities, and a fall convening reviews what happened and what we learned."},
+      {title:"Fellowship",body:"Early-career professionals and researchers will spend a semester or a year in Cambridge, working on problems drawn directly from our government partnerships."},
+      {title:"Student programming",body:"A summer program focused on power concentration and state capacity, building on the education programs PII has run since 2021."},
+      {title:"Seminars and workshops",body:"Technical workshops for government teams, and seminars led by invited experts and by our fellows."},
+      {title:"Cross-disciplinary convenings",body:"Regular gatherings that bring economists, legal scholars, philosophers and practitioners together around shared questions."},
+      {title:"A shared library",body:"A home for the research, playbooks and lessons the initiative produces, so others can build on them."}
+    ],
+    buildingOutro:"Over time, we hope to take Counterweight beyond Cambridge, wherever the work proves its value.",
+    involvedHeading:"Help shape this work from the start.",
+    involvedBody:"We are looking for government teams, researchers and practitioners who want to be part of Counterweight as it takes shape. If that’s you, we’d like to hear from you."
+  },
+  focusAreas:[
+    {page:"counterweight/biosecurity",title:"Biosecurity",body:"AI is changing what is possible in the life sciences, and with it the biological risks that state, local and small-island governments may one day have to face. We work with officials to rehearse those decisions before they are needed."}
+  ],
+  biosecurity:{
+    heroSubtitle:"Preparing state, local and small-island governments for biological risk as AI changes the life sciences",
+    whyHeading:"When a biological threat emerges, many of the first decisions are made far from national capitals.",
+    whyParas:[
+      "AI is beginning to change what is possible in the life sciences. The same tools that can speed up research and drug discovery could also lower the barriers for someone who wants to cause harm, and the companies building the most capable models now publish safeguards aimed specifically at biological misuse. Most of the policy conversation, understandably, is about those models and the national governments that oversee them.",
+      "But when something goes wrong, much of the response falls to state and city health departments, to emergency managers, and in small island states to a handful of officials who often carry several roles at once. These are the institutions with the least room to rehearse, and the places where a slow or poorly coordinated decision can cost the most.",
+      "Counterweight’s biosecurity work is aimed at them. We want the officials who would face these decisions to have worked through them before, with the right people around the table, and to leave with something they can use."
+    ],
+    focusBox:"The capacity of state, local and small-island governments to anticipate and respond to AI-enabled biological risk.",
+    focusBoxNote:"Our scenarios are built around policy, coordination and response decisions. We do not develop or publish technical information that could help someone cause harm.",
+    workIntro:"The simulations sit at the centre of this work, and everything else either feeds into them or carries what they teach us further.",
+    work:[
+      {title:"Simulations with government officials",body:"A series of simulations that bring officials together with public health, biosecurity and AI experts to work through how a biological event might unfold and where their institutions would come under strain. Where it helps, we invite biotech and biosecurity firms into the room, so officials hear what industry can offer and firms see the policy constraints their solutions will meet. The first simulation is planned for spring 2027 in Cambridge, and a second in the fall will build on what the first reveals."},
+      {title:"Conversations with experts",body:"Interviews with people working across biosecurity, public health, emergency management and AI governance, published through Counterweight so that what they know reaches the officials who need it."},
+      {title:"Briefs and playbooks",body:"What we learn in each simulation becomes practical material that governments can use once the room has emptied: briefs on what we found, and playbooks for the decisions that proved hardest."},
+      {title:"Learning that follows the work",body:"Findings from the officials’ simulations go on to shape what we teach students and early-career professionals. The order matters to us, because it means what we teach reflects the decisions governments actually face."}
+    ],
+    whoHeading:"The people who would be in the room if it happened for real.",
+    who:[
+      {title:"Government officials",body:"People in city, state and national government, and especially in small island states and smaller US cities, whose institutions would carry the first response to a biological event."},
+      {title:"Public health and biosecurity practitioners",body:"Epidemiologists, emergency managers, laboratory leaders and biosecurity specialists who can bring realism to the scenarios and help officials see what is coming."},
+      {title:"Industry and research",body:"Biotech and biosecurity firms, and researchers in AI governance, who want to understand the institutional realities their work will meet."}
+    ],
+    involvedHeading:"Take part in the simulations.",
+    involvedBody:"We are looking for people in government, public health and biosecurity who want to take part, whether as players, as expert voices within the scenarios, or in the conversations and events around them. Tell us a little about yourself and we’ll be in touch as plans firm up.",
+    closedNote:"Sign-ups are closed for now. If you’d like to be involved, get in touch and we’ll let you know when they reopen.",
+    thankYou:"Thank you for signing up. We’ll be in touch as plans for the simulations take shape."
+  }
+};
+// Field-by-field merge so a partly filled CMS entry never blanks the page.
+function cwMerge(def,val){
+  if(Array.isArray(def)) return Array.isArray(val)&&val.length?val:def;
+  if(def&&typeof def==="object"){const o={};Object.keys(def).forEach(k=>{o[k]=cwMerge(def[k],val?val[k]:undefined);});return o;}
+  if(typeof def==="boolean") return typeof val==="boolean"?val:def;
+  return (typeof val==="string"&&val.trim())?val:def;
+}
+function cwContent(data){return cwMerge(CW_DEFAULTS,(data||{}).counterweight||{});}
 
-    // Why this matters
-    h("section",{style:{padding:"4.5rem 2.5rem",borderBottom:`1px solid ${RULE}`}},
-      h("div",{className:"pii-g21",style:{gap:"3rem",alignItems:"start"}},
-        h("div",null,
-          h("div",{style:{...tag,marginBottom:"1.2rem"}},"Why Counterweight"),
-          h("h2",{style:h2s},"The checks on concentrated power are spread across thousands of local institutions. As AI enters government, they need to hold."),
-          h("p",{style:p},"Most of the conversation about the risks of advanced AI is aimed at the frontier: the companies building the most capable systems and the national governments that might regulate them. That focus makes sense, but it misses something. Many of the tools that could be used to entrench power, from surveillance and policing systems to the infrastructure that runs elections, are bought and deployed by state and local governments. Many of the most important checks on concentrated power sit there too, spread across thousands of election offices, oversight bodies, procurement teams and city councils."),
-          h("p",{style:{...p,marginBottom:0}},"Those checks are easy to overlook precisely because everyone is looking at national capitals. As AI moves into government, they can erode quietly, through a procurement decision made without the right questions, a growing dependence on a handful of vendors, or an oversight body that lacks the technical capacity to see what is changing. Counterweight exists to help them hold.")
-        ),
-        h("div",{style:{background:INK,padding:"2rem",color:"#fff"}},
-          h("div",{style:{fontSize:10,letterSpacing:"0.12em",textTransform:"uppercase",color:ACCENT,fontWeight:500,marginBottom:"1rem"}},"Our focus"),
-          h("p",{style:{fontFamily:SERIF,fontSize:"1.15rem",lineHeight:1.65,color:"rgba(255,255,255,0.9)",marginBottom:"1.2rem"}},"AI-enabled concentration of power, and the capacity of state and local government to manage it."),
-          h("p",{style:{fontSize:13,lineHeight:1.75,color:"rgba(255,255,255,0.6)"}},"We look at how AI changes the way public institutions buy technology, oversee its use, run elections and stay independent of the systems they depend on. Our aim is not to strengthen any particular government or party, but the institutions that keep power accountable, whoever holds it.")
-        )
+// Section building blocks shared by the Counterweight pages.
+const cwP={fontSize:15,color:"#3a3a36",lineHeight:1.85,marginBottom:"1.2rem"};
+const cwH2={fontFamily:SERIF,fontSize:"clamp(1.6rem,2.8vw,2.3rem)",fontWeight:700,color:INK,lineHeight:1.25,marginBottom:"1.5rem"};
+function CwWhy({label,heading,paras,box,boxNote}){
+  return h("section",{style:{padding:"4.5rem 2.5rem",borderBottom:`1px solid ${RULE}`}},
+    h("div",{className:"pii-g21",style:{gap:"3rem",alignItems:"start"}},
+      h("div",null,
+        h("div",{style:{...tag,marginBottom:"1.2rem"}},label),
+        h("h2",{style:cwH2},heading),
+        paras.map((t,i)=>h("p",{key:i,style:{...cwP,marginBottom:i===paras.length-1?0:"1.2rem"}},t))
+      ),
+      h("div",{style:{background:INK,padding:"2rem",color:"#fff"}},
+        h("div",{style:{fontSize:10,letterSpacing:"0.12em",textTransform:"uppercase",color:ACCENT,fontWeight:500,marginBottom:"1rem"}},"Our focus"),
+        h("p",{style:{fontFamily:SERIF,fontSize:"1.15rem",lineHeight:1.65,color:"rgba(255,255,255,0.9)",marginBottom:"1.2rem"}},box),
+        h("p",{style:{fontSize:13,lineHeight:1.75,color:"rgba(255,255,255,0.6)"}},boxNote)
       )
+    )
+  );
+}
+function CwNumberedList({label,intro,items,outro}){
+  return h("section",{style:{padding:"4.5rem 0",borderBottom:`1px solid ${RULE}`}},
+    h("div",{style:{padding:"0 2.5rem"}},
+      h("div",{style:{...tag,marginBottom:"1.2rem"}},label),
+      h("p",{style:{...cwP,maxWidth:720,marginBottom:"2rem"}},intro)
     ),
-
-    // Focus areas — each links to its own page
-    h("section",{style:{padding:"4.5rem 2.5rem",borderBottom:`1px solid ${RULE}`}},
-      h("div",{style:{...tag,marginBottom:"1rem"}},"Focus areas"),
-      h("h2",{style:{...h2s,maxWidth:720}},"Where the stakes for local institutions are already clear."),
-      h("p",{style:{...p,maxWidth:680,marginBottom:"2.5rem"}},"Counterweight’s work is organised around focus areas, each one a place where AI is changing what state and local governments have to be ready for."),
-      focusAreas.map(f=>h("a",{key:f.page,href:"/"+f.page,onClick:e=>{e.preventDefault();setPage(f.page);},className:"pii-g12",style:{gap:0,alignItems:"center",textDecoration:"none",color:"inherit",border:`1px solid ${RULE}`,background:"#fff",cursor:"pointer"}},
-        h("div",{style:{overflow:"hidden"}},h(f.art)),
-        h("div",{style:{padding:"1.75rem 2rem"}},
-          h("div",{style:{fontFamily:MONO,fontSize:11,color:ACCENT,marginBottom:"0.6rem"}},"Focus area"),
-          h("div",{style:{fontFamily:SERIF,fontSize:"1.6rem",fontWeight:700,color:INK,marginBottom:"0.7rem",lineHeight:1.25}},f.title),
-          h("div",{style:{fontSize:14,color:"#3a3a36",lineHeight:1.8,marginBottom:"1.2rem",maxWidth:560}},f.body),
-          h("span",{style:{fontSize:12,letterSpacing:"0.08em",textTransform:"uppercase",fontWeight:500,color:INK,borderBottom:`1px solid ${ACCENT}`,paddingBottom:2}},"Explore the work →")
+    h("div",{style:{border:`3px solid ${INK}`}},
+      items.map((item,i)=>h("div",{key:i,style:{display:"flex",gap:"1.5rem",alignItems:"flex-start",padding:"1.4rem 2.5rem",borderBottom:i<items.length-1?`1px solid ${INK}`:"none"}},
+        h("div",{style:{fontFamily:MONO,fontSize:11,color:ACCENT,minWidth:24,paddingTop:3}},String(i+1).padStart(2,"0")),
+        h("div",{style:{maxWidth:780}},
+          h("div",{style:{fontFamily:SERIF,fontSize:"1.1rem",fontWeight:700,color:INK,marginBottom:"0.35rem"}},item.title),
+          h("div",{style:{fontSize:13.5,color:"#3a3a36",lineHeight:1.75}},item.body)
         )
       ))
+    ),
+    outro&&h("div",{style:{padding:"0 2.5rem"}},h("p",{style:{...cwP,marginTop:"2rem",marginBottom:0}},outro))
+  );
+}
+
+const CW_AUDIENCE_ART=[CwArtGovernment,CwArtResearchers,CwArtStudents];
+const CW_FOCUS_ART={"counterweight/biosecurity":CwArtBiosecurity};
+
+function CounterweightPage({data,setPage}){
+  const hero=(data.pageHeroes||{}).counterweight||{};
+  const cw=cwContent(data),m=cw.main;
+  return h("div",{style:{fontFamily:SANS}},
+    h(CounterweightHero,{title:hero.title,subtitle:m.heroSubtitle}),
+    h(CwWhy,{label:"Why Counterweight",heading:m.whyHeading,paras:m.whyParas,box:m.focusBox,boxNote:m.focusBoxNote}),
+
+    // Focus areas — each links to its own page
+    cw.focusAreas.length>0&&h("section",{style:{padding:"4.5rem 2.5rem",borderBottom:`1px solid ${RULE}`}},
+      h("div",{style:{...tag,marginBottom:"1rem"}},"Focus areas"),
+      h("h2",{style:{...cwH2,maxWidth:720}},m.focusAreasHeading),
+      h("p",{style:{...cwP,maxWidth:680,marginBottom:"2.5rem"}},m.focusAreasIntro),
+      h("div",{style:{display:"grid",gap:"1.5rem"}},
+        cw.focusAreas.map(f=>{
+          const Art=CW_FOCUS_ART[f.page]||CwArtGovernment;
+          return h("a",{key:f.page+f.title,href:"/"+f.page,onClick:e=>{e.preventDefault();setPage(f.page);},className:"pii-g12",style:{gap:0,alignItems:"center",textDecoration:"none",color:"inherit",border:`1px solid ${RULE}`,background:"#fff",cursor:"pointer"}},
+            h("div",{style:{overflow:"hidden"}},h(Art)),
+            h("div",{style:{padding:"1.75rem 2rem"}},
+              h("div",{style:{fontFamily:MONO,fontSize:11,color:ACCENT,marginBottom:"0.6rem"}},"Focus area"),
+              h("div",{style:{fontFamily:SERIF,fontSize:"1.6rem",fontWeight:700,color:INK,marginBottom:"0.7rem",lineHeight:1.25}},f.title),
+              h("div",{style:{fontSize:14,color:"#3a3a36",lineHeight:1.8,marginBottom:"1.2rem",maxWidth:560}},f.body),
+              h("span",{style:{fontSize:12,letterSpacing:"0.08em",textTransform:"uppercase",fontWeight:500,color:INK,borderBottom:`1px solid ${ACCENT}`,paddingBottom:2}},"Explore the work →")
+            )
+          );
+        })
+      )
     ),
 
     // Who it's for
     h("section",{style:{padding:"4.5rem 2.5rem",background:WARM,borderBottom:`1px solid ${RULE}`}},
       h("div",{style:{...tag,marginBottom:"1rem"}},"Who it’s for"),
-      h("h2",{style:{...h2s,maxWidth:720}},"People who rarely share a room, working on the same problem."),
-      h("p",{style:{...p,maxWidth:680,marginBottom:"2.5rem"}},"We believe this problem needs all of them, and that each sees something the others miss."),
+      h("h2",{style:{...cwH2,maxWidth:720}},m.audiencesHeading),
+      h("p",{style:{...cwP,maxWidth:680,marginBottom:"2.5rem"}},m.audiencesIntro),
       h("div",{className:"pii-g3",style:{gap:"1.75rem"}},
-        audiences.map((a,i)=>h("div",{key:a.title},
-          h("div",{style:{border:`1px solid ${RULE}`,overflow:"hidden",marginBottom:"1.25rem"}},h(a.art)),
-          h("div",{style:{fontFamily:MONO,fontSize:11,color:ACCENT,marginBottom:"0.6rem"}},`0${i+1}`),
-          h("div",{style:{fontFamily:SERIF,fontSize:"1.25rem",fontWeight:700,color:INK,marginBottom:"0.6rem",lineHeight:1.3}},a.title),
-          h("div",{style:{fontSize:13.5,color:"#3a3a36",lineHeight:1.75}},a.body)
-        ))
+        m.audiences.map((a,i)=>{
+          const Art=CW_AUDIENCE_ART[i%CW_AUDIENCE_ART.length];
+          return h("div",{key:i},
+            h("div",{style:{border:`1px solid ${RULE}`,overflow:"hidden",marginBottom:"1.25rem"}},h(Art)),
+            h("div",{style:{fontFamily:MONO,fontSize:11,color:ACCENT,marginBottom:"0.6rem"}},String(i+1).padStart(2,"0")),
+            h("div",{style:{fontFamily:SERIF,fontSize:"1.25rem",fontWeight:700,color:INK,marginBottom:"0.6rem",lineHeight:1.3}},a.title),
+            h("div",{style:{fontSize:13.5,color:"#3a3a36",lineHeight:1.75}},a.body)
+          );
+        })
       )
     ),
 
-    // What we're building — the list runs edge to edge, with the rows' text aligned to the page margin
-    h("section",{style:{padding:"4.5rem 0",borderBottom:`1px solid ${RULE}`}},
-      h("div",{style:{padding:"0 2.5rem"}},
-        h("div",{style:{...tag,marginBottom:"1.2rem"}},"What we’re building"),
-        h("p",{style:{...p,maxWidth:720,marginBottom:"2rem"}},"Each part feeds the next: the problems our government partners face shape what fellows research, what students learn and what we discuss when we convene.")
-      ),
-      h("div",{style:{border:`3px solid ${INK}`}},
-        activities.map((item,i)=>h("div",{key:item.title,style:{display:"flex",gap:"1.5rem",alignItems:"flex-start",padding:"1.4rem 2.5rem",borderBottom:i<activities.length-1?`1px solid ${INK}`:"none"}},
-          h("div",{style:{fontFamily:MONO,fontSize:11,color:ACCENT,minWidth:24,paddingTop:3}},`0${i+1}`),
-          h("div",{style:{maxWidth:780}},
-            h("div",{style:{fontFamily:SERIF,fontSize:"1.1rem",fontWeight:700,color:INK,marginBottom:"0.35rem"}},item.title),
-            h("div",{style:{fontSize:13.5,color:"#3a3a36",lineHeight:1.75}},item.body)
-          )
-        ))
-      ),
-      h("div",{style:{padding:"0 2.5rem"}},
-        h("p",{style:{...p,marginTop:"2rem",marginBottom:0}},"Over time, we hope to take Counterweight beyond Cambridge, wherever the work proves its value.")
-      )
-    ),
+    h(CwNumberedList,{label:"What we’re building",intro:m.buildingIntro,items:m.activities,outro:m.buildingOutro}),
 
     // Get involved
     h("section",{style:{padding:"4.5rem 2.5rem",borderBottom:`1px solid ${RULE}`}},
       h("div",{style:{maxWidth:640}},
         h("div",{style:{...tag,marginBottom:"1rem"}},"Get involved"),
-        h("h2",{style:h2s},"Help shape this work from the start."),
-        h("p",{style:{...p,marginBottom:"2rem"}},"We are looking for government teams, researchers and practitioners who want to be part of Counterweight as it takes shape. If that’s you, we’d like to hear from you."),
+        h("h2",{style:cwH2},m.involvedHeading),
+        h("p",{style:{...cwP,marginBottom:"2rem"}},m.involvedBody),
         h("button",{onClick:()=>setPage("contact"),style:btn()},"Get in touch")
       )
     )
@@ -1488,81 +1565,123 @@ function CounterweightPage({data,setPage}){
 }
 
 // ── Counterweight · Biosecurity ───────────────────────────────────────────────
-function CounterweightBiosecurityPage({setPage}){
-  const p={fontSize:15,color:"#3a3a36",lineHeight:1.85,marginBottom:"1.2rem"};
-  const h2s={fontFamily:SERIF,fontSize:"clamp(1.6rem,2.8vw,2.3rem)",fontWeight:700,color:INK,lineHeight:1.25,marginBottom:"1.5rem"};
-  const work=[
-    {title:"Simulations with government officials",body:"A series of simulations that bring officials together with public health, biosecurity and AI experts to work through how a biological event might unfold and where their institutions would come under strain. Where it helps, we invite biotech and biosecurity firms into the room, so officials hear what industry can offer and firms see the policy constraints their solutions will meet. The first simulation is planned for spring 2027 in Cambridge, and a second in the fall will build on what the first reveals."},
-    {title:"Conversations with experts",body:"Interviews with people working across biosecurity, public health, emergency management and AI governance, published through Counterweight so that what they know reaches the officials who need it."},
-    {title:"Briefs and playbooks",body:"What we learn in each simulation becomes practical material that governments can use once the room has emptied: briefs on what we found, and playbooks for the decisions that proved hardest."},
-    {title:"Learning that follows the work",body:"Findings from the officials’ simulations go on to shape what we teach students and early-career professionals. The order matters to us, because it means what we teach reflects the decisions governments actually face."}
-  ];
-  const who=[
-    {title:"Government officials",body:"People in city, state and national government, and especially in small island states and smaller US cities, whose institutions would carry the first response to a biological event."},
-    {title:"Public health and biosecurity practitioners",body:"Epidemiologists, emergency managers, laboratory leaders and biosecurity specialists who can bring realism to the scenarios and help officials see what is coming."},
-    {title:"Industry and research",body:"Biotech and biosecurity firms, and researchers in AI governance, who want to understand the institutional realities their work will meet."}
-  ];
-  return h("div",{style:{fontFamily:SANS}},
-    h(CounterweightHero,{title:"Biosecurity",subtitle:"Preparing state, local and small-island governments for biological risk as AI changes the life sciences",eyebrow:"← Counterweight · Focus area",onEyebrow:()=>setPage("counterweight")}),
+// Sign-ups go to pii_counterweight_signups through the public
+// pii_cw_submit_signup RPC (validated server-side, insert-only), and are read
+// in the CMS's Counterweight tab.
+const CW_SECTORS=[["government","Government"],["practice","Public health or biosecurity practice"],["industry","Industry"],["research","Research or academia"],["other","Other"]];
+const CW_GOV_LEVELS=[["local","City or local"],["state","State, provincial or territorial"],["national","National"],["island","Small island state"],["intl","International or multilateral"]];
+const CW_PARTICIPATION=[["player","Play in a simulation"],["expert","Contribute as an expert voice"],["events","Join conversations and events"]];
 
-    // Why biosecurity
-    h("section",{style:{padding:"4.5rem 2.5rem",borderBottom:`1px solid ${RULE}`}},
-      h("div",{className:"pii-g21",style:{gap:"3rem",alignItems:"start"}},
-        h("div",null,
-          h("div",{style:{...tag,marginBottom:"1.2rem"}},"Why biosecurity"),
-          h("h2",{style:h2s},"When a biological threat emerges, many of the first decisions are made far from national capitals."),
-          h("p",{style:p},"AI is beginning to change what is possible in the life sciences. The same tools that can speed up research and drug discovery could also lower the barriers for someone who wants to cause harm, and the companies building the most capable models now publish safeguards aimed specifically at biological misuse. Most of the policy conversation, understandably, is about those models and the national governments that oversee them."),
-          h("p",{style:p},"But when something goes wrong, much of the response falls to state and city health departments, to emergency managers, and in small island states to a handful of officials who often carry several roles at once. These are the institutions with the least room to rehearse, and the places where a slow or poorly coordinated decision can cost the most."),
-          h("p",{style:{...p,marginBottom:0}},"Counterweight’s biosecurity work is aimed at them. We want the officials who would face these decisions to have worked through them before, with the right people around the table, and to leave with something they can use.")
-        ),
-        h("div",{style:{background:INK,padding:"2rem",color:"#fff"}},
-          h("div",{style:{fontSize:10,letterSpacing:"0.12em",textTransform:"uppercase",color:ACCENT,fontWeight:500,marginBottom:"1rem"}},"Our focus"),
-          h("p",{style:{fontFamily:SERIF,fontSize:"1.15rem",lineHeight:1.65,color:"rgba(255,255,255,0.9)",marginBottom:"1.2rem"}},"The capacity of state, local and small-island governments to anticipate and respond to AI-enabled biological risk."),
-          h("p",{style:{fontSize:13,lineHeight:1.75,color:"rgba(255,255,255,0.6)"}},"Our scenarios are built around policy, coordination and response decisions. We do not develop or publish technical information that could help someone cause harm.")
-        )
-      )
+function CwSignupForm({cw,data,setPage}){
+  const b=cw.biosecurity;
+  const blank={name:"",email:"",org:"",role:"",sector:"",govLevel:"",country:"",participation:[],note:"",consent:false,website:""};
+  const [form,setForm]=useState(blank);
+  const [sent,setSent]=useState(false);
+  const [sending,setSending]=useState(false);
+  const [error,setError]=useState("");
+  const set=(k,v)=>setForm(f=>({...f,[k]:v}));
+  const toggle=v=>setForm(f=>({...f,participation:f.participation.includes(v)?f.participation.filter(x=>x!==v):[...f.participation,v]}));
+  const label={display:"block",fontSize:11,fontWeight:500,letterSpacing:"0.06em",textTransform:"uppercase",color:"#3a3a36",marginBottom:"0.5rem"};
+  const input={width:"100%",padding:"10px 12px",border:`1px solid ${RULE}`,background:"#fff",fontFamily:SANS,fontSize:14,color:INK,outline:"none",boxSizing:"border-box"};
+  const field=(key,text,props={})=>h("div",{style:{marginBottom:"1.2rem"}},
+    h("label",{htmlFor:"cw-"+key,style:label},text),
+    h("input",{id:"cw-"+key,value:form[key],onChange:e=>set(key,e.target.value),style:input,...props})
+  );
+  const select=(key,text,options,req)=>h("div",{style:{marginBottom:"1.2rem"}},
+    h("label",{htmlFor:"cw-"+key,style:label},text),
+    h("select",{id:"cw-"+key,value:form[key],onChange:e=>set(key,e.target.value),style:input},
+      h("option",{value:""},req?"Select one":"Select one (optional)"),
+      options.map(([v,t])=>h("option",{key:v,value:v},t))
+    )
+  );
+  const contactEmail=(data.site||{}).email||"info@thepii.org";
+  function submit(e){
+    e&&e.preventDefault();
+    if(form.website){setSent(true);return;} // honeypot
+    if(!form.name.trim()||!form.email.trim()||!form.sector){setError("Please add your name, email and the sector you work in.");return;}
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())){setError("Please check your email address.");return;}
+    if(!form.consent){setError("Please confirm we can store your details and contact you.");return;}
+    setError("");setSending(true);
+    sbClient.rpc("pii_cw_submit_signup",{
+      p_track:"biosecurity",p_name:form.name,p_email:form.email,p_org:form.org,p_role:form.role,
+      p_sector:form.sector,p_gov_level:form.sector==="government"?form.govLevel:"",p_country:form.country,
+      p_participation:form.participation,p_note:form.note,p_consent:form.consent
+    }).then(res=>{
+      setSending(false);
+      if(res.error){setError("Something went wrong saving your sign-up. Please email us at "+contactEmail+".");return;}
+      setSent(true);
+    }).catch(()=>{setSending(false);setError("Something went wrong saving your sign-up. Please email us at "+contactEmail+".");});
+  }
+  if(sent) return h("div",{role:"status",style:{padding:"2.5rem",background:WARM,border:`1px solid ${RULE}`}},
+    h("div",{style:{fontFamily:SERIF,fontSize:"1.6rem",fontWeight:700,color:INK,marginBottom:"0.8rem"}},"You’re signed up."),
+    h("div",{style:{fontSize:14,color:"#3a3a36",lineHeight:1.8}},b.thankYou)
+  );
+  if(!cw.signupsOpen) return h("div",null,
+    h("p",{style:{...cwP,marginBottom:"1.5rem"}},b.closedNote),
+    h("button",{onClick:()=>setPage("contact"),style:btn()},"Get in touch")
+  );
+  return h("form",{onSubmit:submit,noValidate:true},
+    error&&h("div",{role:"alert",style:{padding:"0.9rem 1.1rem",marginBottom:"1.2rem",background:"#fdf1ee",border:"1px solid #e8b8a8",color:"#8a3620",fontSize:13,lineHeight:1.6}},error),
+    h("div",{className:"pii-g2",style:{gap:"0 1.2rem"}},
+      field("name","Full name *",{autoComplete:"name"}),
+      field("email","Email *",{type:"email",autoComplete:"email"}),
+      field("org","Organization",{autoComplete:"organization"}),
+      field("role","Role or title",{autoComplete:"organization-title"}),
+      select("sector","Sector *",CW_SECTORS,true),
+      form.sector==="government"?select("govLevel","Level of government",CW_GOV_LEVELS,false):field("country","Country",{autoComplete:"country-name"})
     ),
-
-    // What we do
-    h("section",{style:{padding:"4.5rem 0",borderBottom:`1px solid ${RULE}`}},
-      h("div",{style:{padding:"0 2.5rem"}},
-        h("div",{style:{...tag,marginBottom:"1.2rem"}},"What we do"),
-        h("p",{style:{...p,maxWidth:720,marginBottom:"2rem"}},"The simulations sit at the centre of this work, and everything else either feeds into them or carries what they teach us further.")
-      ),
-      h("div",{style:{border:`3px solid ${INK}`}},
-        work.map((item,i)=>h("div",{key:item.title,style:{display:"flex",gap:"1.5rem",alignItems:"flex-start",padding:"1.4rem 2.5rem",borderBottom:i<work.length-1?`1px solid ${INK}`:"none"}},
-          h("div",{style:{fontFamily:MONO,fontSize:11,color:ACCENT,minWidth:24,paddingTop:3}},`0${i+1}`),
-          h("div",{style:{maxWidth:780}},
-            h("div",{style:{fontFamily:SERIF,fontSize:"1.1rem",fontWeight:700,color:INK,marginBottom:"0.35rem"}},item.title),
-            h("div",{style:{fontSize:13.5,color:"#3a3a36",lineHeight:1.75}},item.body)
-          )
+    form.sector==="government"&&field("country","Country",{autoComplete:"country-name"}),
+    h("fieldset",{style:{border:"none",padding:0,margin:"0 0 1.2rem"}},
+      h("legend",{style:{...label,padding:0}},"How would you like to take part?"),
+      h("div",{style:{display:"flex",flexWrap:"wrap",gap:"0.6rem 1.5rem"}},
+        CW_PARTICIPATION.map(([v,t])=>h("label",{key:v,style:{display:"flex",alignItems:"center",gap:8,fontSize:14,color:INK,cursor:"pointer"}},
+          h("input",{type:"checkbox",checked:form.participation.includes(v),onChange:()=>toggle(v),style:{accentColor:ACCENT,width:16,height:16}}),t
         ))
       )
     ),
+    h("div",{style:{marginBottom:"1.2rem"}},
+      h("label",{htmlFor:"cw-note",style:label},"Anything you’d like us to know"),
+      h("textarea",{id:"cw-note",value:form.note,onChange:e=>set("note",e.target.value),rows:4,style:{...input,resize:"vertical"}})
+    ),
+    h("label",{style:{display:"flex",alignItems:"flex-start",gap:10,fontSize:13,color:"#3a3a36",lineHeight:1.6,marginBottom:"1.5rem",cursor:"pointer"}},
+      h("input",{type:"checkbox",checked:form.consent,onChange:e=>set("consent",e.target.checked),style:{accentColor:ACCENT,width:16,height:16,marginTop:3,flexShrink:0}}),
+      "I agree that The Public Innovation Institute may store these details and contact me about Counterweight’s biosecurity work."
+    ),
+    h("input",{type:"text",tabIndex:-1,autoComplete:"off",value:form.website,onChange:e=>set("website",e.target.value),style:{position:"absolute",left:"-9999px",width:1,height:1,opacity:0},"aria-hidden":"true"}),
+    h("button",{type:"submit",disabled:sending,style:btn({opacity:sending?0.6:1,cursor:sending?"default":"pointer"})},sending?"Sending…":"Sign up →")
+  );
+}
+
+function CounterweightBiosecurityPage({data,setPage}){
+  const cw=cwContent(data),b=cw.biosecurity;
+  return h("div",{style:{fontFamily:SANS}},
+    h(CounterweightHero,{title:"Biosecurity",subtitle:b.heroSubtitle,eyebrow:"← Counterweight · Focus area",onEyebrow:()=>setPage("counterweight")}),
+    h(CwWhy,{label:"Why biosecurity",heading:b.whyHeading,paras:b.whyParas,box:b.focusBox,boxNote:b.focusBoxNote}),
+    h(CwNumberedList,{label:"What we do",intro:b.workIntro,items:b.work}),
 
     // Who takes part
     h("section",{style:{padding:"4.5rem 2.5rem",background:WARM,borderBottom:`1px solid ${RULE}`}},
       h("div",{style:{...tag,marginBottom:"1rem"}},"Who takes part"),
-      h("h2",{style:{...h2s,maxWidth:720}},"The people who would be in the room if it happened for real."),
+      h("h2",{style:{...cwH2,maxWidth:720}},b.whoHeading),
       h("div",{className:"pii-g3",style:{gap:"1.75rem",marginTop:"1rem"}},
-        who.map((a,i)=>h("div",{key:a.title,style:{borderTop:`2px solid ${INK}`,paddingTop:"1.1rem"}},
-          h("div",{style:{fontFamily:MONO,fontSize:11,color:ACCENT,marginBottom:"0.6rem"}},`0${i+1}`),
+        b.who.map((a,i)=>h("div",{key:i,style:{borderTop:`2px solid ${INK}`,paddingTop:"1.1rem"}},
+          h("div",{style:{fontFamily:MONO,fontSize:11,color:ACCENT,marginBottom:"0.6rem"}},String(i+1).padStart(2,"0")),
           h("div",{style:{fontFamily:SERIF,fontSize:"1.25rem",fontWeight:700,color:INK,marginBottom:"0.6rem",lineHeight:1.3}},a.title),
           h("div",{style:{fontSize:13.5,color:"#3a3a36",lineHeight:1.75}},a.body)
         ))
       )
     ),
 
-    // Get involved
-    h("section",{style:{padding:"4.5rem 2.5rem",borderBottom:`1px solid ${RULE}`}},
-      h("div",{style:{maxWidth:640}},
-        h("div",{style:{...tag,marginBottom:"1rem"}},"Get involved"),
-        h("h2",{style:h2s},"Take part in the simulations."),
-        h("p",{style:{...p,marginBottom:"2rem"}},"We are looking for people in government, public health and biosecurity who want to take part, whether as players, as expert voices within the scenarios, or in the conversations and events around them. If that’s you, we’d like to hear from you."),
-        h("div",{style:{display:"flex",gap:"0.75rem",flexWrap:"wrap"}},
-          h("button",{onClick:()=>setPage("contact"),style:btn()},"Get in touch"),
+    // Sign up
+    h("section",{id:"sign-up",style:{padding:"4.5rem 2.5rem",borderBottom:`1px solid ${RULE}`}},
+      h("div",{className:"pii-g12",style:{gap:"3rem",alignItems:"start"}},
+        h("div",null,
+          h("div",{style:{...tag,marginBottom:"1rem"}},"Sign up"),
+          h("h2",{style:cwH2},b.involvedHeading),
+          h("p",{style:{...cwP,marginBottom:"1.5rem"}},b.involvedBody),
           h("button",{onClick:()=>setPage("counterweight"),style:btnGhost()},"About Counterweight")
-        )
+        ),
+        h(CwSignupForm,{cw,data,setPage})
       )
     )
   );
@@ -2122,7 +2241,7 @@ function App(){
     rootPage==="programs"&&subId&&h(ProgramDetail,{program,setPage:go}),
     rootPage==="hyperion"&&h(HyperionPage,{data}),
     rootPage==="counterweight"&&!subId&&h(CounterweightPage,{data,setPage:go}),
-    rootPage==="counterweight"&&subId==="biosecurity"&&h(CounterweightBiosecurityPage,{setPage:go}),
+    rootPage==="counterweight"&&subId==="biosecurity"&&h(CounterweightBiosecurityPage,{data,setPage:go}),
     rootPage==="counterweight"&&subId&&subId!=="biosecurity"&&h(CounterweightPage,{data,setPage:go}),
     rootPage==="cail"&&!subId&&h(CAILPage,{data,setPage:go}),
     rootPage==="cail"&&subId&&h(CAILPostPage,{post:cailPost,setPage:go}),
