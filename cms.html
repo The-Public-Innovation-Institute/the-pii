@@ -530,6 +530,7 @@ function rebuildSidebar(){
     ${isSA?`
     <div class="nav-item" onclick="nav('carousel')">Carousel</div>
     <div class="nav-item" onclick="nav('hyperion')">Hyperion</div>
+    <div class="nav-item" onclick="nav('counterweight')">Counterweight</div>
     <div class="nav-item" onclick="nav('conference')">Change.Enabled</div>`:''}
     ${isSA?`<div class="nav-section">Site</div>
     <div class="nav-item" onclick="nav('focus')">Focus Areas</div>
@@ -610,6 +611,9 @@ function nav(pg){
   if(pg==='users'){
     loadUsers().then(list=>{USERS=list;render();});
   }
+  if(pg==='counterweight'){
+    loadCwSignups().then(list=>{CW_SIGNUPS=list;render();});
+  }
   if(pg==='messages'){
     loadMessages().then(list=>{MESSAGES=list;render();refreshMessageBadge();});
   }
@@ -638,6 +642,7 @@ function render(){
   else if(PAGE==='programs') c.innerHTML=renderPrograms();
   else if(PAGE==='carousel') c.innerHTML=renderCarousel();
   else if(PAGE==='hyperion') c.innerHTML=renderHyperion();
+  else if(PAGE==='counterweight') c.innerHTML=renderCounterweight();
   else if(PAGE==='conference') c.innerHTML=renderConference();
   else if(PAGE==='focus') c.innerHTML=renderFocus();
   else if(PAGE==='stats') c.innerHTML=renderStats();
@@ -920,6 +925,293 @@ function renderCarousel(){
       </div>
       <button class="btn" onclick="save()">Save Changes</button>
     </div>`).join('')}`;
+}
+
+// ── Counterweight content defaults ───────────────────────────────────────────
+// Counterweight and Biosecurity page copy is edited in the CMS (Counterweight
+// tab) and stored at data.counterweight. These defaults are what shows until
+// something is saved there, and fill any field the CMS leaves empty.
+// KEEP IN SYNC with CW_DEFAULTS in index.html.
+const CW_DEFAULTS={
+  signupsOpen:true,
+  main:{
+    heroSubtitle:"A Public Innovation Institute initiative on AI, power and the public institutions that check it",
+    whyHeading:"The checks on concentrated power are spread across thousands of local institutions. As AI enters government, they need to hold.",
+    whyParas:[
+      "Most of the conversation about the risks of advanced AI is aimed at the frontier: the companies building the most capable systems and the national governments that might regulate them. That focus makes sense, but it misses something. Many of the tools that could be used to entrench power, from surveillance and policing systems to the infrastructure that runs elections, are bought and deployed by state and local governments. Many of the most important checks on concentrated power sit there too, spread across thousands of election offices, oversight bodies, procurement teams and city councils.",
+      "Those checks are easy to overlook precisely because everyone is looking at national capitals. As AI moves into government, they can erode quietly, through a procurement decision made without the right questions, a growing dependence on a handful of vendors, or an oversight body that lacks the technical capacity to see what is changing. Counterweight exists to help them hold."
+    ],
+    focusBox:"AI-enabled concentration of power, and the capacity of state and local government to manage it.",
+    focusBoxNote:"We look at how AI changes the way public institutions buy technology, oversee its use, run elections and stay independent of the systems they depend on. Our aim is not to strengthen any particular government or party, but the institutions that keep power accountable, whoever holds it.",
+    focusAreasHeading:"Where the stakes for local institutions are already clear.",
+    focusAreasIntro:"Counterweight’s work is organised around focus areas, each one a place where AI is changing what state and local governments have to be ready for.",
+    audiencesHeading:"People who rarely share a room, working on the same problem.",
+    audiencesIntro:"We believe this problem needs all of them, and that each sees something the others miss.",
+    audiences:[
+      {title:"Government teams",body:"The technical and policy teams inside city and state government who are making decisions about AI now: in procurement, oversight, election administration and digital services."},
+      {title:"Early-career professionals and researchers",body:"People from policy, economics, law, philosophy and beyond who want to work on how AI could concentrate power, and what public institutions can do about it."},
+      {title:"Students",body:"Students who are just starting to think about where they can contribute, and who want to learn alongside the people doing the work."}
+    ],
+    buildingIntro:"Each part feeds the next: the problems our government partners face shape what fellows research, what students learn and what we discuss when we convene.",
+    activities:[
+      {title:"Government engagements",body:"Ongoing partnerships with a small number of state and local teams, each built around a specific problem they face as AI enters their work. A spring convening sets the year’s priorities, and a fall convening reviews what happened and what we learned."},
+      {title:"Fellowship",body:"Early-career professionals and researchers will spend a semester or a year in Cambridge, working on problems drawn directly from our government partnerships."},
+      {title:"Student programming",body:"A summer program focused on power concentration and state capacity, building on the education programs PII has run since 2021."},
+      {title:"Seminars and workshops",body:"Technical workshops for government teams, and seminars led by invited experts and by our fellows."},
+      {title:"Cross-disciplinary convenings",body:"Regular gatherings that bring economists, legal scholars, philosophers and practitioners together around shared questions."},
+      {title:"A shared library",body:"A home for the research, playbooks and lessons the initiative produces, so others can build on them."}
+    ],
+    buildingOutro:"Over time, we hope to take Counterweight beyond Cambridge, wherever the work proves its value.",
+    involvedHeading:"Help shape this work from the start.",
+    involvedBody:"We are looking for government teams, researchers and practitioners who want to be part of Counterweight as it takes shape. If that’s you, we’d like to hear from you."
+  },
+  focusAreas:[
+    {page:"counterweight/biosecurity",title:"Biosecurity",body:"AI is changing what is possible in the life sciences, and with it the biological risks that state, local and small-island governments may one day have to face. We work with officials to rehearse those decisions before they are needed."}
+  ],
+  biosecurity:{
+    heroSubtitle:"Preparing state, local and small-island governments for biological risk as AI changes the life sciences",
+    whyHeading:"When a biological threat emerges, many of the first decisions are made far from national capitals.",
+    whyParas:[
+      "AI is beginning to change what is possible in the life sciences. The same tools that can speed up research and drug discovery could also lower the barriers for someone who wants to cause harm, and the companies building the most capable models now publish safeguards aimed specifically at biological misuse. Most of the policy conversation, understandably, is about those models and the national governments that oversee them.",
+      "But when something goes wrong, much of the response falls to state and city health departments, to emergency managers, and in small island states to a handful of officials who often carry several roles at once. These are the institutions with the least room to rehearse, and the places where a slow or poorly coordinated decision can cost the most.",
+      "Counterweight’s biosecurity work is aimed at them. We want the officials who would face these decisions to have worked through them before, with the right people around the table, and to leave with something they can use."
+    ],
+    focusBox:"The capacity of state, local and small-island governments to anticipate and respond to AI-enabled biological risk.",
+    focusBoxNote:"Our scenarios are built around policy, coordination and response decisions. We do not develop or publish technical information that could help someone cause harm.",
+    workIntro:"The simulations sit at the centre of this work, and everything else either feeds into them or carries what they teach us further.",
+    work:[
+      {title:"Simulations with government officials",body:"A series of simulations that bring officials together with public health, biosecurity and AI experts to work through how a biological event might unfold and where their institutions would come under strain. Where it helps, we invite biotech and biosecurity firms into the room, so officials hear what industry can offer and firms see the policy constraints their solutions will meet. The first simulation is planned for spring 2027 in Cambridge, and a second in the fall will build on what the first reveals."},
+      {title:"Conversations with experts",body:"Interviews with people working across biosecurity, public health, emergency management and AI governance, published through Counterweight so that what they know reaches the officials who need it."},
+      {title:"Briefs and playbooks",body:"What we learn in each simulation becomes practical material that governments can use once the room has emptied: briefs on what we found, and playbooks for the decisions that proved hardest."},
+      {title:"Learning that follows the work",body:"Findings from the officials’ simulations go on to shape what we teach students and early-career professionals. The order matters to us, because it means what we teach reflects the decisions governments actually face."}
+    ],
+    whoHeading:"The people who would be in the room if it happened for real.",
+    who:[
+      {title:"Government officials",body:"People in city, state and national government, and especially in small island states and smaller US cities, whose institutions would carry the first response to a biological event."},
+      {title:"Public health and biosecurity practitioners",body:"Epidemiologists, emergency managers, laboratory leaders and biosecurity specialists who can bring realism to the scenarios and help officials see what is coming."},
+      {title:"Industry and research",body:"Biotech and biosecurity firms, and researchers in AI governance, who want to understand the institutional realities their work will meet."}
+    ],
+    involvedHeading:"Take part in the simulations.",
+    involvedBody:"We are looking for people in government, public health and biosecurity who want to take part, whether as players, as expert voices within the scenarios, or in the conversations and events around them. Tell us a little about yourself and we’ll be in touch as plans firm up.",
+    closedNote:"Sign-ups are closed for now. If you’d like to be involved, get in touch and we’ll let you know when they reopen.",
+    thankYou:"Thank you for signing up. We’ll be in touch as plans for the simulations take shape."
+  }
+};
+// Field-by-field merge so a partly filled CMS entry never blanks the page.
+function cwMerge(def,val){
+  if(Array.isArray(def)) return Array.isArray(val)&&val.length?val:def;
+  if(def&&typeof def==="object"){const o={};Object.keys(def).forEach(k=>{o[k]=cwMerge(def[k],val?val[k]:undefined);});return o;}
+  if(typeof def==="boolean") return typeof val==="boolean"?val:def;
+  return (typeof val==="string"&&val.trim())?val:def;
+}
+function cwContent(data){return cwMerge(CW_DEFAULTS,(data||{}).counterweight||{});}
+
+// ── Counterweight tab ────────────────────────────────────────────────────────
+// Page copy lives at DATA.counterweight and is saved with everything else via
+// save(). Biosecurity sign-ups live in their own table
+// (pii_counterweight_signups) behind auth-gated RPCs, like Messages.
+let CW_SIGNUPS=[], CW_SIGNUPS_LOADED=false, CW_FILTER='all';
+const CW_STATUS=[['new','New'],['contacted','Contacted'],['confirmed','Confirmed'],['declined','Declined']];
+const CW_SECTOR_LABEL={government:'Government',practice:'Public health / biosecurity practice',industry:'Industry',research:'Research / academia',other:'Other'};
+const CW_GOV_LABEL={local:'City or local',state:'State / provincial / territorial',national:'National',island:'Small island state',intl:'International / multilateral'};
+const CW_PART_LABEL={player:'Play in a simulation',expert:'Expert voice',events:'Conversations and events'};
+
+function cwEnsure(){
+  DATA.counterweight=cwMerge(CW_DEFAULTS,DATA.counterweight||{});
+  return DATA.counterweight;
+}
+function cwGet(path){return path.split('.').reduce((o,k)=>o==null?o:o[k],cwEnsure());}
+function cwSet(path,val){
+  const keys=path.split('.'),last=keys.pop();
+  const obj=keys.reduce((o,k)=>o[k],cwEnsure());
+  obj[last]=val;
+}
+function cwArrAdd(path,item){cwGet(path).push(item);render();}
+function cwArrRemove(path,i){if(!confirm('Remove this item?'))return;cwGet(path).splice(i,1);save();}
+function cwArrMove(path,i,d){const a=cwGet(path),j=i+d;if(j<0||j>=a.length)return;[a[i],a[j]]=[a[j],a[i]];render();}
+
+function cwField(label,path,rows){return field(label,cwGet(path),`cwSet('${path}',this.value)`,rows);}
+function cwParas(label,path){
+  const arr=cwGet(path);
+  return `<div class="field"><label>${label}</label>
+    ${arr.map((t,i)=>`<div style="display:flex;gap:.5rem;margin-bottom:.5rem;align-items:flex-start">
+      <textarea rows="4" style="flex:1" onchange="cwGet('${path}')[${i}]=this.value">${esc(t)}</textarea>
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <button class="btn-ghost" style="padding:3px 8px" onclick="cwArrMove('${path}',${i},-1)" title="Move up">↑</button>
+        <button class="btn-ghost" style="padding:3px 8px" onclick="cwArrMove('${path}',${i},1)" title="Move down">↓</button>
+        <button class="btn-danger" style="padding:3px 8px" onclick="cwArrRemove('${path}',${i})" title="Remove">&times;</button>
+      </div></div>`).join('')}
+    <button class="btn-ghost" onclick="cwArrAdd('${path}','')">+ Add paragraph</button></div>`;
+}
+function cwItems(label,path,note){
+  const arr=cwGet(path);
+  return `<div class="field"><label>${label}</label>${note?`<div style="font-size:11px;color:#7a7a72;margin-bottom:.5rem">${note}</div>`:''}
+    ${arr.map((it,i)=>`<div style="border:1px solid rgba(14,14,12,0.12);padding:.75rem;margin-bottom:.6rem;background:#faf8f5">
+      <div style="display:flex;gap:.5rem;margin-bottom:.5rem;align-items:center">
+        <span class="mono" style="font-size:11px;color:#c8401e;min-width:22px">${String(i+1).padStart(2,'0')}</span>
+        <input type="text" style="flex:1" value="${esc(it.title||'')}" placeholder="Title" onchange="cwGet('${path}')[${i}].title=this.value">
+        <button class="btn-ghost" style="padding:3px 8px" onclick="cwArrMove('${path}',${i},-1)" title="Move up">↑</button>
+        <button class="btn-ghost" style="padding:3px 8px" onclick="cwArrMove('${path}',${i},1)" title="Move down">↓</button>
+        <button class="btn-danger" style="padding:3px 8px" onclick="cwArrRemove('${path}',${i})" title="Remove">&times;</button>
+      </div>
+      <textarea rows="3" style="width:100%" placeholder="Description" onchange="cwGet('${path}')[${i}].body=this.value">${esc(it.body||'')}</textarea>
+    </div>`).join('')}
+    <button class="btn-ghost" onclick="cwArrAdd('${path}',{title:'',body:''})">+ Add item</button></div>`;
+}
+
+// Sign-ups
+async function loadCwSignups(){
+  if(!requireAuth())return CW_SIGNUPS;
+  try{
+    const {data,error}=await sb.rpc('pii_cw_get_signups',{p_email_hash:AUTH_EH,p_pw_hash:AUTH_PH});
+    if(error)throw error;
+    CW_SIGNUPS_LOADED=true;
+    return data||[];
+  }catch(e){
+    saveErrorBanner('⚠ Could not load Counterweight sign-ups from the server.');
+    return CW_SIGNUPS;
+  }
+}
+function setCwSignupStatus(id,status){
+  const s=CW_SIGNUPS.find(x=>x.id===id); if(s) s.status=status;
+  render();
+  sb.rpc('pii_cw_update_signup',{p_email_hash:AUTH_EH,p_pw_hash:AUTH_PH,p_id:id,p_status:status,p_staff_notes:s?s.staff_notes||'':''})
+    .then(res=>{if(res.error)toast('⚠ Could not update sign-up.');}).catch(()=>toast('⚠ Could not update sign-up.'));
+}
+function setCwSignupNotes(id,notes){
+  const s=CW_SIGNUPS.find(x=>x.id===id); if(!s)return; s.staff_notes=notes;
+  sb.rpc('pii_cw_update_signup',{p_email_hash:AUTH_EH,p_pw_hash:AUTH_PH,p_id:id,p_status:s.status,p_staff_notes:notes})
+    .then(res=>{toast(res.error?'⚠ Could not save note.':'Note saved ✓');}).catch(()=>toast('⚠ Could not save note.'));
+}
+function deleteCwSignup(id){
+  if(!confirm('Delete this sign-up? This cannot be undone.'))return;
+  CW_SIGNUPS=CW_SIGNUPS.filter(x=>x.id!==id); render();
+  sb.rpc('pii_cw_delete_signup',{p_email_hash:AUTH_EH,p_pw_hash:AUTH_PH,p_id:id})
+    .then(res=>{if(res.error)toast('⚠ Could not delete on the server.');}).catch(()=>toast('⚠ Could not delete on the server.'));
+}
+function exportCwSignups(){
+  const cols=['created_at','track','name','email','org','role','sector','gov_level','country','participation','note','status','staff_notes'];
+  const q=v=>'"'+String(v==null?'':Array.isArray(v)?v.join('; '):v).replace(/"/g,'""')+'"';
+  const csv=[cols.join(',')].concat(CW_SIGNUPS.map(r=>cols.map(c=>q(r[c])).join(','))).join('\n');
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+  a.download='counterweight-signups-'+new Date().toISOString().slice(0,10)+'.csv';
+  a.click();
+}
+function renderCwSignups(){
+  const list=CW_SIGNUPS.filter(s=>CW_FILTER==='all'||s.status===CW_FILTER)
+    .sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
+  const counts={}; CW_SIGNUPS.forEach(s=>{counts[s.status]=(counts[s.status]||0)+1;});
+  const filters=[['all','All ('+CW_SIGNUPS.length+')']].concat(CW_STATUS.map(([v,l])=>[v,l+' ('+(counts[v]||0)+')']));
+  return `
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;margin-bottom:1rem">
+        <div class="section-sub" style="margin:0">Biosecurity sign-ups</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn-ghost" style="font-size:11px;padding:5px 10px" onclick="loadCwSignups().then(l=>{CW_SIGNUPS=l;render();})">Refresh</button>
+          <button class="btn-ghost" style="font-size:11px;padding:5px 10px" onclick="exportCwSignups()" ${CW_SIGNUPS.length?'':'disabled'}>Export CSV</button>
+        </div>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1rem">
+        ${filters.map(([v,l])=>`<button class="btn-ghost" style="font-size:11px;padding:5px 10px;${CW_FILTER===v?'background:#0e0e0c;color:#fff;border-color:#0e0e0c':''}" onclick="CW_FILTER='${v}';render()">${l}</button>`).join('')}
+      </div>
+      ${!CW_SIGNUPS_LOADED?'<p style="font-size:13px;color:#7a7a72">Loading sign-ups…</p>':
+        list.length===0?'<p style="font-size:13px;color:#7a7a72">No sign-ups '+(CW_FILTER==='all'?'yet. Submissions from the form on the Biosecurity page will appear here.':'with this status.')+'</p>':
+        list.map(s=>`
+        <div style="border:1px solid rgba(14,14,12,0.12);${s.status==='new'?'border-left:3px solid #c8401e;':''}padding:1rem;margin-bottom:.75rem;background:#fff">
+          <div style="display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-bottom:.5rem">
+            <div>
+              <div style="font-size:14px;font-weight:600">${esc(s.name)}${s.role?` <span style="font-weight:400;color:#7a7a72;font-size:12px">· ${esc(s.role)}</span>`:''}${s.org?` <span style="font-weight:400;color:#7a7a72;font-size:12px">· ${esc(s.org)}</span>`:''}</div>
+              <div style="font-size:12px;color:#7a7a72;margin-top:3px">
+                <a href="mailto:${esc(s.email)}" style="color:#7a7a72">${esc(s.email)}</a>
+                · ${esc(CW_SECTOR_LABEL[s.sector]||s.sector||'')}${s.gov_level?' ('+esc(CW_GOV_LABEL[s.gov_level]||s.gov_level)+')':''}
+                ${s.country?' · '+esc(s.country):''}
+                · ${new Date(s.created_at).toLocaleString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'})}
+              </div>
+            </div>
+            <div style="display:flex;gap:6px;align-items:center;flex-shrink:0">
+              <select style="font-size:12px;padding:4px 6px" onchange="setCwSignupStatus('${s.id}',this.value)">
+                ${CW_STATUS.map(([v,l])=>`<option value="${v}" ${s.status===v?'selected':''}>${l}</option>`).join('')}
+              </select>
+              <a class="btn-ghost" style="font-size:11px;padding:5px 10px;text-decoration:none" href="mailto:${esc(s.email)}?subject=${encodeURIComponent('Counterweight biosecurity simulations')}&body=${encodeURIComponent('Hi '+s.name+',\n\n')}">Email</a>
+              <button class="btn-danger" onclick="deleteCwSignup('${s.id}')">Delete</button>
+            </div>
+          </div>
+          ${(s.participation||[]).length?`<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:.5rem">${s.participation.map(p=>`<span class="badge badge-draft">${esc(CW_PART_LABEL[p]||p)}</span>`).join('')}</div>`:''}
+          ${s.note?`<div style="font-size:13px;color:#3a3a36;line-height:1.7;white-space:pre-wrap;background:#faf8f5;padding:.7rem .9rem;border:1px solid rgba(14,14,12,0.08);margin-bottom:.5rem">${esc(s.note)}</div>`:''}
+          <input type="text" style="width:100%;font-size:12px" placeholder="Internal note (only visible here)" value="${esc(s.staff_notes||'')}" onchange="setCwSignupNotes('${s.id}',this.value)">
+        </div>`).join('')}
+    </div>`;
+}
+
+function renderCounterweight(){
+  const cw=cwEnsure();
+  const tab=SEARCH.cwTab||'signups';
+  const tabs=[['signups','Sign-ups'],['main','Counterweight page'],['biosecurity','Biosecurity page']];
+  let body='';
+  if(tab==='signups'){
+    body=renderCwSignups()+`
+    <div class="card">
+      <div class="section-sub">Sign-up form</div>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:1.25rem">
+        <input id="cw-open" type="checkbox" style="width:16px;height:16px;margin:0;flex:none;accent-color:#c8401e" ${cw.signupsOpen?'checked':''} onchange="cwSet('signupsOpen',this.checked);save()">
+        <span style="font-size:13px;color:#0e0e0c;cursor:pointer" onclick="document.getElementById('cw-open').click()">Accept sign-ups on the Biosecurity page${cw.signupsOpen?'':' <span class="badge badge-draft">Closed</span>'}</span>
+      </div>
+      ${cwField('Message shown after someone signs up','biosecurity.thankYou',2)}
+      ${cwField('Message shown when sign-ups are closed','biosecurity.closedNote',2)}
+      <button class="btn" onclick="save()">Save Changes</button>
+    </div>`;
+  } else if(tab==='main'){
+    body=`
+    <div class="card"><div class="section-sub">Hero</div>
+      ${field('Title',((DATA.pageHeroes||{}).counterweight||{}).title||'Counterweight',`DATA.pageHeroes=DATA.pageHeroes||{};DATA.pageHeroes.counterweight=Object.assign({},DATA.pageHeroes.counterweight,{title:this.value})`)}
+      ${cwField('Subtitle','main.heroSubtitle')}</div>
+    <div class="card"><div class="section-sub">Why Counterweight</div>
+      ${cwField('Heading','main.whyHeading',2)}${cwParas('Paragraphs','main.whyParas')}
+      ${cwField('“Our focus” box','main.focusBox',2)}${cwField('“Our focus” note','main.focusBoxNote',3)}</div>
+    <div class="card"><div class="section-sub">Focus areas</div>
+      ${cwField('Heading','main.focusAreasHeading',2)}${cwField('Intro','main.focusAreasIntro',2)}
+      <div class="field"><label>Focus areas</label>
+      ${cw.focusAreas.map((f,i)=>`<div style="border:1px solid rgba(14,14,12,0.12);padding:.75rem;margin-bottom:.6rem;background:#faf8f5">
+        <div style="display:flex;gap:.5rem;margin-bottom:.5rem;align-items:center">
+          <input type="text" style="flex:1" value="${esc(f.title)}" placeholder="Title" onchange="cwGet('focusAreas')[${i}].title=this.value">
+          <input type="text" style="flex:1" value="${esc(f.page)}" placeholder="Page path, e.g. counterweight/biosecurity" onchange="cwGet('focusAreas')[${i}].page=this.value.replace(/^\\/+/,'')">
+          <button class="btn-ghost" style="padding:3px 8px" onclick="cwArrMove('focusAreas',${i},-1)">↑</button>
+          <button class="btn-ghost" style="padding:3px 8px" onclick="cwArrMove('focusAreas',${i},1)">↓</button>
+        </div>
+        <textarea rows="3" style="width:100%" onchange="cwGet('focusAreas')[${i}].body=this.value">${esc(f.body)}</textarea>
+      </div>`).join('')}
+      <div style="font-size:11px;color:#7a7a72">Each focus area needs its own page built on the site, so new ones are added in code rather than here.</div></div></div>
+    <div class="card"><div class="section-sub">Who it’s for</div>
+      ${cwField('Heading','main.audiencesHeading',2)}${cwField('Intro','main.audiencesIntro',2)}
+      ${cwItems('Audiences','main.audiences','The three illustrations repeat in order if you add more than three.')}</div>
+    <div class="card"><div class="section-sub">What we’re building</div>
+      ${cwField('Intro','main.buildingIntro',2)}${cwItems('Activities','main.activities')}${cwField('Closing line','main.buildingOutro',2)}</div>
+    <div class="card"><div class="section-sub">Get involved</div>
+      ${cwField('Heading','main.involvedHeading')}${cwField('Body','main.involvedBody',3)}</div>
+    <button class="btn" onclick="save()">Save Changes</button>`;
+  } else {
+    body=`
+    <div class="card"><div class="section-sub">Hero</div>${cwField('Subtitle','biosecurity.heroSubtitle')}</div>
+    <div class="card"><div class="section-sub">Why biosecurity</div>
+      ${cwField('Heading','biosecurity.whyHeading',2)}${cwParas('Paragraphs','biosecurity.whyParas')}
+      ${cwField('“Our focus” box','biosecurity.focusBox',2)}${cwField('“Our focus” note','biosecurity.focusBoxNote',3)}</div>
+    <div class="card"><div class="section-sub">What we do</div>
+      ${cwField('Intro','biosecurity.workIntro',2)}${cwItems('Items','biosecurity.work')}</div>
+    <div class="card"><div class="section-sub">Who takes part</div>
+      ${cwField('Heading','biosecurity.whoHeading',2)}${cwItems('Groups','biosecurity.who')}</div>
+    <div class="card"><div class="section-sub">Sign up</div>
+      ${cwField('Heading','biosecurity.involvedHeading')}${cwField('Body','biosecurity.involvedBody',3)}
+      <div style="font-size:11px;color:#7a7a72">The form itself, and the messages around it, are on the Sign-ups tab.</div></div>
+    <button class="btn" onclick="save()">Save Changes</button>`;
+  }
+  return `
+    <div class="section-header"><div><h1>Counterweight</h1><div style="font-size:12px;color:#7a7a72;margin-top:4px">Initiative pages, focus areas and sign-ups</div></div>
+      <a class="btn-ghost" style="text-decoration:none" href="/${tab==='biosecurity'?'counterweight/biosecurity':'counterweight'}" target="_blank">View page ↗</a></div>
+    <div style="display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap">
+      ${tabs.map(([v,l])=>`<button class="btn-ghost" style="${tab===v?'background:#0e0e0c;color:#fff;border-color:#0e0e0c':''}" onclick="SEARCH.cwTab='${v}';render()">${l}</button>`).join('')}
+    </div>
+    ${body}`;
 }
 
 function renderHyperion(){
