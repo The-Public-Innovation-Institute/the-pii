@@ -212,11 +212,6 @@ function sha256(s){
   return hh.map(v=>(v>>>0).toString(16).padStart(8,'0')).join('');
 }
 
-// \u2500\u2500 Credentials (hashed) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
-// The superadmin's hash pair is also embedded server-side (see the Supabase
-// migration SQL) so pii_site_login / pii_site_check_auth recognize it too.
-const EH="0dd6e6abc466574edd69c9422d79f5fd269f621b5b5caabd35e00628873469d8";
-const PH="e85608a8d9888ef66a9fde4f6194a2ece6e2d79b5277397b76630ed4ff3ead83";
 const SK="pii_session_v2",DK="pii_cms_data_v2",UK="pii_cms_users_v2";
 
 // \u2500\u2500 Users store (Supabase-backed) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
