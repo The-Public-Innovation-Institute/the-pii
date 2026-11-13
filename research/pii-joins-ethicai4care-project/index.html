@@ -137,6 +137,13 @@ img,video{max-width:100%}
   .pii-map-hint{display:block!important}
 }
 
+
+/* ── Research and Insights / News ───────────────────────────── */
+.pii-ri-card:hover{background:#f3f0e8!important}
+@media (max-width:760px){
+  .pii-news-row{grid-template-columns:1fr!important;gap:6px!important}
+  .pii-news-thumb{display:none}
+}
 </style>
 </head>
 <body>
@@ -175,6 +182,26 @@ const DEFAULT_DATA={
   editorialImages:{research:"",programs:"",cail:"",opportunities:"",about:""},
   site:{name:"The Public Innovation Institute",email:"info@thepii.org",tagline:"Working at the intersection of technology, public policy, and community leadership.",address:"1 Washington Mall, Suite 1159\nGovernment Center, Boston, MA 02108",twitter:"@thepii_org",ga4Id:"",pullQuote:'"The world doesn\'t move in straight lines. A child\'s health is shaped by the air they breathe, the school they attend, the code behind a distant algorithm."'},
   affiliations:[{name:"Harvard University",shortName:"Harvard",color:"#A31F34",logo:""},{name:"Bloomberg Center for Cities",shortName:"Bloomberg Center",color:"#003087",logo:""},{name:"MIT",shortName:"MIT",color:"#A31F34",logo:""}],
+  researchPage:{
+    headline:"Evidence for the public choices",
+    headlineAccent:"technology is forcing.",
+    intro:"Research, insights and articles from The Public Innovation Institute across our three focus areas.",
+    focusAreas:[
+      {name:"Technology and Policy",desc:"How governments buy, govern and deploy technology, and the policy choices that follow."},
+      {name:"Ethics and Technology",desc:"The questions of rights, values and power raised when technology enters public life."},
+      {name:"Science and Technology",desc:"Applied science and data work on public health, infrastructure and the environment."}
+    ],
+    types:{
+      research:"Studies, working papers and empirical analysis.",
+      insights:"Shorter analysis and commentary on developments that matter now.",
+      articles:"Essays and features from PII and our community."
+    }
+  },
+  newsPage:{
+    headline:"Partnerships, people",
+    headlineAccent:"and progress.",
+    intro:"Announcements, new collaborations and event recaps from across The Public Innovation Institute."
+  },
   programsPage:{
     headline:"The skills to fix public systems.",
     headlineAccent:"And the field experience to prove it.",
@@ -325,6 +352,8 @@ function mergeWithDefaults(parsed){
     editorialImages:{...DEFAULT_DATA.editorialImages,...(parsed.editorialImages||{})},
     pageHeroes:{...DEFAULT_DATA.pageHeroes,...(parsed.pageHeroes||{})},
     programsPage:{...DEFAULT_DATA.programsPage,...(parsed.programsPage||{})},
+    researchPage:{...DEFAULT_DATA.researchPage,...(parsed.researchPage||{})},
+    newsPage:{...DEFAULT_DATA.newsPage,...(parsed.newsPage||{})},
     site:{...DEFAULT_DATA.site,...(parsed.site||{})}
   };
 }
@@ -370,7 +399,7 @@ function Ticker({items}){
 }
 
 function Nav({page,setPage,data}){
-  const links=[["research","Research"],["programs","Programs"],["initiatives","Initiatives"],["conference","Change.Enabled"],["opportunities","Opportunities"],["about","About"]];
+  const links=[["research","Research and Insights"],["programs","Programs"],["initiatives","Initiatives"],["conference","Change.Enabled"],["opportunities","Opportunities"],["news","News"],["about","About"]];
   const [initOpen,setInitOpen]=useState(false);
   const [aboutOpen,setAboutOpen]=useState(false);
   const [mobileOpen,setMobileOpen]=useState(false);
@@ -430,7 +459,7 @@ function Nav({page,setPage,data}){
       )
     ),
     mobileOpen&&h("div",{style:{position:"absolute",top:"100%",left:0,right:0,background:PAPER,borderBottom:`1px solid ${RULE}`,boxShadow:"0 8px 20px rgba(0,0,0,0.08)",zIndex:150,maxHeight:"calc(100vh - 60px)",overflowY:"auto"}},
-      [["home","Home"],["research","Research"],["programs","Programs"],["hyperion","Hyperion"],["cail","City as Innovation Lab"],["counterweight","Counterweight"],["conference","Change.Enabled"],["opportunities","Opportunities"],["about","About PII"],["team","People"]].map(([p,label])=>
+      [["home","Home"],["research","Research and Insights"],["news","News"],["programs","Programs"],["hyperion","Hyperion"],["cail","City as Innovation Lab"],["counterweight","Counterweight"],["conference","Change.Enabled"],["opportunities","Opportunities"],["about","About PII"],["team","People"]].map(([p,label])=>
         h("div",{key:p,onClick:()=>goMobile(p),style:{padding:"14px 1.5rem",fontSize:14,color:page===p?ACCENT:INK,fontWeight:page===p?600:400,borderBottom:`1px solid ${RULE}`,cursor:"pointer"}},label)
       ),
       h("div",{style:{padding:"1.2rem 1.5rem"}},
@@ -451,7 +480,7 @@ function Footer({data,setPage}){
           h("div",null,data.site.email)
         )
       ),
-      ...[ ["Research",[["Research","research"],["Publications","publications"],["Working Papers","publications"]]],["Initiatives",[["City as Innovation Lab","cail"],["Hyperion","hyperion"],["Counterweight","counterweight"],["Change.Enabled","conference"]]],["Institute",[["About","about"],["People","team"],["Opportunities","opportunities"],["Contact","contact"]]] ].map(([label,links])=>
+      ...[ ["Research",[["Research and Insights","research"],["News","news"]]],["Initiatives",[["City as Innovation Lab","cail"],["Hyperion","hyperion"],["Counterweight","counterweight"],["Change.Enabled","conference"]]],["Institute",[["About","about"],["People","team"],["Opportunities","opportunities"],["Contact","contact"]]] ].map(([label,links])=>
         h("div",{key:label},
           h("div",{style:{fontSize:10,letterSpacing:"0.1em",textTransform:"uppercase",color:"rgba(255,255,255,0.28)",marginBottom:"0.9rem",fontWeight:500}},label),
           links.map(([name,pg])=>h("div",{key:name,onClick:()=>setPage(pg),style:{fontSize:12,color:"rgba(255,255,255,0.45)",marginBottom:"0.5rem",cursor:"pointer"}},name))
@@ -891,79 +920,221 @@ function FeaturedStrip({posts, onSelect, label}){
   );
 }
 
-function ResearchPage({data,setPage,initialSection}){
-  const PER_PAGE=10;
-  const [filter,setFilter]=useState("all");
-  const [rPage,setRPage]=useState(1);
-  const [pPage,setPPage]=useState(1);
-  const getTag=r=>r.tag||(r.tags&&r.tags[0])||'';
-  const getSection=r=>r.section||"research";
+// ── Research and Insights + News ─────────────────────────────────
+// Every post lives in data.research. Each one has a `kind`
+// (research | insights | articles | news) and, except news, a
+// `focusArea` — both set per post in the CMS. Page copy lives in
+// data.researchPage / data.newsPage.
+const PII_FOCUS_AREAS=["Technology and Policy","Ethics and Technology","Science and Technology"];
+const PII_KINDS=[["research","Research"],["insights","Insights"],["articles","Articles"]];
+// Posts saved before `kind` existed fall back to their old section/tag.
+function piiKindOf(r){
+  if(r&&r.kind)return r.kind;
+  const t=String((r&&r.tag)||"").toLowerCase();
+  if(t==="news"||t==="event"||t==="feature")return "news";
+  if(t==="insights"||t==="insight")return "insights";
+  if(((r&&r.section)||"research")==="research")return "research";
+  return "articles";
+}
+function piiYearOf(r){const m=String((r&&r.date)||"").match(/\b(20\d\d)\b/);return m?m[1]:"";}
+// Old category tags that just repeat the post's type aren't shown as topic tags.
+function piiTopicTag(r){const t=String((r&&r.tag)||"").trim();return ["news","insights","insight","article","articles","research"].includes(t.toLowerCase())?"":t;}
+function piiPostImg(r){return r.media&&r.mediaType!=="video"?r.media:(r.image||"");}
+
+function PiiPostImage({r,height}){
+  const src=piiPostImg(r);
+  if(src&&isCounterweightMesh(src))return h("div",{style:{position:"relative",width:"100%",height,overflow:"hidden"}},h(CounterweightMesh));
+  if(!src)return null;
+  return h("img",{src,alt:"",loading:"lazy",style:{width:"100%",height,objectFit:"cover",display:"block"}});
+}
+
+function ResearchPage({data,setPage}){
+  const rp=data.researchPage||{};
   const hero=(data.pageHeroes||{}).research||{};
-  const tags=["all",...new Set(data.research.map(getTag).filter(Boolean)),"Featured"];
-  const featured=data.research.filter(r=>r.featured&&r.status==="published");
-  const handleFilter=t=>{setFilter(t);setRPage(1);setPPage(1);};
-  const matchesFilter=r=>filter==="all"||(filter==="Featured"?r.featured:getTag(r)===filter);
+  const [area,setArea]=useState("All");
+  const [type,setType]=useState("all");
+  const posts=(data.research||[]).filter(r=>r.status==="published"&&piiKindOf(r)!=="news");
+  const inArea=r=>area==="All"||r.focusArea===area;
+  const areaDesc=n=>((rp.focusAreas||[]).find(f=>f.name===n)||{}).desc||"";
+  const typeDesc=k=>((rp.types||{})[k])||"";
+  const open=r=>setPage(`research/${r.id}`);
+  const featured=posts.find(r=>r.featured);
+  const showFeatured=area==="All"&&type==="all"&&!!featured;
+  const total=posts.filter(r=>inArea(r)&&(type==="all"||piiKindOf(r)===type)).length;
+  const typeLabel=k=>(PII_KINDS.find(([v])=>v===k)||[k,k])[1];
+  const pill=(text,bg,fg)=>h("span",{style:{fontSize:10,letterSpacing:"0.1em",textTransform:"uppercase",background:bg,color:fg,padding:"4px 8px",fontWeight:600}},text);
+  const wrap={maxWidth:1200,margin:"0 auto"};
 
-  const researchFiltered=data.research.filter(r=>getSection(r)==="research"&&r.status==="published"&&matchesFilter(r));
-  const pubsFiltered=data.research.filter(r=>getSection(r)==="publications"&&r.status==="published"&&matchesFilter(r));
-  const rTotalPages=Math.max(1,Math.ceil(researchFiltered.length/PER_PAGE));
-  const pTotalPages=Math.max(1,Math.ceil(pubsFiltered.length/PER_PAGE));
-  const rPaginated=researchFiltered.slice((rPage-1)*PER_PAGE,rPage*PER_PAGE);
-  const pPaginated=pubsFiltered.slice((pPage-1)*PER_PAGE,pPage*PER_PAGE);
-
-  const renderCard=r=>h("div",{key:r.id,onClick:()=>setPage(`research/${r.id}`),style:{padding:"1.75rem 0",borderBottom:`1px solid ${RULE}`,cursor:"pointer",transition:"background .2s"},
-      onMouseEnter:e=>e.currentTarget.style.background=WARM,onMouseLeave:e=>e.currentTarget.style.background="transparent"},
-    h("div",{style:{display:"flex",gap:10,alignItems:"center",marginBottom:"0.6rem"}},
-      h("span",{style:{fontSize:10,letterSpacing:"0.09em",textTransform:"uppercase",background:"#f5ede9",color:ACCENT,padding:"3px 9px",fontWeight:500}},getTag(r)),
-      h("span",{style:{fontSize:11,color:"#7a7a72",fontFamily:MONO}},r.date)
-    ),
-    h("h2",{style:{fontFamily:SERIF,fontSize:"1.1rem",fontWeight:700,lineHeight:1.35,color:INK,marginBottom:"0.4rem"}},r.title),
-    h("p",{style:{fontSize:13,color:"#3a3a36",lineHeight:1.7,marginBottom:"0.6rem"}},r.excerpt),
-    h("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center"}},
-      h("span",{style:{fontSize:12,color:"#3a3a36",fontFamily:MONO}},r.author),
-      h("span",{style:{fontSize:11,color:INK,fontWeight:500,borderBottom:`1px solid ${INK}`,paddingBottom:1}},"Read paper ↗")
-    )
-  );
-
-  const renderPagination=(totalPages,page,setPageFn)=>totalPages>1&&h("div",{style:{display:"flex",alignItems:"center",justifyContent:"center",gap:"0.4rem",padding:"2.5rem 0 1rem",borderTop:`1px solid ${RULE}`,marginTop:"0.5rem"}},
-    h("button",{onClick:()=>setPageFn(p=>Math.max(1,p-1)),disabled:page===1,style:{padding:"8px 14px",fontSize:12,fontWeight:500,fontFamily:SANS,cursor:page===1?"not-allowed":"pointer",border:`1px solid ${RULE}`,background:"transparent",color:page===1?"#ccc":INK,opacity:page===1?0.4:1}},"←"),
-    ...Array.from({length:totalPages},(_,i)=>i+1).map(n=>
-      h("button",{key:n,onClick:()=>setPageFn(n),style:{width:36,height:36,fontSize:12,fontWeight:n===page?700:400,fontFamily:MONO,cursor:"pointer",border:`1px solid ${n===page?INK:RULE}`,background:n===page?INK:"transparent",color:n===page?"#fff":"#3a3a36"}},n)
-    ),
-    h("button",{onClick:()=>setPageFn(p=>Math.min(totalPages,p+1)),disabled:page===totalPages,style:{padding:"8px 14px",fontSize:12,fontWeight:500,fontFamily:SANS,cursor:page===totalPages?"not-allowed":"pointer",border:`1px solid ${RULE}`,background:"transparent",color:page===totalPages?"#ccc":INK,opacity:page===totalPages?0.4:1}},"→")
-  );
-
-  return h("div",{style:{fontFamily:SANS}},
-    h(PageHero,{hero,pageName:"Research & Publications"}),
-    featured.length>0&&h(FeaturedStrip,{posts:featured,onSelect:r=>setPage(`research/${r.id}`)}),
-    h("div",{style:{padding:"1.5rem 2.5rem 1.5rem",borderBottom:`1px solid ${RULE}`}},
-      h("div",{style:{display:"flex",gap:8,flexWrap:"wrap"}},
-        tags.map(t=>h("button",{key:t,onClick:()=>handleFilter(t),style:{padding:"7px 16px",fontSize:11,letterSpacing:"0.06em",textTransform:"uppercase",fontFamily:SANS,fontWeight:500,cursor:"pointer",border:`1px solid ${filter===t?INK:RULE}`,background:filter===t?INK:"transparent",color:filter===t?"#fff":"#3a3a36"}},t==="all"?"All":t))
-      )
-    ),
-    h(EditorialImage,{src:(data.editorialImages||{}).research,alt:"PII Research",height:320}),
-    h("div",{className:"pii-g2"},
-      h("div",{style:{padding:"3rem 2.5rem",borderRight:`1px solid ${RULE}`}},
-        h("div",{style:{fontFamily:SERIF,fontSize:"1.7rem",fontWeight:900,color:INK,marginBottom:"1.5rem"}},"Research"),
-        rPaginated.length>0?rPaginated.map(renderCard):h("div",{style:{padding:"1.5rem 0 2rem",fontSize:13,color:"#7a7a72"}},"No research pieces found."),
-        renderPagination(rTotalPages,rPage,setRPage)
+  const card=r=>h("a",{key:r.id,href:`/research/${r.id}`,onClick:e=>{e.preventDefault();open(r);},className:"pii-ri-card",
+      style:{display:"flex",flexDirection:"column",textDecoration:"none",color:INK,border:`1px solid ${RULE}`,background:"#fff",transition:"background .2s"}},
+    piiPostImg(r)&&h("div",{style:{height:180,overflow:"hidden",borderBottom:`1px solid ${RULE}`}},h(PiiPostImage,{r,height:180})),
+    h("div",{style:{padding:22,display:"flex",flexDirection:"column",gap:10,flex:1}},
+      h("div",{style:{display:"flex",flexWrap:"wrap",gap:6}},
+        r.focusArea&&pill(r.focusArea,"#f5ede9","#a8331a"),
+        piiTopicTag(r)&&pill(piiTopicTag(r),WARM,"#3a3a36")
       ),
-      h("div",{style:{padding:"3rem 2.5rem"}},
-        h("div",{style:{fontFamily:SERIF,fontSize:"1.7rem",fontWeight:900,color:INK,marginBottom:"1.5rem"}},"Publications"),
-        pPaginated.length>0?pPaginated.map(renderCard):h("div",{style:{padding:"1.5rem 0 2rem",fontSize:13,color:"#7a7a72"}},"No publications found."),
-        renderPagination(pTotalPages,pPage,setPPage)
-      )
+      h("div",{style:{fontFamily:SERIF,fontSize:20,fontWeight:700,lineHeight:1.3,flex:1}},r.title),
+      h("div",{style:{fontFamily:MONO,fontSize:11,color:"#6b6b63"}},[r.author,r.date].filter(Boolean).join(" · "))
     )
+  );
+
+  return h("div",{style:{fontFamily:SANS,color:INK}},
+    // Hero — keeps the CMS header photo
+    h("section",{className:"pii-pp-pad",style:{position:"relative",overflow:"hidden",padding:"6.5rem 2.5rem 5rem",background:"#2b2b27"}},
+      hero.image&&h("img",{src:hero.image,alt:"",style:{position:"absolute",inset:0,width:"100%",height:"100%",objectFit:"cover",display:"block"}}),
+      h("div",{"aria-hidden":"true",style:{position:"absolute",inset:0,background:"linear-gradient(135deg,rgba(10,10,8,0.74) 0%,rgba(10,10,8,0.45) 100%)"}}),
+      h("div",{style:{...wrap,position:"relative"}},
+        h("div",{style:{fontFamily:MONO,fontSize:12,letterSpacing:"0.12em",textTransform:"uppercase",color:"#f08a6c",marginBottom:18}},"Research and Insights"),
+        h("h1",{style:{fontFamily:SERIF,fontWeight:900,fontSize:"clamp(2.4rem,5vw,4.4rem)",lineHeight:1.06,margin:"0 0 22px",color:"#fff",maxWidth:900}},
+          rp.headline||"",rp.headlineAccent&&h(React.Fragment,null," ",h("em",{style:{fontWeight:400,color:"#f08a6c"}},rp.headlineAccent))),
+        rp.intro&&h("p",{style:{fontSize:18,lineHeight:1.65,color:"rgba(255,255,255,0.82)",maxWidth:640}},rp.intro)
+      )
+    ),
+    // Focus areas
+    h("section",{className:"pii-pp-pad",style:{padding:"4rem 2.5rem 0"}},
+      h("div",{style:wrap},
+        h("div",{style:{fontFamily:MONO,fontSize:12,letterSpacing:"0.12em",textTransform:"uppercase",color:ACCENT,marginBottom:20}},"Our focus areas"),
+        h("div",{style:{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(280px,1fr))",border:"1px solid rgba(14,14,12,0.14)"}},
+          PII_FOCUS_AREAS.map((n,i)=>{
+            const on=area===n;const c=posts.filter(r=>r.focusArea===n).length;
+            return h("button",{key:n,type:"button","aria-pressed":on?"true":"false",onClick:()=>setArea(on?"All":n),
+              style:{textAlign:"left",fontFamily:SANS,cursor:"pointer",padding:32,border:"none",borderRight:i<2?`1px solid ${RULE}`:"none",background:on?INK:PAPER,color:on?"#fff":INK,transition:"background .2s"}},
+              h("span",{style:{display:"block",fontFamily:MONO,fontSize:12,marginBottom:14,opacity:0.8}},`0${i+1} · ${c} ${c===1?"piece":"pieces"}`),
+              h("span",{style:{display:"block",fontFamily:SERIF,fontSize:26,fontWeight:700,lineHeight:1.2,marginBottom:10}},n),
+              areaDesc(n)&&h("span",{style:{display:"block",fontSize:14,lineHeight:1.6,opacity:0.85}},areaDesc(n))
+            );
+          })
+        )
+      )
+    ),
+    // Type tabs
+    h("section",{className:"pii-pp-pad",style:{padding:"2.25rem 2.5rem 0"}},
+      h("div",{style:{...wrap,display:"flex",flexWrap:"wrap",justifyContent:"space-between",alignItems:"center",gap:16,borderBottom:"1px solid rgba(14,14,12,0.14)"}},
+        h("div",{role:"tablist","aria-label":"Publication type",style:{display:"flex",flexWrap:"wrap",gap:4}},
+          [["all","All"],...PII_KINDS].map(([k,label])=>{
+            const on=type===k;const c=posts.filter(r=>inArea(r)&&(k==="all"||piiKindOf(r)===k)).length;
+            return h("button",{key:k,type:"button",role:"tab","aria-selected":on?"true":"false",onClick:()=>setType(k),
+              style:{fontFamily:SANS,fontSize:14,fontWeight:600,padding:"12px 18px",minHeight:44,cursor:"pointer",background:"none",border:"none",borderBottom:`3px solid ${on?ACCENT:"transparent"}`,color:on?INK:"#6b6b63",marginBottom:-1}},
+              label," ",h("span",{style:{fontFamily:MONO,fontSize:11,opacity:0.6}},c));
+          })
+        ),
+        h("div",{style:{fontSize:13,color:"#6b6b63",paddingBottom:12}},`Showing ${total} ${type==="all"?(total===1?"piece":"pieces"):typeLabel(type).toLowerCase()}${area==="All"?" across all focus areas":" in "+area}`)
+      )
+    ),
+    // Featured
+    showFeatured&&h("section",{className:"pii-pp-pad",style:{padding:"3rem 2.5rem 0"}},
+      h("a",{href:`/research/${featured.id}`,onClick:e=>{e.preventDefault();open(featured);},className:"pii-ri-card",
+          style:{...wrap,display:"flex",flexWrap:"wrap",border:"1px solid rgba(14,14,12,0.14)",textDecoration:"none",color:INK,background:"#fff",transition:"background .2s"}},
+        piiPostImg(featured)&&h("div",{style:{flex:"1 1 460px",minHeight:300,overflow:"hidden"}},h(PiiPostImage,{r:featured,height:"100%"})),
+        h("div",{style:{flex:"1 1 420px",padding:40,display:"flex",flexDirection:"column",justifyContent:"center",gap:14}},
+          h("div",{style:{display:"flex",flexWrap:"wrap",gap:8}},
+            pill("Featured",ACCENT,"#fff"),pill(typeLabel(piiKindOf(featured)),INK,"#fff"),featured.focusArea&&pill(featured.focusArea,WARM,"#3a3a36")),
+          h("div",{style:{fontFamily:SERIF,fontSize:32,fontWeight:700,lineHeight:1.2}},featured.title),
+          h("div",{style:{fontFamily:MONO,fontSize:12,color:"#6b6b63"}},[featured.author,featured.date].filter(Boolean).join(" · ")),
+          h("div",{style:{fontSize:13,fontWeight:600,borderBottom:`1px solid ${INK}`,paddingBottom:2,alignSelf:"flex-start"}},"Read →")
+        )
+      )
+    ),
+    // Sections by type
+    PII_KINDS.filter(([k])=>type==="all"||type===k).map(([k,label])=>{
+      const items=posts.filter(r=>piiKindOf(r)===k&&inArea(r));
+      const shown=type==="all"?items.slice(0,3):items;
+      return h("section",{key:k,className:"pii-pp-pad",style:{padding:"4rem 2.5rem 0"}},
+        h("div",{style:wrap},
+          h("div",{style:{display:"flex",flexWrap:"wrap",justifyContent:"space-between",alignItems:"flex-end",gap:16,paddingBottom:18,marginBottom:28,borderBottom:`2px solid ${INK}`}},
+            h("div",null,
+              h("h2",{style:{fontFamily:SERIF,fontSize:36,fontWeight:900,margin:"0 0 6px"}},label),
+              typeDesc(k)&&h("div",{style:{fontSize:14,color:"#3a3a36"}},typeDesc(k))
+            ),
+            type==="all"&&items.length>3&&h("button",{type:"button",onClick:()=>setType(k),style:{fontFamily:SANS,fontSize:12,fontWeight:600,background:"none",border:"none",borderBottom:`1px solid ${INK}`,padding:"0 0 2px",cursor:"pointer",minHeight:32,color:INK}},`View all ${label.toLowerCase()} →`)
+          ),
+          items.length===0
+            ?h("div",{style:{padding:28,background:WARM,fontSize:14,color:"#3a3a36"}},`No ${label.toLowerCase()} ${area==="All"?"published":"in "+area} yet.`)
+            :h("div",{style:{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(300px,1fr))",gap:28}},shown.map(card))
+        )
+      );
+    }),
+    h("div",{style:{height:"5.5rem"}})
+  );
+}
+
+function NewsPage({data,setPage}){
+  const np=data.newsPage||{};
+  const [kind,setKind]=useState("All");
+  const news=(data.research||[]).filter(r=>r.status==="published"&&piiKindOf(r)==="news");
+  const labelOf=r=>(!r.tag||String(r.tag).toLowerCase()==="news")?"Announcement":r.tag;
+  const lead=news[0];
+  const rest=news.slice(1);
+  const kinds=["All",...new Set(rest.map(labelOf))];
+  const active=kinds.includes(kind)?kind:"All";
+  const shown=rest.filter(r=>active==="All"||labelOf(r)===active);
+  const groups=[];
+  shown.forEach(r=>{const y=piiYearOf(r)||"More news";let g=groups.find(x=>x.year===y);if(!g){g={year:y,items:[]};groups.push(g);}g.items.push(r);});
+  groups.sort((a,b)=>(a.year==="More news")-(b.year==="More news")||String(b.year).localeCompare(String(a.year)));
+  const open=r=>setPage(`news/${r.id}`);
+  const wrap={maxWidth:1200,margin:"0 auto"};
+  return h("div",{style:{fontFamily:SANS,color:INK}},
+    h("section",{className:"pii-pp-pad",style:{padding:"5rem 2.5rem 3rem",borderBottom:`1px solid ${RULE}`}},
+      h("div",{style:{...wrap,display:"flex",flexWrap:"wrap",gap:32,alignItems:"flex-end",justifyContent:"space-between"}},
+        h("div",{style:{flex:"999 1 560px",minWidth:0}},
+          h("div",{style:{fontFamily:MONO,fontSize:12,letterSpacing:"0.12em",textTransform:"uppercase",color:ACCENT,marginBottom:18}},"News"),
+          h("h1",{style:{fontFamily:SERIF,fontWeight:900,fontSize:"clamp(2.4rem,5vw,4.2rem)",lineHeight:1.06}},
+            np.headline||"",np.headlineAccent&&h(React.Fragment,null," ",h("em",{style:{fontWeight:400,color:ACCENT}},np.headlineAccent)))
+        ),
+        np.intro&&h("p",{style:{flex:"1 1 320px",fontSize:16,lineHeight:1.65,color:"#3a3a36"}},np.intro)
+      )
+    ),
+    !lead&&h("section",{className:"pii-pp-pad",style:{padding:"3rem 2.5rem"}},h("div",{style:{...wrap,padding:28,background:WARM,fontSize:14,color:"#3a3a36"}},"No news published yet.")),
+    lead&&h("section",{className:"pii-pp-pad",style:{padding:"3rem 2.5rem 0"}},
+      h("a",{href:`/news/${lead.id}`,onClick:e=>{e.preventDefault();open(lead);},className:"pii-ri-card",
+          style:{...wrap,display:"flex",flexWrap:"wrap",border:"1px solid rgba(14,14,12,0.14)",textDecoration:"none",color:INK,background:"#fff",transition:"background .2s"}},
+        piiPostImg(lead)&&h("div",{style:{flex:"1 1 460px",minHeight:320,overflow:"hidden"}},h(PiiPostImage,{r:lead,height:"100%"})),
+        h("div",{style:{flex:"1 1 420px",padding:40,display:"flex",flexDirection:"column",justifyContent:"center",gap:14}},
+          h("div",{style:{display:"flex",flexWrap:"wrap",gap:8}},
+            h("span",{style:{fontSize:10,letterSpacing:"0.1em",textTransform:"uppercase",background:ACCENT,color:"#fff",padding:"4px 9px",fontWeight:600}},"Latest"),
+            h("span",{style:{fontSize:10,letterSpacing:"0.1em",textTransform:"uppercase",background:WARM,color:"#3a3a36",padding:"4px 9px",fontWeight:600}},labelOf(lead))),
+          h("div",{style:{fontFamily:SERIF,fontSize:32,fontWeight:700,lineHeight:1.2}},lead.title),
+          lead.date&&h("div",{style:{fontFamily:MONO,fontSize:12,color:"#6b6b63"}},lead.date),
+          h("div",{style:{fontSize:13,fontWeight:600,borderBottom:`1px solid ${INK}`,paddingBottom:2,alignSelf:"flex-start"}},"Read more →")
+        )
+      )
+    ),
+    rest.length>0&&h("section",{className:"pii-pp-pad",style:{padding:"3.5rem 2.5rem 0"}},
+      h("div",{style:wrap},
+        h("div",{style:{display:"flex",flexWrap:"wrap",justifyContent:"space-between",alignItems:"center",gap:16,marginBottom:8}},
+          h("h2",{style:{fontFamily:SERIF,fontSize:32,fontWeight:900}},"All news"),
+          kinds.length>2&&h("div",{role:"group","aria-label":"Filter news",style:{display:"flex",flexWrap:"wrap",gap:8}},
+            kinds.map(x=>{const on=active===x;return h("button",{key:x,type:"button","aria-pressed":on?"true":"false",onClick:()=>setKind(x),
+              style:{fontFamily:SANS,fontSize:12,fontWeight:600,padding:"10px 16px",minHeight:44,cursor:"pointer",border:`1px solid ${on?INK:"rgba(14,14,12,0.2)"}`,background:on?INK:"transparent",color:on?"#fff":INK}},x);})
+          )
+        ),
+        groups.map(g=>h("div",{key:g.year,style:{marginTop:28}},
+          h("div",{style:{fontFamily:MONO,fontSize:13,color:"#6b6b63",paddingBottom:10,borderBottom:`2px solid ${INK}`}},g.year),
+          g.items.map(r=>h("a",{key:r.id,href:`/news/${r.id}`,onClick:e=>{e.preventDefault();open(r);},className:"pii-ri-card pii-news-row",
+              style:{display:"grid",gridTemplateColumns:"140px minmax(0,1fr) 120px",gap:24,alignItems:"center",padding:"22px 12px",borderBottom:`1px solid ${RULE}`,textDecoration:"none",color:INK,transition:"background .2s"}},
+            h("div",{style:{fontFamily:MONO,fontSize:12,color:"#6b6b63"}},r.date||""),
+            h("div",{style:{minWidth:0}},
+              h("div",{style:{fontSize:10,letterSpacing:"0.1em",textTransform:"uppercase",color:"#a8331a",fontWeight:600,marginBottom:6}},labelOf(r)),
+              h("div",{style:{fontFamily:SERIF,fontSize:21,fontWeight:700,lineHeight:1.3}},r.title)
+            ),
+            h("div",{className:"pii-news-thumb",style:{height:80,overflow:"hidden"}},h(PiiPostImage,{r,height:80}))
+          ))
+        ))
+      )
+    ),
+    h("div",{style:{height:"5.5rem"}})
   );
 }
 
 function ArticlePage({article,setPage,data}){
   if(!article){setPage("research");return null;}
-  const section=article.section||"research";
-  const others=data.research.filter(r=>r.id!==article.id&&r.status==="published"&&(r.section||"research")===section).slice(0,2);
+  const kind=piiKindOf(article);
+  const isNews=kind==="news";
+  const backTo=isNews?"news":"research";
+  const others=data.research.filter(r=>r.id!==article.id&&r.status==="published"&&piiKindOf(r)===kind).slice(0,2);
   return h("div",{style:{fontFamily:SANS}},
     h("div",{style:{padding:"3rem 2.5rem",borderBottom:`1px solid ${RULE}`,background:WARM}},
-      h("button",{onClick:()=>setPage(section),style:{fontSize:12,color:"#7a7a72",background:"none",border:"none",cursor:"pointer",marginBottom:"1.5rem",display:"block"}},section==="publications"?"← Back to Publications":"← Back to Research"),
+      h("button",{onClick:()=>setPage(backTo),style:{fontSize:12,color:"#7a7a72",background:"none",border:"none",cursor:"pointer",marginBottom:"1.5rem",display:"block"}},isNews?"← Back to News":"← Back to Research and Insights"),
       h("span",{style:{fontSize:10,letterSpacing:"0.1em",textTransform:"uppercase",background:"#f5ede9",color:ACCENT,padding:"3px 9px",fontWeight:500}},article.tag),
       h("h1",{style:{fontFamily:SERIF,fontSize:"clamp(1.8rem,4vw,3.5rem)",fontWeight:900,lineHeight:1.1,margin:"1.2rem 0",color:INK}},article.title),
       h("div",{style:{display:"flex",gap:"2rem",alignItems:"center"}},
@@ -1004,8 +1175,8 @@ function ArticlePage({article,setPage,data}){
           h("div",{style:{fontSize:11,color:"#3a3a36",fontFamily:MONO,lineHeight:1.7,background:"#fff",padding:"0.75rem",border:`1px solid ${RULE}`}},`${article.author} (${article.date.split(",")[1]?.trim()||"2026"}). "${article.title}." The Public Innovation Institute.`)
         ),
         others.length>0&&h("div",null,
-          h("div",{style:{fontSize:11,letterSpacing:"0.08em",textTransform:"uppercase",color:"#7a7a72",marginBottom:"1rem",fontWeight:500}},section==="publications"?"Related Publications":"Related Research"),
-          others.map(r=>h("div",{key:r.id,onClick:()=>setPage(`research/${r.id}`),style:{padding:"1rem 0",borderBottom:`1px solid ${RULE}`,cursor:"pointer"},
+          h("div",{style:{fontSize:11,letterSpacing:"0.08em",textTransform:"uppercase",color:"#7a7a72",marginBottom:"1rem",fontWeight:500}},isNews?"More News":"Related Research and Insights"),
+          others.map(r=>h("div",{key:r.id,onClick:()=>setPage(`${backTo}/${r.id}`),style:{padding:"1rem 0",borderBottom:`1px solid ${RULE}`,cursor:"pointer"},
             onMouseEnter:e=>e.currentTarget.style.color=ACCENT,onMouseLeave:e=>e.currentTarget.style.color=INK},
             h("div",{style:{fontFamily:SERIF,fontSize:"0.9rem",fontWeight:700,lineHeight:1.3,marginBottom:"0.3rem"}},r.title),
             h("div",{style:{fontSize:11,color:"#7a7a72"}},`${r.author} · ${r.date}`)
@@ -2417,7 +2588,12 @@ function App(){
       const a=data.research.find(r=>r.id===sub);
       if(a){title=a.title+" — PII";desc=a.excerpt||desc;url="https://www.thepii.org/research/"+sub;}
     } else if(root==="research"){
-      title="Research — The Public Innovation Institute";desc="Publications, working papers, and data-driven policy research from PII.";url="https://www.thepii.org/research";
+      title="Research and Insights — The Public Innovation Institute";desc="Research, insights and articles from PII on technology and policy, ethics and technology, and science and technology.";url="https://www.thepii.org/research";
+    } else if(root==="news"&&sub){
+      const a=data.research.find(r=>r.id===sub);
+      if(a){title=a.title+" — PII";desc=a.excerpt||desc;url="https://www.thepii.org/news/"+sub;}
+    } else if(root==="news"){
+      title="News — The Public Innovation Institute";desc="Announcements, partnerships and event recaps from The Public Innovation Institute.";url="https://www.thepii.org/news";
     } else if(root==="publications"&&sub){
       const a=data.research.find(r=>r.id===sub);
       if(a){title=a.title+" — PII";desc=a.excerpt||desc;url="https://www.thepii.org/publications/"+sub;}
@@ -2476,16 +2652,18 @@ function App(){
     setPage(pg);
   };
   const [rootPage,subId]=page.split("/");
-  const article=(rootPage==="research"||rootPage==="publications")&&subId?data.research.find(r=>r.id===subId):null;
+  const article=(rootPage==="research"||rootPage==="publications"||rootPage==="news")&&subId?data.research.find(r=>r.id===subId):null;
   const program=rootPage==="programs"&&subId?data.programs.find(p=>p.id===subId):null;
   const cailPost=rootPage==="cail"&&subId?(data.cailPosts||[]).find(p=>p.id===subId):null;
 
   return h("div",{style:{background:PAPER,minHeight:"100vh"}},
     h(Nav,{page:rootPage==="cail"||rootPage==="hyperion"||rootPage==="counterweight"?"initiatives":rootPage==="team"?"about":rootPage==="publications"?"research":rootPage,setPage:go,data}),
     rootPage==="home"&&h(HomePage,{data,setPage:go}),
-    rootPage==="research"&&!subId&&h(ResearchPage,{data,setPage:go,initialSection:"research"}),
+    rootPage==="research"&&!subId&&h(ResearchPage,{data,setPage:go}),
     rootPage==="research"&&subId&&h(ArticlePage,{article,setPage:go,data}),
-    rootPage==="publications"&&!subId&&h(ResearchPage,{data,setPage:go,initialSection:"publications"}),
+    rootPage==="publications"&&!subId&&h(ResearchPage,{data,setPage:go}),
+    rootPage==="news"&&!subId&&h(NewsPage,{data,setPage:go}),
+    rootPage==="news"&&subId&&h(ArticlePage,{article,setPage:go,data}),
     rootPage==="publications"&&subId&&h(ArticlePage,{article,setPage:go,data}),
     rootPage==="programs"&&!subId&&h(ProgramsPage,{data,setPage:go}),
     rootPage==="programs"&&subId&&h(ProgramDetail,{program,setPage:go}),
