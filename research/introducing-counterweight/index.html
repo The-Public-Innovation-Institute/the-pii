@@ -936,7 +936,20 @@ function piiKindOf(r){
   if(((r&&r.section)||"research")==="research")return "research";
   return "articles";
 }
-function piiYearOf(r){const m=String((r&&r.date)||"").match(/\b(20\d\d)\b/);return m?m[1]:"";}
+// Sort key for a post: its written date ("November 3, 2025", "10/23/2026",
+// "April 2026"), or — when no date was entered — the time it was created in
+// the CMS, which is stamped into ids like "post-1783949262532".
+function piiTimeOf(r){
+  const d=String((r&&r.date)||"").trim();
+  if(d){
+    let t=Date.parse(d);
+    if(isNaN(t)){const m=d.match(/^([A-Za-z]+)\s+(\d{4})$/);if(m)t=Date.parse(`${m[1]} 1, ${m[2]}`);}
+    if(!isNaN(t))return t;
+  }
+  const m=String((r&&r.id)||"").match(/^post-(\d{12,14})$/);
+  return m?Number(m[1]):0;
+}
+function piiYearOf(r){const t=piiTimeOf(r);return t?String(new Date(t).getFullYear()):"";}
 // Old category tags that just repeat the post's type aren't shown as topic tags.
 function piiTopicTag(r){const t=String((r&&r.tag)||"").trim();return ["news","insights","insight","article","articles","research"].includes(t.toLowerCase())?"":t;}
 function piiPostImg(r){return r.media&&r.mediaType!=="video"?r.media:(r.image||"");}
@@ -1061,7 +1074,7 @@ function ResearchPage({data,setPage}){
 function NewsPage({data,setPage}){
   const np=data.newsPage||{};
   const [kind,setKind]=useState("All");
-  const news=(data.research||[]).filter(r=>r.status==="published"&&piiKindOf(r)==="news");
+  const news=(data.research||[]).filter(r=>r.status==="published"&&piiKindOf(r)==="news").sort((a,b)=>piiTimeOf(b)-piiTimeOf(a));
   const labelOf=r=>(!r.tag||String(r.tag).toLowerCase()==="news")?"Announcement":r.tag;
   const lead=news[0];
   const rest=news.slice(1);
