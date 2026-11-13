@@ -358,7 +358,7 @@ const DD={
     ],
     mapEyebrow:"Where our learners come from",
     mapHeading:"One classroom, many hometowns.",
-    mapIntro:"Our learners join from across the world, and each brings the challenges of their own community into the cohort. Hover over or tap a country to trace the connection.",
+    mapIntro:"Our learners join from across the world, and each brings the challenges of their own community into the cohort.",
     hubLabel:"PII · Cambridge, MA",
     countries:[
       {name:"United States",lat:39.0,lon:-98.0,label:"l",dy:0,territory:false},
@@ -900,11 +900,11 @@ function renderPrograms(){
   const q=SEARCH.programs.toLowerCase();
   const items=DATA.programs.filter(p=>{
     if(!q)return true;
-    return (p.name||'').toLowerCase().includes(q)||(p.level||'').toLowerCase().includes(q)||(p.format||'').toLowerCase().includes(q);
+    return (p.name||'').toLowerCase().includes(q)||progAudiences(p).join(' ').toLowerCase().includes(q)||(p.format||'').toLowerCase().includes(q);
   });
   return `
     <div class="section-header">
-      <div><h1>Programs</h1><div style="font-size:12px;color:#7a7a72;margin-top:4px">Manage all academic programs</div></div>
+      <div><h1>Programs</h1><div style="font-size:12px;color:#7a7a72;margin-top:4px">Manage all academic programs. For the page's headline, stats, learner map countries, steps, alumni logos and partner buttons, open <a href="#" onclick="nav('programsPage');return false" style="color:#c8401e;font-weight:600">Programs Page →</a></div></div>
       <button class="btn" onclick="addProgram()">+ New Program</button>
     </div>
     <div class="search-bar">
@@ -922,7 +922,7 @@ function renderPrograms(){
         <div style="flex:1;min-width:0">
           <div style="font-weight:600;font-size:14px;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(p.name||'Untitled')}</div>
           <div style="display:flex;gap:6px;align-items:center">
-            <span class="badge badge-red">${esc(p.level||'')}</span>
+            ${progAudiences(p).map(a=>`<span class="badge badge-red">${esc(a)}</span>`).join('')}
             <span class="badge ${p.status==='open'?'badge-pub':'badge-draft'}">${p.status}</span>
             ${p.featured?'<span class="badge" style="background:#fff3cd;color:#856404">Featured</span>':''}
             <span style="font-size:11px;color:#7a7a72">${esc(p.format||'')}</span>
@@ -936,7 +936,7 @@ function renderPrograms(){
       ${open?`<div class="card-body">
         <div class="grid2">
           <div class="field"><label>Name</label><input type="text" value="${esc(p.name||'')}" onchange="updateProgram(${i},'name',this.value)"></div>
-          <div class="field"><label>Level</label><input type="text" list="pp-levels" value="${esc(p.level||'')}" placeholder="Choose or type a level" onchange="updateProgram(${i},'level',this.value)"><datalist id="pp-levels">${PP_LEVELS.map(l=>`<option value="${l}">`).join('')}</datalist><div style="font-size:11px;color:#7a7a72;margin-top:4px">Shown on the program card and used for the level filter on the Programs page.</div></div>
+          <div class="field"><label>Who it's for</label><div style="display:flex;flex-wrap:wrap;gap:6px 14px;padding:6px 0">${PP_AUDIENCES.map(aud=>`<label style="margin:0;display:flex;align-items:center;gap:6px;text-transform:none;letter-spacing:0;font-size:13px;font-weight:400"><input type="checkbox" style="width:auto;margin:0" ${progAudiences(p).includes(aud)?'checked':''} onchange="toggleProgramAudience(${i},'${aud}',this.checked)">${aud}</label>`).join('')}</div><div style="font-size:11px;color:#7a7a72">Tick every group that can apply. These show as tags on the program card and power the filter buttons on the Programs page.</div></div>
         </div>
         <div class="grid2">
           <div class="field"><label>Format</label><input type="text" value="${esc(p.format||'')}" onchange="updateProgram(${i},'format',this.value)"></div>
@@ -971,7 +971,21 @@ function renderPrograms(){
 // public /programs page live at DATA.programsPage and are saved with
 // everything else via save(). Program cards themselves stay under Programs;
 // the header photo stays under Settings › Page Hero Sections.
-const PP_LEVELS=['Featured','Graduate','Undergraduate','Fellowship','High School','Professional','Executive'];
+const PP_AUDIENCES=['High school students','Undergraduates','Graduate students','Recent graduates','Early-career professionals','Mid-career professionals','Researchers'];
+// Older programs only have a single free-text "level"; treat it as their
+// audience until someone ticks boxes ("Featured" is a separate flag, not an audience).
+function progAudiences(p){
+  if(Array.isArray(p.levels)) return p.levels;
+  const map={'Graduate':'Graduate students','Undergraduate':'Undergraduates','High School':'High school students','Fellowship':'Researchers'};
+  return p.level&&p.level!=='Featured'?[map[p.level]||p.level]:[];
+}
+function toggleProgramAudience(i,aud,on){
+  const p=DATA.programs[i];
+  const cur=progAudiences(p).slice();
+  const next=on?(cur.includes(aud)?cur:cur.concat(aud)):cur.filter(x=>x!==aud);
+  p.levels=PP_AUDIENCES.filter(x=>next.includes(x)).concat(next.filter(x=>!PP_AUDIENCES.includes(x)));
+  p.level=p.levels[0]||'';
+}
 // Approximate capital-city coordinates, used to fill in lat/lon when a country
 // is typed in. Anything not listed can still be added by entering coordinates.
 const PP_PLACES={"Afghanistan":[34.5,69.2],"Algeria":[36.8,3.1],"Angola":[-8.8,13.2],"Antigua and Barbuda":[17.1,-61.8],"Argentina":[-34.6,-58.4],"Armenia":[40.2,44.5],"Australia":[-35.3,149.1],"Austria":[48.2,16.4],"Bahamas":[25.1,-77.3],"Bangladesh":[23.8,90.4],"Barbados":[13.1,-59.6],"Belgium":[50.8,4.4],"Belize":[17.3,-88.8],"Bolivia":[-16.5,-68.1],"Botswana":[-24.7,25.9],"Brazil":[-15.8,-47.9],"Cameroon":[3.9,11.5],"Canada":[45.4,-75.7],"Chile":[-33.4,-70.6],"China":[39.9,116.4],"Colombia":[4.7,-74.1],"Costa Rica":[9.9,-84.1],"Cuba":[23.1,-82.4],"Cyprus":[35.2,33.4],"Denmark":[55.7,12.6],"Dominica":[15.3,-61.4],"Dominican Republic":[18.5,-69.9],"Ecuador":[-0.2,-78.5],"Egypt":[30.0,31.2],"El Salvador":[13.7,-89.2],"Ethiopia":[9.0,38.7],"Finland":[60.2,24.9],"France":[48.9,2.4],"Germany":[52.5,13.4],"Ghana":[5.6,-0.2],"Greece":[38.0,23.7],"Grenada":[12.1,-61.7],"Guatemala":[14.6,-90.5],"Guyana":[6.8,-58.2],"Haiti":[18.5,-72.3],"Honduras":[14.1,-87.2],"India":[28.6,77.2],"Indonesia":[-6.2,106.8],"Iran":[35.7,51.4],"Ireland":[53.3,-6.3],"Israel":[31.8,35.2],"Italy":[41.9,12.5],"Jamaica":[18.0,-76.8],"Japan":[35.7,139.7],"Jordan":[31.9,35.9],"Kenya":[-1.3,36.8],"Lebanon":[33.9,35.5],"Malawi":[-14.0,33.8],"Malaysia":[3.1,101.7],"Mexico":[19.4,-99.1],"Morocco":[34.0,-6.8],"Mozambique":[-25.9,32.6],"Nepal":[27.7,85.3],"Netherlands":[52.4,4.9],"New Zealand":[-41.3,174.8],"Nicaragua":[12.1,-86.3],"Nigeria":[9.1,7.5],"Norway":[59.9,10.8],"Pakistan":[33.7,73.1],"Panama":[9.0,-79.5],"Paraguay":[-25.3,-57.6],"Peru":[-12.0,-77.0],"Philippines":[14.6,121.0],"Poland":[52.2,21.0],"Portugal":[38.7,-9.1],"Puerto Rico":[18.4,-66.1],"Qatar":[25.3,51.5],"Romania":[44.4,26.1],"Rwanda":[-1.9,30.1],"Saint Kitts and Nevis":[17.3,-62.7],"Saint Lucia":[14.0,-61.0],"Saint Vincent and the Grenadines":[13.2,-61.2],"Saudi Arabia":[24.7,46.7],"Senegal":[14.7,-17.4],"Singapore":[1.35,103.8],"South Africa":[-26.2,28.0],"South Korea":[37.6,127.0],"Spain":[40.4,-3.7],"Sri Lanka":[6.9,79.9],"Suriname":[5.9,-55.2],"Sweden":[59.3,18.1],"Switzerland":[46.9,7.4],"Taiwan":[25.0,121.5],"Tanzania":[-6.8,39.3],"Thailand":[13.8,100.5],"Trinidad and Tobago":[10.7,-61.5],"Tunisia":[36.8,10.2],"Turkey":[39.9,32.9],"Uganda":[0.35,32.6],"Ukraine":[50.5,30.5],"United Arab Emirates":[24.5,54.4],"United Kingdom":[51.5,-0.1],"United States":[39.0,-98.0],"Uruguay":[-34.9,-56.2],"Venezuela":[10.5,-66.9],"Vietnam":[21.0,105.8],"Zambia":[-15.4,28.3],"Zimbabwe":[-17.8,31.0]};
@@ -1107,7 +1121,7 @@ function renderProgramsPage(){
     <div class="card">
       <div class="section-sub">Program list</div>
       <div class="grid2">${ppField('Eyebrow','programsEyebrow')}${ppField('Heading','programsHeading')}</div>
-      ${note('The level filter buttons are built from each program\'s Level (set under Programs).')}
+      ${note('The filter buttons are built from each program\'s "Who it\'s for" boxes (set under Programs).')}
       <button class="btn" onclick="save()">Save Changes</button>
     </div>
 
