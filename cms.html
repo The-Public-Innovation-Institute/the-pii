@@ -172,6 +172,23 @@ td{padding:9px 1rem;font-size:13px;border-bottom:1px solid rgba(14,14,12,0.12)}
   </div>
 </div>
 
+<!-- RESET PASSWORD (superadmin only) -->
+<div id="pw-modal" class="modal-overlay" onclick="if(event.target===this)closePwModal()">
+  <div class="modal-box" style="width:min(440px,100%)">
+    <div class="modal-header">
+      <div style="font-family:'Playfair Display',Georgia,serif;font-size:1.1rem;font-weight:700">Set new password</div>
+      <button class="btn-ghost" style="padding:5px 12px" onclick="closePwModal()">Cancel</button>
+    </div>
+    <div style="font-size:13px;color:#3a3a36;margin-bottom:1rem" id="pw-modal-who"></div>
+    <div class="field"><label>New password</label><input type="password" id="pw-new" autocomplete="new-password"></div>
+    <div class="field"><label>Confirm new password</label><input type="password" id="pw-confirm" autocomplete="new-password" onkeydown="if(event.key==='Enter')submitPwReset()"></div>
+    <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:#7a7a72;margin-bottom:1rem;cursor:pointer"><input type="checkbox" id="pw-show" style="width:auto" onchange="document.getElementById('pw-new').type=document.getElementById('pw-confirm').type=this.checked?'text':'password'"> Show passwords</label>
+    <div class="err-box" id="pw-err" style="display:none;margin-bottom:.75rem"></div>
+    <button class="btn" id="pw-submit" onclick="submitPwReset()">Save new password</button>
+    <div style="font-size:11px;color:#7a7a72;margin-top:.75rem;line-height:1.5">Share the new password with them through a secure channel. Anyone already signed in with the old password will be signed out the next time they try to save.</div>
+  </div>
+</div>
+
 <script>
 // ── Supabase backend ──────────────────────────────────────────────────────
 // Uses the same Supabase project as the PII × Cyvl admissions portal, but
@@ -1986,41 +2003,30 @@ function renderUsers(){
     <!-- Current users -->
     <div class="card" style="margin-bottom:1.5rem">
       <div class="section-sub">Team Members</div>
-      <!-- Superadmin (hardcoded, cannot be edited) -->
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:.85rem 0;border-bottom:1px solid rgba(14,14,12,0.12)">
+      ${USERS.map((u,i)=>{
+        const isMe=CURRENT_USER&&u.id===CURRENT_USER.id;
+        return `
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;padding:.85rem 0;border-bottom:1px solid rgba(14,14,12,0.12)">
         <div style="display:flex;align-items:center;gap:12px">
-          <div style="width:34px;height:34px;background:#0e0e0c;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:600;flex-shrink:0">KL</div>
+          <div style="width:34px;height:34px;background:${u.active?(u.role==='superadmin'?'#0e0e0c':'#3a3a36'):'#ccc'};border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:600;flex-shrink:0">${esc(u.name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase())}</div>
           <div>
-            <div style="font-size:13px;font-weight:500">Khahlil Louisy</div>
-            <div style="font-size:11px;color:#7a7a72">khahlil.louisy@gmail.com</div>
-          </div>
-        </div>
-        <div style="display:flex;align-items:center;gap:10px">
-          ${roleBadge('superadmin')}
-          <span style="font-size:11px;color:#7a7a72;font-style:italic">Hardcoded</span>
-        </div>
-      </div>
-      ${USERS.map((u,i)=>`
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:.85rem 0;border-bottom:1px solid rgba(14,14,12,0.12)">
-        <div style="display:flex;align-items:center;gap:12px">
-          <div style="width:34px;height:34px;background:${u.active?'#3a3a36':'#ccc'};border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:600;flex-shrink:0">${u.name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase()}</div>
-          <div>
-            <div style="font-size:13px;font-weight:500">${esc(u.name)}</div>
+            <div style="font-size:13px;font-weight:500">${esc(u.name)}${isMe?' <span style="font-size:11px;color:#7a7a72;font-weight:400">(you)</span>':''}</div>
             <div style="font-size:11px;color:#7a7a72">${esc(u.email)}</div>
           </div>
         </div>
-        <div style="display:flex;align-items:center;gap:8px">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
           ${roleBadge(u.role)}
           <span class="badge ${u.active?'badge-pub':'badge-draft'}">${u.active?'Active':'Suspended'}</span>
-          <select onchange="updateUser(${i},'role',this.value)" style="width:auto;padding:4px 8px;font-size:12px">
+          ${isMe?'':`<select onchange="updateUser(${i},'role',this.value)" style="width:auto;padding:4px 8px;font-size:12px">
             <option ${u.role==='editor'?'selected':''} value="editor">Editor</option>
             <option ${u.role==='contributor'?'selected':''} value="contributor">Contributor</option>
             <option ${u.role==='superadmin'?'selected':''} value="superadmin">Superadmin</option>
-          </select>
-          <button class="btn-ghost" style="font-size:11px;padding:5px 10px" onclick="toggleUser(${i})">${u.active?'Suspend':'Activate'}</button>
-          <button class="btn-danger" onclick="deleteUser(${i})">Remove</button>
+          </select>`}
+          <button class="btn-ghost" style="font-size:11px;padding:5px 10px" onclick="openPwModal(${i})">${isMe?'Change password':'Reset password'}</button>
+          ${isMe?'':`<button class="btn-ghost" style="font-size:11px;padding:5px 10px" onclick="toggleUser(${i})">${u.active?'Suspend':'Activate'}</button>
+          <button class="btn-danger" onclick="deleteUser(${i})">Remove</button>`}
         </div>
-      </div>`).join('')}
+      </div>`;}).join('')}
       ${USERS.length===0?'<div style="font-size:13px;color:#7a7a72;padding:1rem 0">No team members added yet.</div>':''}
     </div>
 
@@ -2032,7 +2038,7 @@ function renderUsers(){
         <div class="field"><label>Email Address</label><input type="email" id="nu-email" placeholder="jane@example.com"></div>
       </div>
       <div class="grid2">
-        <div class="field"><label>Temporary Password</label><input type="password" id="nu-pw" placeholder="They should change this"><div style="font-size:11px;color:#7a7a72;margin-top:4px">Share this with them securely. They cannot change it themselves in the CMS.</div></div>
+        <div class="field"><label>Temporary Password</label><input type="password" id="nu-pw" placeholder="They should change this"><div style="font-size:11px;color:#7a7a72;margin-top:4px">Share this with them securely. A superadmin can reset it later from this page.</div></div>
         <div class="field"><label>Role</label><select id="nu-role" style="width:100%"><option value="contributor">Contributor</option><option value="editor">Editor</option><option value="superadmin">Superadmin</option></select></div>
       </div>
       <button class="btn" onclick="addUser()">Add Team Member</button>
@@ -2121,6 +2127,59 @@ async function toggleUser(i){
   const ok=await saveUsers(USERS);
   if(ok)toast((USERS[i].active?'Activated':'Suspended')+' \u2713'); else USERS[i].active=!USERS[i].active;
   render();
+}
+// ── Password reset (superadmin) ─────────────────────────────────────────────
+// Goes through pii_site_set_user_password, which re-verifies superadmin on the
+// server and changes only that one user's pwHash — it never rewrites the whole
+// user list, so it can't clobber edits made elsewhere.
+let PW_TARGET=null;
+function openPwModal(i){
+  const u=USERS[i]; if(!u)return;
+  PW_TARGET=u.id;
+  const isMe=CURRENT_USER&&u.id===CURRENT_USER.id;
+  document.getElementById('pw-modal-who').innerHTML=isMe
+    ?'Changing <strong>your own</strong> password. You will stay signed in.'
+    :'Setting a new password for <strong>'+esc(u.name)+'</strong> ('+esc(u.email)+').';
+  ['pw-new','pw-confirm'].forEach(id=>{const el=document.getElementById(id);el.value='';el.type='password';});
+  document.getElementById('pw-show').checked=false;
+  document.getElementById('pw-err').style.display='none';
+  document.getElementById('pw-modal').classList.add('open');
+  setTimeout(()=>document.getElementById('pw-new').focus(),50);
+}
+function closePwModal(){
+  document.getElementById('pw-modal').classList.remove('open');
+  ['pw-new','pw-confirm'].forEach(id=>{document.getElementById(id).value='';});
+  PW_TARGET=null;
+}
+async function submitPwReset(){
+  const errEl=document.getElementById('pw-err');
+  const btn=document.getElementById('pw-submit');
+  const showErr=m=>{errEl.textContent=m;errEl.style.display='block';};
+  const u=USERS.find(x=>x.id===PW_TARGET);
+  if(!u){showErr('That user no longer exists — refresh the page.');return;}
+  const pw=document.getElementById('pw-new').value;
+  const pw2=document.getElementById('pw-confirm').value;
+  const min=u.role==='superadmin'?12:8;
+  if(pw.length<min){showErr('Password must be at least '+min+' characters'+(u.role==='superadmin'?' for a superadmin.':'.'));return;}
+  if(pw!==pw2){showErr('The two passwords don’t match.');return;}
+  if(!requireAuth())return;
+  const newHash=sha256(pw);
+  btn.disabled=true;btn.textContent='Saving…';
+  try{
+    const {error}=await sb.rpc('pii_site_set_user_password',{p_email_hash:AUTH_EH,p_pw_hash:AUTH_PH,p_user_id:u.id,p_new_pw_hash:newHash});
+    if(error)throw error;
+    u.pwHash=newHash;
+    try{localStorage.setItem(UK,JSON.stringify(USERS));}catch(e){}
+    // If you changed your own password, the old hash in this session is now
+    // invalid — swap it so your next save doesn't get rejected.
+    if(CURRENT_USER&&u.id===CURRENT_USER.id){AUTH_PH=newHash;setSession(CURRENT_USER,AUTH_EH,AUTH_PH);}
+    closePwModal();
+    toast('Password updated ✓');
+  }catch(e){
+    showErr('Could not update the password: '+((e&&e.message)||'server error')+'. Nothing was changed.');
+  }finally{
+    btn.disabled=false;btn.textContent='Save new password';
+  }
 }
 async function deleteUser(i){
   if(!confirm('Remove '+USERS[i].name+'? They will lose access immediately.'))return;
