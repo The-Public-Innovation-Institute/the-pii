@@ -121,6 +121,22 @@ img,video{max-width:100%}
 .rte-body strong{font-weight:700}
 .rte-body em{font-style:italic}
 .rte-body u{text-decoration:underline}
+
+/* ── Programs page: learner map ─────────────────────────────── */
+@keyframes piiDraw{from{stroke-dashoffset:600}to{stroke-dashoffset:0}}
+@keyframes piiPulse{0%{r:5;opacity:.55}100%{r:22;opacity:0}}
+.pii-arc{stroke-dasharray:600;animation:piiDraw 2.4s ease-out both}
+.pii-pulse{animation:piiPulse 2.2s ease-out infinite}
+.pii-map-label{transition:background .15s,color .15s,border-color .15s}
+.pii-map-scroll{width:100%}
+@media (prefers-reduced-motion:reduce){.pii-arc,.pii-pulse{animation:none}}
+@media (max-width:760px){
+  .pii-pp-pad{padding-left:1.25rem!important;padding-right:1.25rem!important}
+  .pii-map-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .pii-map-scroll .pii-map{min-width:720px}
+  .pii-map-hint{display:block!important}
+}
+
 </style>
 </head>
 <body>
@@ -159,6 +175,65 @@ const DEFAULT_DATA={
   editorialImages:{research:"",programs:"",cail:"",opportunities:"",about:""},
   site:{name:"The Public Innovation Institute",email:"info@thepii.org",tagline:"Working at the intersection of technology, public policy, and community leadership.",address:"1 Washington Mall, Suite 1159\nGovernment Center, Boston, MA 02108",twitter:"@thepii_org",ga4Id:"",pullQuote:'"The world doesn\'t move in straight lines. A child\'s health is shaped by the air they breathe, the school they attend, the code behind a distant algorithm."'},
   affiliations:[{name:"Harvard University",shortName:"Harvard",color:"#A31F34",logo:""},{name:"Bloomberg Center for Cities",shortName:"Bloomberg Center",color:"#003087",logo:""},{name:"MIT",shortName:"MIT",color:"#A31F34",logo:""}],
+  programsPage:{
+    headline:"Learn in Cambridge.",
+    headlineAccent:"Build for home.",
+    intro:"PII programs give students and early-career professionals the training to work with data, AI and research methods, then turn them loose on the public challenges they care about most, alongside the cities, communities and partners closest to the problem.",
+    primaryCta:"Explore programs",
+    secondaryCta:"Host a cohort",
+    stats:[
+      {kind:"countries",num:"",desc:"countries represented across our cohorts"},
+      {kind:"custom",num:"2021",desc:"running cohorts since, first under ITGH"},
+      {kind:"programs",num:"",desc:"programs, from undergraduate study to fellowship"}
+    ],
+    mapEyebrow:"Where our learners come from",
+    mapHeading:"One classroom, many hometowns.",
+    mapIntro:"Every cohort is run from Cambridge, but the problems our learners bring with them come from everywhere. Hover over or tap a country to trace the connection.",
+    hubLabel:"Cambridge, MA",
+    countries:[
+      {name:"United States",lat:39.0,lon:-98.0,label:"l",dy:0,territory:false},
+      {name:"Mexico",lat:19.4,lon:-99.1,label:"l",dy:0,territory:false},
+      {name:"Haiti",lat:18.5,lon:-72.3,label:"l",dy:12,territory:false},
+      {name:"Dominican Republic",lat:18.5,lon:-69.9,label:"r",dy:14,territory:false},
+      {name:"Puerto Rico",lat:18.4,lon:-66.1,label:"r",dy:-8,territory:true},
+      {name:"Venezuela",lat:10.5,lon:-66.9,label:"b",dy:8,territory:false},
+      {name:"Brazil",lat:-15.8,lon:-47.9,label:"r",dy:0,territory:false},
+      {name:"Argentina",lat:-34.6,lon:-58.4,label:"r",dy:0,territory:false},
+      {name:"United Kingdom",lat:51.5,lon:-0.1,label:"l",dy:-6,territory:false},
+      {name:"Spain",lat:40.4,lon:-3.7,label:"l",dy:6,territory:false},
+      {name:"Germany",lat:52.5,lon:13.4,label:"r",dy:-6,territory:false},
+      {name:"Italy",lat:41.9,lon:12.5,label:"r",dy:8,territory:false},
+      {name:"Armenia",lat:40.2,lon:44.5,label:"r",dy:0,territory:false},
+      {name:"Uganda",lat:0.35,lon:32.6,label:"l",dy:-4,territory:false},
+      {name:"Kenya",lat:-1.3,lon:36.8,label:"r",dy:4,territory:false},
+      {name:"South Africa",lat:-26.2,lon:28.0,label:"r",dy:0,territory:false},
+      {name:"India",lat:28.6,lon:77.2,label:"r",dy:0,territory:false}
+    ],
+    howEyebrow:"How our programs work",
+    steps:[
+      {title:"Foundations first",kicker:"Train",body:"An intensive opening in data analysis, research methods, systems thinking and the ethics of AI, with the human side of data at the center."},
+      {title:"Find what matters",kicker:"Discover",body:"Teams dig into open city data and partner datasets to identify the challenges they believe deserve attention, in whatever sector they choose."},
+      {title:"Ship something real",kicker:"Build",body:"Learners use AI and other tools to design solutions with partners, and the strongest work continues into a year-long fellowship."}
+    ],
+    programsEyebrow:"Our programs",
+    programsHeading:"Find your way in.",
+    alumniEyebrow:"Where alumni go next",
+    alumniText:"Our alumni have gone on to graduate study and careers at some of the world's leading institutions.",
+    alumni:[
+      {name:"Harvard Medical School",logo:"",url:""},
+      {name:"Johns Hopkins University",logo:"",url:""},
+      {name:"University of Oxford",logo:"",url:""},
+      {name:"Columbia Mailman School of Public Health",logo:"",url:""},
+      {name:"University College London",logo:"",url:""}
+    ],
+    partnerEyebrow:"Partner with PII",
+    partnerHeading:"The next cohort could start in your community.",
+    partnerBody:"We work with colleges, governments and companies to host cohorts, open up real datasets and give learners problems worth solving. If you want to bring a PII program closer to the people it serves, let's talk.",
+    partnerButtons:[
+      {label:"Become a host partner",link:"contact"},
+      {label:"Become an industry partner",link:"contact"}
+    ]
+  },
   pageHeroes:{
     research:{image:"",title:"Research & Publications",subtitle:"Empirical research, policy analysis, and working papers on AI in government, urban health equity, and civic data infrastructure."},
     programs:{image:"",title:"Programs & Opportunities",subtitle:"From summer intensives to graduate fellowships, our programs prepare the next generation of civic technologists and public innovators."},
@@ -249,6 +324,7 @@ function mergeWithDefaults(parsed){
     about:{...DEFAULT_DATA.about,...(parsed.about||{})},
     editorialImages:{...DEFAULT_DATA.editorialImages,...(parsed.editorialImages||{})},
     pageHeroes:{...DEFAULT_DATA.pageHeroes,...(parsed.pageHeroes||{})},
+    programsPage:{...DEFAULT_DATA.programsPage,...(parsed.programsPage||{})},
     site:{...DEFAULT_DATA.site,...(parsed.site||{})}
   };
 }
@@ -940,32 +1016,197 @@ function ArticlePage({article,setPage,data}){
   );
 }
 
+// ── Programs page ────────────────────────────────────────────────
+// All copy, stats, map countries, steps, alumni logos and partner buttons
+// come from data.programsPage (edited in the CMS under "Programs Page");
+// program cards come from data.programs; the header photo comes from
+// data.pageHeroes.programs, exactly as before.
+const PII_MAP_H=383.33;
+function piiProj(lat,lon){return {x:(Number(lon)+180)/360*1000,y:(80-Number(lat))/138*PII_MAP_H};}
+function piiCountryCount(pp){return ((pp&&pp.countries)||[]).filter(c=>c&&c.name&&!c.territory).length;}
+// Never overstate: 16 countries reads "15+", 9 reads "9".
+function piiRoundedPlus(n){return n>=10?`${Math.floor(n/5)*5}+`:String(n);}
+function piiGo(link,setPage){
+  if(!link)return;
+  if(/^https?:\/\//i.test(link)){window.open(link,"_blank","noopener");return;}
+  setPage(String(link).replace(/^\/+/,""));
+}
+
+function LearnerMap({pp}){
+  const [act,setAct]=useState(null);
+  const hub=piiProj(42.37,-71.11);
+  const countries=((pp&&pp.countries)||[]).filter(c=>c&&c.name&&isFinite(Number(c.lat))&&isFinite(Number(c.lon)));
+  const pts=countries.map(c=>{
+    const p=piiProj(c.lat,c.lon);
+    const dx=hub.x-p.x,dy=hub.y-p.y,dist=Math.sqrt(dx*dx+dy*dy);
+    const mx=(p.x+hub.x)/2,my=Math.min(p.y,hub.y)-dist*0.28;
+    return {c,p,d:`M${p.x.toFixed(1)} ${p.y.toFixed(1)} Q${mx.toFixed(1)} ${my.toFixed(1)} ${hub.x.toFixed(1)} ${hub.y.toFixed(1)}`};
+  });
+  const pct=(v,max)=>`${(v/max*100).toFixed(2)}%`;
+  return h("div",{className:"pii-map-scroll"},
+    h("div",{className:"pii-map",style:{position:"relative",width:"100%",aspectRatio:"1000 / 383",background:WARM,border:`1px solid ${RULE}`,overflow:"hidden"}},
+      h("img",{src:"/assets/programs/land-dots.svg",alt:"","aria-hidden":"true",style:{position:"absolute",inset:0,width:"100%",height:"100%",display:"block"}}),
+      h("svg",{viewBox:`0 0 1000 ${PII_MAP_H}`,role:"img","aria-label":`Map of the ${countries.length} places PII learners have come from, each connected by an arc to Cambridge, Massachusetts`,style:{position:"absolute",inset:0,width:"100%",height:"100%"}},
+        pts.map(({c,d},i)=>{
+          const on=act===c.name,dim=act&&!on;
+          return h("path",{key:"a"+i,className:"pii-arc",d,fill:"none",stroke:dim?"#b9b2a3":ACCENT,strokeWidth:on?2.6:1.3,strokeLinecap:"round",opacity:dim?0.35:(on?1:0.7),style:{animationDelay:`${(i*0.09).toFixed(2)}s`}});
+        }),
+        pts.map(({c,p},i)=>{
+          const on=act===c.name,dim=act&&!on;
+          return h("circle",{key:"d"+i,cx:p.x,cy:p.y,r:on?6:3.6,fill:dim?"#b9b2a3":ACCENT,stroke:PAPER,strokeWidth:1.5});
+        }),
+        h("circle",{className:"pii-pulse",cx:hub.x,cy:hub.y,r:5,fill:ACCENT}),
+        h("circle",{cx:hub.x,cy:hub.y,r:6,fill:INK,stroke:PAPER,strokeWidth:2})
+      ),
+      h("div",{style:{position:"absolute",left:pct(hub.x,1000),top:pct(hub.y,PII_MAP_H),transform:"translate(-50%, calc(-100% - 14px))",background:INK,color:"#fff",fontFamily:MONO,fontSize:11,letterSpacing:"0.06em",textTransform:"uppercase",padding:"5px 9px",whiteSpace:"nowrap",pointerEvents:"none",zIndex:4}},pp.hubLabel||"Cambridge, MA"),
+      pts.map(({c,p},i)=>{
+        const on=act===c.name,dy=Number(c.dy)||0;
+        const t=c.label==="l"?`translate(calc(-100% - 9px), calc(-50% + ${dy}px))`:c.label==="b"?`translate(-50%, ${dy}px)`:`translate(9px, calc(-50% + ${dy}px))`;
+        return h("button",{key:"l"+i,type:"button",className:"pii-map-label",onMouseEnter:()=>setAct(c.name),onMouseLeave:()=>setAct(null),onFocus:()=>setAct(c.name),onBlur:()=>setAct(null),onClick:()=>setAct(on?null:c.name),"aria-pressed":on?"true":"false",
+          style:{position:"absolute",left:pct(p.x,1000),top:pct(p.y,PII_MAP_H),transform:t,fontFamily:SANS,fontSize:11,fontWeight:600,lineHeight:1.3,whiteSpace:"nowrap",padding:"2px 6px",cursor:"pointer",border:`1px solid ${on?ACCENT:"rgba(14,14,12,0.14)"}`,background:on?ACCENT:"rgba(250,249,245,0.92)",color:on?"#fff":INK,zIndex:on?3:2}},c.name);
+      })
+    )
+  );
+}
+
 function ProgramsPage({data,setPage}){
   const hero=(data.pageHeroes||{}).programs||{};
-  const featuredProgs=data.programs.filter(p=>p.featured&&p.status==="open").map(p=>({...p,title:p.name,excerpt:p.description||""}));
-  return h("div",{style:{fontFamily:SANS}},
-    h(PageHero,{hero,pageName:"Programs & Opportunities"}),
-    featuredProgs.length>0&&h(FeaturedStrip,{posts:featuredProgs,onSelect:p=>setPage(`programs/${p.id}`),label:"Program"}),
-    h(EditorialImage,{src:(data.editorialImages||{}).programs,alt:"PII Programs",height:300}),
-    h("div",{style:{padding:"3rem 2.5rem"}},
-      data.programs.map((prog,i)=>h("div",{key:prog.id,onClick:()=>setPage(`programs/${prog.id}`),className:prog.image?"pii-g-row":"pii-g-row-noimg",style:{gap:"2rem",padding:"2rem 0",borderBottom:`1px solid ${RULE}`,cursor:"pointer",alignItems:"center",transition:"background .2s"},
-        onMouseEnter:e=>e.currentTarget.style.background=WARM,onMouseLeave:e=>e.currentTarget.style.background="transparent"},
-        prog.image&&h("div",{className:"pii-prog-thumb",style:{width:240,height:160,overflow:"hidden",flexShrink:0,position:"relative",background:WARM}},
-          h("img",{src:prog.image,alt:prog.name,style:{width:"100%",height:"100%",objectFit:"cover",display:"block"}}),
-          h("div",{style:{position:"absolute",top:10,left:10,fontFamily:MONO,fontSize:12,color:"#fff",background:"rgba(14,14,12,0.55)",padding:"3px 8px",fontWeight:500}},`0${i+1}`)
-        ),
-        !prog.image&&h("div",{style:{fontFamily:MONO,fontSize:"1.5rem",color:"rgba(14,14,12,0.15)",fontWeight:400,minWidth:40}},`0${i+1}`),
-        h("div",null,
-          h("div",{style:{display:"flex",gap:8,alignItems:"center",marginBottom:"0.5rem"}},
-            h("span",{style:{fontSize:10,letterSpacing:"0.1em",textTransform:"uppercase",background:"#f5ede9",color:ACCENT,padding:"3px 9px",fontWeight:500}},prog.level),
-            prog.status==="open"&&h("span",{style:{fontSize:10,letterSpacing:"0.1em",textTransform:"uppercase",background:"rgba(15,110,86,0.1)",color:"#0F6E56",padding:"3px 9px",fontWeight:500}},"Open")
+  const pp=data.programsPage||{};
+  const progs=data.programs||[];
+  const [filter,setFilter]=useState("All");
+  const levels=["All",...new Set(progs.map(p=>p.level).filter(Boolean))];
+  const active=levels.includes(filter)?filter:"All";
+  const shown=progs.filter(p=>active==="All"||p.level===active);
+  const hasImage=!!(hero.image&&hero.image.length);
+  const scrollTo=id=>{const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:"smooth",block:"start"});};
+  const statNum=s=>(s.num&&String(s.num).trim())?s.num:(s.kind==="countries"?piiRoundedPlus(piiCountryCount(pp)):s.kind==="programs"?String(progs.length):"");
+  const eyebrow=(text,color)=>h("div",{style:{fontFamily:MONO,fontSize:12,letterSpacing:"0.12em",textTransform:"uppercase",color:color||ACCENT,marginBottom:14}},text);
+  const h2=(text,extra)=>h("h2",{style:{fontFamily:SERIF,fontSize:"clamp(2rem,3.6vw,3rem)",fontWeight:700,lineHeight:1.1,color:INK,...(extra||{})}},text);
+  const wrap={maxWidth:1200,margin:"0 auto"};
+  const ctaSolid={display:"block",background:ACCENT,color:"#fff",border:"none",textAlign:"center",padding:"15px 24px",fontFamily:SANS,fontSize:13,fontWeight:600,letterSpacing:"0.07em",textTransform:"uppercase",cursor:"pointer",textDecoration:"none",width:"100%"};
+  const ctaLine={...ctaSolid,background:"transparent",border:"1px solid rgba(255,255,255,0.7)"};
+  const steps=pp.steps||[];
+  const alumni=(pp.alumni||[]).filter(a=>a&&(a.name||a.logo));
+
+  return h("div",{style:{fontFamily:SANS,color:INK}},
+    // Hero — keeps the live header photo from the CMS page-hero settings
+    h("section",{className:"pii-pp-pad",style:{position:"relative",overflow:"hidden",padding:"7rem 2.5rem 5.5rem",borderBottom:`1px solid ${RULE}`,background:"#2b2b27"}},
+      hasImage&&h("img",{src:hero.image,alt:"",style:{position:"absolute",inset:0,width:"100%",height:"100%",objectFit:"cover",display:"block"}}),
+      h("div",{"aria-hidden":"true",style:{position:"absolute",inset:0,background:"linear-gradient(135deg,rgba(10,10,8,0.72) 0%,rgba(10,10,8,0.45) 100%)"}}),
+      h("div",{style:{...wrap,position:"relative",display:"flex",flexWrap:"wrap",gap:48,alignItems:"flex-end"}},
+        h("div",{style:{flex:"999 1 560px",minWidth:0}},
+          eyebrow(hero.title||"Programs & Opportunities","#f08a6c"),
+          h("h1",{style:{fontFamily:SERIF,fontWeight:900,fontSize:"clamp(2.6rem,5.5vw,4.75rem)",lineHeight:1.04,margin:"6px 0 24px",letterSpacing:"-0.01em",color:"#fff"}},
+            pp.headline||"",
+            pp.headlineAccent&&h(React.Fragment,null,h("br"),h("em",{style:{fontWeight:400,color:"#f08a6c"}},pp.headlineAccent))
           ),
-          h("h2",{style:{fontFamily:SERIF,fontSize:"1.5rem",fontWeight:700,color:INK,lineHeight:1.3,marginBottom:"0.5rem"}},prog.name),
-          prog.description&&h("p",{style:{fontSize:13,color:"#3a3a36",lineHeight:1.6,marginBottom:"0.5rem",maxWidth:480}},prog.description),
-          h("div",{style:{fontSize:12,color:"#7a7a72"}},prog.format+(prog.deadline!=="TBD"?` · Deadline: ${prog.deadline}`:""))
+          (pp.intro||hero.subtitle)&&h("p",{style:{fontSize:18,lineHeight:1.65,color:"rgba(255,255,255,0.82)",maxWidth:620}},pp.intro||hero.subtitle)
         ),
-        h("div",{style:{fontSize:12,fontWeight:500,color:INK,whiteSpace:"nowrap",borderBottom:`1px solid ${INK}`,paddingBottom:2}},"Learn more →")
-      ))
+        h("div",{style:{flex:"1 1 280px",display:"flex",flexDirection:"column",gap:12}},
+          pp.primaryCta&&h("button",{type:"button",onClick:()=>scrollTo("pii-program-list"),style:ctaSolid},pp.primaryCta),
+          pp.secondaryCta&&h("button",{type:"button",onClick:()=>scrollTo("pii-partner"),style:{...ctaLine,color:"#fff"}},pp.secondaryCta)
+        )
+      )
+    ),
+    // Stats
+    (pp.stats||[]).length>0&&h("section",{style:{background:INK,color:"#fff"}},
+      h("div",{className:"pii-pp-pad",style:{...wrap,padding:"2.75rem 2.5rem",display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(220px,1fr))",gap:32}},
+        (pp.stats||[]).map((s,i)=>h("div",{key:i},
+          h("div",{style:{fontFamily:SERIF,fontSize:52,fontWeight:700,lineHeight:1}},statNum(s)),
+          h("div",{style:{fontSize:13,color:"rgba(255,255,255,0.72)",marginTop:10,lineHeight:1.5}},s.desc)
+        ))
+      )
+    ),
+    // Learner map
+    (pp.countries||[]).length>0&&h("section",{className:"pii-pp-pad",style:{padding:"5.5rem 2.5rem",borderBottom:`1px solid ${RULE}`}},
+      h("div",{style:wrap},
+        h("div",{style:{display:"flex",flexWrap:"wrap",justifyContent:"space-between",alignItems:"flex-end",gap:24,marginBottom:40}},
+          h("div",{style:{flex:"999 1 520px",minWidth:0}},eyebrow(pp.mapEyebrow),h2(pp.mapHeading)),
+          pp.mapIntro&&h("p",{style:{flex:"1 1 320px",fontSize:15,lineHeight:1.7,color:"#3a3a36"}},pp.mapIntro)
+        ),
+        h(LearnerMap,{pp}),
+        h("div",{className:"pii-map-hint",style:{display:"none",fontSize:12,color:"#6b6b63",marginTop:10}},"Swipe the map to see every country →")
+      )
+    ),
+    // How it works
+    steps.length>0&&h("section",{className:"pii-pp-pad",style:{padding:"5.5rem 2.5rem",background:WARM,borderBottom:`1px solid ${RULE}`}},
+      h("div",{style:wrap},
+        h("div",{style:{marginBottom:18}},eyebrow(pp.howEyebrow)),
+        h("div",{style:{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(260px,1fr))",border:"1px solid rgba(14,14,12,0.14)",background:PAPER}},
+          steps.map((s,i)=>h("div",{key:i,style:{padding:32,borderRight:i<steps.length-1?`1px solid ${RULE}`:"none"}},
+            h("div",{style:{fontFamily:MONO,fontSize:12,color:ACCENT,marginBottom:14}},`0${i+1}${s.kicker?" — "+s.kicker:""}`),
+            h("div",{style:{fontFamily:SERIF,fontSize:22,fontWeight:700,marginBottom:10}},s.title),
+            h("p",{style:{fontSize:14,lineHeight:1.7,color:"#3a3a36"}},s.body)
+          ))
+        )
+      )
+    ),
+    // Programs
+    h("section",{id:"pii-program-list",className:"pii-pp-pad",style:{padding:"5.5rem 2.5rem",borderBottom:`1px solid ${RULE}`,scrollMarginTop:24}},
+      h("div",{style:wrap},
+        h("div",{style:{display:"flex",flexWrap:"wrap",justifyContent:"space-between",alignItems:"flex-end",gap:24,marginBottom:32}},
+          h("div",null,eyebrow(pp.programsEyebrow||"Our programs"),h2(pp.programsHeading||"")),
+          levels.length>2&&h("div",{role:"group","aria-label":"Filter programs by level",style:{display:"flex",flexWrap:"wrap",gap:8}},
+            levels.map(l=>{const on=active===l;return h("button",{key:l,type:"button",onClick:()=>setFilter(l),"aria-pressed":on?"true":"false",style:{fontFamily:SANS,fontSize:12,fontWeight:600,letterSpacing:"0.04em",padding:"10px 16px",minHeight:44,cursor:"pointer",border:`1px solid ${on?INK:"rgba(14,14,12,0.2)"}`,background:on?INK:"transparent",color:on?"#fff":INK}},l);})
+          )
+        ),
+        h("div",{style:{borderTop:`1px solid ${RULE}`}},
+          shown.map((prog,i)=>h("a",{key:prog.id,href:`/programs/${prog.id}`,onClick:e=>{e.preventDefault();setPage(`programs/${prog.id}`);},className:prog.image?"pii-g-row":"pii-g-row-noimg",
+            style:{gap:"2rem",padding:"1.75rem 1rem",borderBottom:`1px solid ${RULE}`,cursor:"pointer",alignItems:"center",transition:"background .2s",textDecoration:"none",color:INK},
+            onMouseEnter:e=>e.currentTarget.style.background=WARM,onMouseLeave:e=>e.currentTarget.style.background="transparent"},
+            prog.image?h("div",{className:"pii-prog-thumb",style:{width:240,height:160,overflow:"hidden",flexShrink:0,position:"relative",background:WARM}},
+              h("img",{src:prog.image,alt:prog.name,style:{width:"100%",height:"100%",objectFit:"cover",display:"block"}}),
+              h("div",{style:{position:"absolute",top:10,left:10,fontFamily:MONO,fontSize:12,color:"#fff",background:"rgba(14,14,12,0.55)",padding:"3px 8px",fontWeight:500}},`0${i+1}`)
+            ):h("div",{style:{fontFamily:MONO,fontSize:"1.5rem",color:"rgba(14,14,12,0.28)",minWidth:40}},`0${i+1}`),
+            h("div",{style:{minWidth:0}},
+              h("div",{style:{display:"flex",flexWrap:"wrap",gap:8,marginBottom:10}},
+                prog.level&&h("span",{style:{fontSize:10,letterSpacing:"0.1em",textTransform:"uppercase",background:"#f5ede9",color:"#a8331a",padding:"4px 9px",fontWeight:600}},prog.level),
+                prog.format&&h("span",{style:{fontSize:10,letterSpacing:"0.1em",textTransform:"uppercase",background:WARM,color:"#3a3a36",padding:"4px 9px",fontWeight:600}},prog.format)
+              ),
+              h("h3",{style:{fontFamily:SERIF,fontSize:"1.6rem",fontWeight:700,lineHeight:1.25,marginBottom:8}},prog.name),
+              prog.description&&h("p",{style:{fontSize:14,lineHeight:1.65,color:"#3a3a36",maxWidth:620}},prog.description)
+            ),
+            h("div",{style:{display:"flex",flexDirection:"column",gap:8,alignItems:"flex-start",minWidth:150}},
+              h("div",{style:{fontSize:11,letterSpacing:"0.08em",textTransform:"uppercase",color:"#6b6b63",fontWeight:600}},prog.status==="open"?"Deadline":"Applications"),
+              h("div",{style:{fontSize:14,fontWeight:500,color:prog.status==="open"?"#0F6E56":INK}},prog.status==="open"?(prog.deadline&&prog.deadline!=="TBD"?prog.deadline:"Open"):"Closed for now"),
+              h("div",{style:{fontSize:12,fontWeight:600,borderBottom:`1px solid ${INK}`,paddingBottom:2,marginTop:6}},"Learn more →")
+            )
+          ))
+        )
+      )
+    ),
+    // Alumni
+    alumni.length>0&&h("section",{className:"pii-pp-pad",style:{padding:"4.5rem 2.5rem",borderBottom:`1px solid ${RULE}`}},
+      h("div",{style:wrap},
+        h("div",{style:{marginBottom:36}},
+          eyebrow(pp.alumniEyebrow),
+          pp.alumniText&&h("p",{style:{fontFamily:SERIF,fontSize:26,fontStyle:"italic",lineHeight:1.35,maxWidth:640}},pp.alumniText)
+        ),
+        h("div",{style:{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(190px,1fr))",gap:16}},
+          alumni.map((a,i)=>{
+            const inner=a.logo
+              ?h("img",{src:a.logo,alt:a.name||"",style:{maxWidth:"100%",maxHeight:64,objectFit:"contain",display:"block"}})
+              :h("div",{style:{fontFamily:SERIF,fontSize:17,fontWeight:700,lineHeight:1.3}},a.name);
+            const tile={height:120,border:`1px solid ${RULE}`,background:"#fff",display:"flex",alignItems:"center",justifyContent:"center",padding:16,textAlign:"center",color:INK,textDecoration:"none"};
+            return a.url&&/^https?:\/\//i.test(a.url)
+              ?h("a",{key:i,href:a.url,target:"_blank",rel:"noopener noreferrer",style:tile},inner)
+              :h("div",{key:i,style:tile},inner);
+          })
+        )
+      )
+    ),
+    // Partner CTA
+    h("section",{id:"pii-partner",className:"pii-pp-pad",style:{padding:"5.5rem 2.5rem",background:INK,color:"#fff",scrollMarginTop:24}},
+      h("div",{style:{...wrap,display:"flex",flexWrap:"wrap",gap:48,alignItems:"flex-end"}},
+        h("div",{style:{flex:"999 1 560px",minWidth:0}},
+          eyebrow(pp.partnerEyebrow,"#f08a6c"),
+          h("h2",{style:{fontFamily:SERIF,fontSize:"clamp(2rem,4vw,3.4rem)",fontWeight:700,lineHeight:1.08,margin:"6px 0 20px"}},pp.partnerHeading),
+          pp.partnerBody&&h("p",{style:{fontSize:16,lineHeight:1.7,color:"rgba(255,255,255,0.78)",maxWidth:620}},pp.partnerBody)
+        ),
+        h("div",{style:{flex:"1 1 280px",display:"flex",flexDirection:"column",gap:12}},
+          (pp.partnerButtons||[]).filter(b=>b&&b.label).map((b,i)=>h("button",{key:i,type:"button",onClick:()=>piiGo(b.link,setPage),style:i===0?ctaSolid:{...ctaLine,color:"#fff"}},b.label))
+        )
+      )
     )
   );
 }
