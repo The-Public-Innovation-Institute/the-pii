@@ -138,7 +138,7 @@ async function main() {
         "Working at the intersection of AI, public policy, and urban systems.",
       image: article.media || article.image || DEFAULT_OG_IMAGE,
     };
-    for (const section of ["research", "publications"]) {
+    for (const section of ["research", "publications", "news"]) {
       writeStaticPage(template, `/${section}/${article.id}`, {
         ...meta,
         url: `${SITE_URL}/${section}/${article.id}`,
@@ -182,9 +182,15 @@ async function main() {
   const staticPages = [
     {
       path: "research",
-      title: "Research — The Public Innovation Institute",
+      title: "Research and Insights — The Public Innovation Institute",
       description:
-        "Publications, working papers, and data-driven policy research from PII.",
+        "Research, insights and articles from PII on technology and policy, ethics and technology, and science and technology.",
+    },
+    {
+      path: "news",
+      title: "News — The Public Innovation Institute",
+      description:
+        "Announcements, partnerships and event recaps from The Public Innovation Institute.",
     },
     {
       path: "publications",
@@ -272,6 +278,7 @@ function writeSitemap(data) {
   const staticUrls = [
     { loc: "/", freq: "weekly", priority: "1.0" },
     { loc: "/research", freq: "weekly", priority: "0.9" },
+    { loc: "/news", freq: "weekly", priority: "0.8" },
     { loc: "/programs", freq: "monthly", priority: "0.8" },
     { loc: "/cail", freq: "weekly", priority: "0.9" },
     { loc: "/hyperion", freq: "monthly", priority: "0.7" },

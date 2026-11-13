@@ -345,6 +345,26 @@ const DD={
     approach:["Research-driven — we anchor every intervention in rigorous evidence.","City-centered — we work alongside municipal government, not around it.","Equity-first — we measure success by outcomes in the most vulnerable communities.","Open — we publish our methods and findings for the field to build on."]
   },
   editorialImages:{research:"",programs:"",cail:"",opportunities:"",about:""},
+  researchPage:{
+    headline:"Evidence for the public choices",
+    headlineAccent:"technology is forcing.",
+    intro:"Research, insights and articles from The Public Innovation Institute across our three focus areas.",
+    focusAreas:[
+      {name:"Technology and Policy",desc:"How governments buy, govern and deploy technology, and the policy choices that follow."},
+      {name:"Ethics and Technology",desc:"The questions of rights, values and power raised when technology enters public life."},
+      {name:"Science and Technology",desc:"Applied science and data work on public health, infrastructure and the environment."}
+    ],
+    types:{
+      research:"Studies, working papers and empirical analysis.",
+      insights:"Shorter analysis and commentary on developments that matter now.",
+      articles:"Essays and features from PII and our community."
+    }
+  },
+  newsPage:{
+    headline:"Partnerships, people",
+    headlineAccent:"and progress.",
+    intro:"Announcements, new collaborations and event recaps from across The Public Innovation Institute."
+  },
   programsPage:{
     headline:"The skills to fix public systems.",
     headlineAccent:"And the field experience to prove it.",
@@ -474,7 +494,7 @@ function mergeById(defaults, saved){
 
 function mergeWithDefaults(p){
   if(!p) return JSON.parse(JSON.stringify(DD));
-  return Object.assign({},DD,p,{research:mergeById(DD.research,p.research),programs:p.programs||DD.programs,carousel:p.carousel||DD.carousel,cailPosts:p.cailPosts||DD.cailPosts,team:p.team||DD.team,opportunities:p.opportunities||DD.opportunities,affiliations:p.affiliations||DD.affiliations,about:Object.assign({},DD.about,p.about||{}),editorialImages:Object.assign({},DD.editorialImages,p.editorialImages||{}),pageHeroes:Object.assign({},DD.pageHeroes,p.pageHeroes||{}),programsPage:Object.assign(JSON.parse(JSON.stringify(DD.programsPage)),p.programsPage||{}),hyperion:Object.assign({},DD.hyperion,p.hyperion||{},{partners:(p.hyperion&&p.hyperion.partners)||DD.hyperion.partners,dates:(p.hyperion&&p.hyperion.dates)||DD.hyperion.dates,eligibility:Object.assign({},DD.hyperion.eligibility,(p.hyperion&&p.hyperion.eligibility)||{})}),site:Object.assign({},DD.site,p.site||{})});
+  return Object.assign({},DD,p,{research:mergeById(DD.research,p.research),programs:p.programs||DD.programs,carousel:p.carousel||DD.carousel,cailPosts:p.cailPosts||DD.cailPosts,team:p.team||DD.team,opportunities:p.opportunities||DD.opportunities,affiliations:p.affiliations||DD.affiliations,about:Object.assign({},DD.about,p.about||{}),editorialImages:Object.assign({},DD.editorialImages,p.editorialImages||{}),pageHeroes:Object.assign({},DD.pageHeroes,p.pageHeroes||{}),programsPage:Object.assign(JSON.parse(JSON.stringify(DD.programsPage)),p.programsPage||{}),researchPage:Object.assign(JSON.parse(JSON.stringify(DD.researchPage)),p.researchPage||{}),newsPage:Object.assign(JSON.parse(JSON.stringify(DD.newsPage)),p.newsPage||{}),hyperion:Object.assign({},DD.hyperion,p.hyperion||{},{partners:(p.hyperion&&p.hyperion.partners)||DD.hyperion.partners,dates:(p.hyperion&&p.hyperion.dates)||DD.hyperion.dates,eligibility:Object.assign({},DD.hyperion.eligibility,(p.hyperion&&p.hyperion.eligibility)||{})}),site:Object.assign({},DD.site,p.site||{})});
 }
 // Instant local cache — read synchronously at boot so the CMS shell paints
 // immediately, then refreshed from Supabase a moment later (see
@@ -591,7 +611,8 @@ function rebuildSidebar(){
     <div class="nav-item" onclick="nav('dashboard')">Dashboard</div>
     <div class="nav-item" onclick="nav('analytics')">Analytics</div>
     <div class="nav-section">Content</div>
-    <div class="nav-item" onclick="nav('research')">Research</div>
+    <div class="nav-item" onclick="nav('research')">Research and Insights</div>
+    <div class="nav-item" onclick="nav('news')">News</div>
     <div class="nav-item" onclick="nav('programs')">Programs</div>
     <div class="nav-item" onclick="nav('programsPage')">Programs Page</div>
     <div class="nav-item" onclick="nav('about')">About Page</div>
@@ -705,7 +726,8 @@ function render(){
   const c=document.getElementById('content');
   if(PAGE==='dashboard') c.innerHTML=renderDashboard();
   else if(PAGE==='analytics') c.innerHTML=renderAnalytics();
-  else if(PAGE==='research') c.innerHTML=renderResearch();
+  else if(PAGE==='research') c.innerHTML=renderResearch('research');
+  else if(PAGE==='news') c.innerHTML=renderResearch('news');
   else if(PAGE==='about') c.innerHTML=renderAbout();
   else if(PAGE==='team') c.innerHTML=renderTeam();
   else if(PAGE==='opportunities') c.innerHTML=renderOpportunities();
@@ -742,26 +764,31 @@ function renderDashboard(){
     </div>`;
 }
 
-function renderResearch(){
+function renderResearch(mode){
+  mode=mode||'research';
+  const isNewsMode=mode==='news';
   const q=SEARCH.research.toLowerCase();
   const allTags=[...new Set(DATA.research.flatMap(r=>r.tags||[r.tag]).filter(Boolean))].sort();
-  const secFilter=SEARCH.researchSection||'all';
+  const secFilter=isNewsMode?'news':(SEARCH.researchSection==='news'?'all':(SEARCH.researchSection||'all'));
   const items=DATA.research.filter(r=>{
-    if(secFilter!=='all'&&(r.section||'research')!==secFilter)return false;
+    const k=riKindOf(r);
+    if(isNewsMode?k!=='news':k==='news')return false;
+    if(!isNewsMode&&secFilter!=='all'&&k!==secFilter)return false;
     if(!q)return true;
     return (r.title||'').toLowerCase().includes(q)||(r.author||'').toLowerCase().includes(q)||((r.tags||[r.tag]).join(' ')).toLowerCase().includes(q);
   });
   return `
     <div class="section-header">
-      <div><h1>Research</h1><div style="font-size:12px;color:#7a7a72;margin-top:4px">Manage all research and publications</div></div>
-      <button class="btn" onclick="addResearch()">+ New Post</button>
+      <div><h1>${isNewsMode?'News':'Research and Insights'}</h1><div style="font-size:12px;color:#7a7a72;margin-top:4px">${isNewsMode?'Announcements, partnerships, team news and event recaps. These appear on the News page.':'Research, insights and articles. Give every post a type and a focus area so it lands in the right place on the page.'}</div></div>
+      <button class="btn" onclick="addResearch('${isNewsMode?'news':(secFilter==='all'?'research':secFilter)}')">+ New ${isNewsMode?'News Post':'Post'}</button>
     </div>
+    ${riPageTextCard(isNewsMode)}
     <div class="search-bar">
       <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="6" cy="6" r="4.5" stroke="#7a7a72" stroke-width="1.3"/><line x1="9.5" y1="9.5" x2="13" y2="13" stroke="#7a7a72" stroke-width="1.3" stroke-linecap="round"/></svg>
       <input type="text" placeholder="Search by title, author, or tag&hellip;" value="${esc(SEARCH.research)}" oninput="SEARCH.research=this.value;render()">
     </div>
     <div style="display:flex;gap:8px;margin-bottom:1rem">
-      ${[['all','All'],['research','Research'],['publications','Publications']].map(([v,label])=>`<button class="btn-ghost" style="${secFilter===v?'background:#0e0e0c;color:#fff;border-color:#0e0e0c':''}" onclick="SEARCH.researchSection='${v}';render()">${label}</button>`).join('')}
+      ${isNewsMode?'':[['all','All'],['research','Research'],['insights','Insights'],['articles','Articles']].map(([v,label])=>`<button class="btn-ghost" style="${secFilter===v?'background:#0e0e0c;color:#fff;border-color:#0e0e0c':''}" onclick="SEARCH.researchSection='${v}';render()">${label}</button>`).join('')}
     </div>
     <datalist id="dl-research-tags">${allTags.map(t=>`<option value="${esc(t)}">`).join('')}</datalist>
     ${items.length===0?'<div class="card"><p style="font-size:13px;color:#7a7a72">No posts match your search.</p></div>':''}
@@ -776,7 +803,8 @@ function renderResearch(){
         <div style="flex:1;min-width:0">
           <div style="font-weight:600;font-size:14px;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(r.title||'Untitled')}</div>
           <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
-            <span class="badge" style="background:${(r.section||'research')==='publications'?'#e8f0fe':'#f5ede9'};color:${(r.section||'research')==='publications'?'#1a56db':'#c8401e'}">${(r.section||'research')==='publications'?'Publications':'Research'}</span>
+            <span class="badge" style="background:#0e0e0c;color:#fff">${RI_KIND_LABEL[riKindOf(r)]}</span>
+            ${riKindOf(r)!=='news'?(r.focusArea?`<span class="badge" style="background:#e8f0fe;color:#1a56db">${esc(r.focusArea)}</span>`:'<span class="badge" style="background:#fff3cd;color:#856404">No focus area</span>'):''}
             ${tags.slice(0,2).map(t=>`<span class="badge badge-red">${esc(t)}</span>`).join('')}
             <span class="badge ${r.status==='published'?'badge-pub':'badge-draft'}">${r.status}</span>
             ${r.featured?'<span class="badge" style="background:#fff3cd;color:#856404">Featured</span>':''}
@@ -798,10 +826,8 @@ function renderResearch(){
           <div class="field"><label>Date</label><input type="text" value="${esc(r.date||'')}" onchange="updateResearch(${i},'date',this.value)"></div>
         </div>
         <div class="field"><label>About the Author (shown in the sidebar on the article page)</label><textarea rows="3" onchange="updateResearch(${i},'authorBio',this.value)">${esc(r.authorBio||'')}</textarea></div>
-        <div class="grid2">
-          <div class="field"><label>Section</label><select onchange="updateResearch(${i},'section',this.value)" style="width:100%"><option ${(r.section||'research')==='research'?'selected':''} value="research">Research</option><option ${r.section==='publications'?'selected':''} value="publications">Publications</option></select></div>
-          <div class="field"><label>Category (e.g. Working Paper, White Paper, Article, Policy Brief, News, Event, Feature)</label><input type="text" value="${esc(r.tag||'')}" onchange="updateResearch(${i},'tag',this.value)"></div>
-        </div>
+        ${riTypeAndFocusFields(r,i)}
+        <div class="field"><label>Topic tag (optional, e.g. Working Paper, Urban Analytics${riKindOf(r)==='news'?'; for news: Partnership, Team, Event recap, Program story':''})</label><input type="text" value="${esc(r.tag||'')}" onchange="updateResearch(${i},'tag',this.value)"></div>
         <div class="grid2">
           <div class="field"><label>Status</label><select onchange="updateResearch(${i},'status',this.value)" style="width:100%"><option ${r.status==='draft'?'selected':''} value="draft">Draft</option><option ${r.status==='published'?'selected':''} value="published">Published</option></select></div>
           <div class="field" style="display:flex;align-items:center;gap:10px;padding-top:20px">
@@ -1162,6 +1188,84 @@ function renderProgramsPage(){
       </div>
       <button class="btn" onclick="save()">Save Changes</button>
     </div>`;
+}
+
+// ── Research and Insights / News: type + focus area per post ───────────────
+const RI_FOCUS_AREAS=['Technology and Policy','Ethics and Technology','Science and Technology'];
+const RI_KINDS=['research','insights','articles','news'];
+const RI_KIND_LABEL={research:'Research',insights:'Insights',articles:'Articles',news:'News'};
+// Same fallback as the public site for posts saved before "type" existed.
+function riKindOf(r){
+  if(r&&r.kind)return r.kind;
+  const t=String((r&&r.tag)||'').toLowerCase();
+  if(t==='news'||t==='event'||t==='feature')return 'news';
+  if(t==='insights'||t==='insight')return 'insights';
+  if(((r&&r.section)||'research')==='research')return 'research';
+  return 'articles';
+}
+function setResearchKind(i,k){
+  const r=DATA.research[i]; if(!RI_KINDS.includes(k))return;
+  r.kind=k; r.section=k==='research'?'research':'publications';
+  render();
+}
+function setResearchFocus(i,v){
+  const r=DATA.research[i];
+  r.focusArea=RI_FOCUS_AREAS.includes(v)?v:'';
+  render();
+}
+function riTypeAndFocusFields(r,i){
+  const k=riKindOf(r), isNews=k==='news';
+  const seg=(v,on,first)=>`<button type="button" onclick="setResearchKind(${i},'${v}')" style="font-family:inherit;font-size:13px;font-weight:600;padding:10px 18px;cursor:pointer;border:none;${first?'':'border-left:1px solid #0e0e0c;'}background:${on?'#0e0e0c':'#fff'};color:${on?'#fff':'#0e0e0c'}" aria-pressed="${on}">${RI_KIND_LABEL[v]}</button>`;
+  return `
+    <div class="field"><label>Type <span style="color:#c8401e">*</span></label>
+      <div style="font-size:11px;color:#7a7a72;margin-bottom:6px">Research, Insights and Articles appear on Research and Insights. News appears on the News page.</div>
+      <div style="display:inline-flex;border:1px solid #0e0e0c">${RI_KINDS.map((v,n)=>seg(v,k===v,n===0)).join('')}</div>
+      ${r.kind?'':'<div style="font-size:11px;color:#856404;margin-top:6px">Not set yet. Showing where it lands now based on its old section/category; click a type to confirm.</div>'}
+    </div>
+    <div class="field"><label>Focus area ${isNews?'<span style="text-transform:none;letter-spacing:0;font-weight:400;color:#7a7a72">(optional for news)</span>':'<span style="color:#c8401e">*</span>'}</label>
+      <div style="display:flex;flex-wrap:wrap;gap:8px">
+        ${RI_FOCUS_AREAS.map(a=>{const on=r.focusArea===a;return `<button type="button" onclick="setResearchFocus(${i},'${a}')" aria-pressed="${on}" style="font-family:inherit;text-align:left;font-size:13px;font-weight:600;padding:10px 14px;cursor:pointer;border:${on?'2px solid #c8401e':'1px solid rgba(14,14,12,0.2)'};background:${on?'#f5ede9':'#fff'};color:#0e0e0c">${a}</button>`;}).join('')}
+        ${r.focusArea?`<button type="button" class="btn-ghost" onclick="setResearchFocus(${i},'')">Clear</button>`:''}
+      </div>
+      ${!isNews&&!r.focusArea?'<div style="font-size:11px;color:#856404;margin-top:6px">Pick a focus area, or this post only appears under "All" on the page.</div>':''}
+    </div>`;
+}
+function riSet(path,val){
+  const keys=path.split('.'),last=keys.pop();
+  const root=keys.shift();
+  if(!DATA[root])DATA[root]=JSON.parse(JSON.stringify(DD[root]));
+  const obj=keys.reduce((o,key)=>o[key],DATA[root]);
+  obj[last]=val;
+}
+function riGet(path){
+  const keys=path.split('.'),root=keys.shift();
+  const base=DATA[root]||DD[root];
+  return keys.reduce((o,key)=>o==null?o:o[key],base);
+}
+function riPageTextCard(isNews){
+  const key='research:__pagetext_'+(isNews?'news':'ri');
+  const open=EXPANDED.has(key);
+  const f=(label,path,rows)=>field(label,riGet(path)||'',`riSet('${path}',this.value)`,rows);
+  let body='';
+  if(open){
+    body=isNews?`
+      <div class="grid2">${f('Headline','newsPage.headline')}${f('Headline accent (italic)','newsPage.headlineAccent')}</div>
+      ${f('Intro','newsPage.intro',2)}`:`
+      <div class="grid2">${f('Headline','researchPage.headline')}${f('Headline accent (italic)','researchPage.headlineAccent')}</div>
+      ${f('Intro','researchPage.intro',2)}
+      ${(riGet('researchPage.focusAreas')||[]).map((a,n)=>f(esc(a.name)+' — description',`researchPage.focusAreas.${n}.desc`,2)).join('')}
+      <div class="grid2">${f('Research — description','researchPage.types.research')}${f('Insights — description','researchPage.types.insights')}</div>
+      ${f('Articles — description','researchPage.types.articles')}
+      <div style="font-size:11px;color:#7a7a72;margin-bottom:.75rem">The header photo is set in Settings › Page Hero Sections (Research).</div>`;
+    body+=`<button class="btn" onclick="save()">Save Changes</button>`;
+  }
+  return `<div class="card" style="padding:1rem 1.5rem">
+    <div class="card-header" onclick="toggleExpanded('${key}')">
+      <div style="font-weight:600;font-size:14px">${isNews?'News page text':'Page text — headline, focus area and type descriptions'}</div>
+      <span class="chevron ${open?'open':''}">▼</span>
+    </div>
+    ${open?`<div class="card-body">${body}</div>`:''}
+  </div>`;
 }
 
 function renderCarousel(){
@@ -2095,7 +2199,7 @@ function setResearchStatus(i,v){DATA.research[i].status=v;}
 function setResearchFeatured(i,v){DATA.research[i].featured=v;}
 function delResearch(i){if(confirm('Delete this post?')){EXPANDED.delete('research:'+DATA.research[i].id);DATA.research.splice(i,1);save();}}
 
-function addResearch(){const id='post-'+Date.now();DATA.research.unshift({id,title:'New Post',author:'Khahlil Louisy',affiliation:'The PII',authorBio:'',section:'research',tag:'Working Paper',tags:['Working Paper'],status:'draft',date:'',excerpt:'',body:'',featured:false});EXPANDED.add('research:'+id);render();document.getElementById('content').scrollTop=0;}
+function addResearch(kind){kind=kind||'research';const id='post-'+Date.now();DATA.research.unshift({id,title:'New Post',author:'Khahlil Louisy',affiliation:'The PII',authorBio:'',kind,focusArea:'',section:kind==='research'?'research':'publications',tag:'',tags:[],status:'draft',date:'',excerpt:'',body:'',featured:false});EXPANDED.add('research:'+id);render();document.getElementById('content').scrollTop=0;}
 function addResearchTag(i){const inp=document.getElementById('rtag-input-'+i);const val=(inp.value||'').trim();if(!val)return;if(!DATA.research[i].tags)DATA.research[i].tags=[DATA.research[i].tag].filter(Boolean);if(!DATA.research[i].tags.includes(val)){DATA.research[i].tags.push(val);DATA.research[i].tag=DATA.research[i].tags[0];}inp.value='';save();}
 function removeResearchTag(i,ti){if(!DATA.research[i].tags)DATA.research[i].tags=[DATA.research[i].tag].filter(Boolean);DATA.research[i].tags.splice(ti,1);DATA.research[i].tag=DATA.research[i].tags[0]||'';save();}
 
