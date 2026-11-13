@@ -345,6 +345,65 @@ const DD={
     approach:["Research-driven — we anchor every intervention in rigorous evidence.","City-centered — we work alongside municipal government, not around it.","Equity-first — we measure success by outcomes in the most vulnerable communities.","Open — we publish our methods and findings for the field to build on."]
   },
   editorialImages:{research:"",programs:"",cail:"",opportunities:"",about:""},
+  programsPage:{
+    headline:"Learn in Cambridge.",
+    headlineAccent:"Build for home.",
+    intro:"PII programs give students and early-career professionals the training to work with data, AI and research methods, then turn them loose on the public challenges they care about most, alongside the cities, communities and partners closest to the problem.",
+    primaryCta:"Explore programs",
+    secondaryCta:"Host a cohort",
+    stats:[
+      {kind:"countries",num:"",desc:"countries represented across our cohorts"},
+      {kind:"custom",num:"2021",desc:"running cohorts since, first under ITGH"},
+      {kind:"programs",num:"",desc:"programs, from undergraduate study to fellowship"}
+    ],
+    mapEyebrow:"Where our learners come from",
+    mapHeading:"One classroom, many hometowns.",
+    mapIntro:"Every cohort is run from Cambridge, but the problems our learners bring with them come from everywhere. Hover over or tap a country to trace the connection.",
+    hubLabel:"Cambridge, MA",
+    countries:[
+      {name:"United States",lat:39.0,lon:-98.0,label:"l",dy:0,territory:false},
+      {name:"Mexico",lat:19.4,lon:-99.1,label:"l",dy:0,territory:false},
+      {name:"Haiti",lat:18.5,lon:-72.3,label:"l",dy:12,territory:false},
+      {name:"Dominican Republic",lat:18.5,lon:-69.9,label:"r",dy:14,territory:false},
+      {name:"Puerto Rico",lat:18.4,lon:-66.1,label:"r",dy:-8,territory:true},
+      {name:"Venezuela",lat:10.5,lon:-66.9,label:"b",dy:8,territory:false},
+      {name:"Brazil",lat:-15.8,lon:-47.9,label:"r",dy:0,territory:false},
+      {name:"Argentina",lat:-34.6,lon:-58.4,label:"r",dy:0,territory:false},
+      {name:"United Kingdom",lat:51.5,lon:-0.1,label:"l",dy:-6,territory:false},
+      {name:"Spain",lat:40.4,lon:-3.7,label:"l",dy:6,territory:false},
+      {name:"Germany",lat:52.5,lon:13.4,label:"r",dy:-6,territory:false},
+      {name:"Italy",lat:41.9,lon:12.5,label:"r",dy:8,territory:false},
+      {name:"Armenia",lat:40.2,lon:44.5,label:"r",dy:0,territory:false},
+      {name:"Uganda",lat:0.35,lon:32.6,label:"l",dy:-4,territory:false},
+      {name:"Kenya",lat:-1.3,lon:36.8,label:"r",dy:4,territory:false},
+      {name:"South Africa",lat:-26.2,lon:28.0,label:"r",dy:0,territory:false},
+      {name:"India",lat:28.6,lon:77.2,label:"r",dy:0,territory:false}
+    ],
+    howEyebrow:"How our programs work",
+    steps:[
+      {title:"Foundations first",kicker:"Train",body:"An intensive opening in data analysis, research methods, systems thinking and the ethics of AI, with the human side of data at the center."},
+      {title:"Find what matters",kicker:"Discover",body:"Teams dig into open city data and partner datasets to identify the challenges they believe deserve attention, in whatever sector they choose."},
+      {title:"Ship something real",kicker:"Build",body:"Learners use AI and other tools to design solutions with partners, and the strongest work continues into a year-long fellowship."}
+    ],
+    programsEyebrow:"Our programs",
+    programsHeading:"Find your way in.",
+    alumniEyebrow:"Where alumni go next",
+    alumniText:"Our alumni have gone on to graduate study and careers at some of the world's leading institutions.",
+    alumni:[
+      {name:"Harvard Medical School",logo:"",url:""},
+      {name:"Johns Hopkins University",logo:"",url:""},
+      {name:"University of Oxford",logo:"",url:""},
+      {name:"Columbia Mailman School of Public Health",logo:"",url:""},
+      {name:"University College London",logo:"",url:""}
+    ],
+    partnerEyebrow:"Partner with PII",
+    partnerHeading:"The next cohort could start in your community.",
+    partnerBody:"We work with colleges, governments and companies to host cohorts, open up real datasets and give learners problems worth solving. If you want to bring a PII program closer to the people it serves, let's talk.",
+    partnerButtons:[
+      {label:"Become a host partner",link:"contact"},
+      {label:"Become an industry partner",link:"contact"}
+    ]
+  },
   pageHeroes:{research:{image:"",title:"Research & Publications",subtitle:"Empirical research, policy analysis, and working papers on AI in government, urban health equity, and civic data infrastructure."},programs:{image:"",title:"Programs & Opportunities",subtitle:"From summer intensives to graduate fellowships, our programs prepare the next generation of civic technologists."},hyperion:{image:"",title:"Hyperion",subtitle:"A venture program designed for founders tackling the most complex challenges of our time."},cail:{image:"",title:"City as Innovation Lab",subtitle:"Working with cities, companies, and researchers to design, test, and scale solutions in real-world urban environments."},conference:{image:"",title:"Change.Enabled",subtitle:"The annual conference on public-interest innovation and invention."},about:{image:"",title:"The Public Innovation Institute",subtitle:"Working at the intersection of technology, public policy, and community leadership."},opportunities:{image:"",title:"Opportunities",subtitle:"Fellowships, volunteer positions, city partnerships, and company partnerships at PII."},team:{image:"",title:"Our People",subtitle:"The researchers, advisors, and civic leaders behind PII's work."}},
   stats:[{num:"10",unit:"M",desc:"People die annually from pollution-related causes"},{num:"14",unit:"x",desc:"Return on every $1 invested in public health infrastructure"},{num:"77",unit:"%",desc:"Of jobs will require digital skills by 2030"},{num:"97",unit:"M",desc:"New jobs AI is expected to create"}],
   carousel:[
@@ -415,7 +474,7 @@ function mergeById(defaults, saved){
 
 function mergeWithDefaults(p){
   if(!p) return JSON.parse(JSON.stringify(DD));
-  return Object.assign({},DD,p,{research:mergeById(DD.research,p.research),programs:p.programs||DD.programs,carousel:p.carousel||DD.carousel,cailPosts:p.cailPosts||DD.cailPosts,team:p.team||DD.team,opportunities:p.opportunities||DD.opportunities,affiliations:p.affiliations||DD.affiliations,about:Object.assign({},DD.about,p.about||{}),editorialImages:Object.assign({},DD.editorialImages,p.editorialImages||{}),pageHeroes:Object.assign({},DD.pageHeroes,p.pageHeroes||{}),hyperion:Object.assign({},DD.hyperion,p.hyperion||{},{partners:(p.hyperion&&p.hyperion.partners)||DD.hyperion.partners,dates:(p.hyperion&&p.hyperion.dates)||DD.hyperion.dates,eligibility:Object.assign({},DD.hyperion.eligibility,(p.hyperion&&p.hyperion.eligibility)||{})}),site:Object.assign({},DD.site,p.site||{})});
+  return Object.assign({},DD,p,{research:mergeById(DD.research,p.research),programs:p.programs||DD.programs,carousel:p.carousel||DD.carousel,cailPosts:p.cailPosts||DD.cailPosts,team:p.team||DD.team,opportunities:p.opportunities||DD.opportunities,affiliations:p.affiliations||DD.affiliations,about:Object.assign({},DD.about,p.about||{}),editorialImages:Object.assign({},DD.editorialImages,p.editorialImages||{}),pageHeroes:Object.assign({},DD.pageHeroes,p.pageHeroes||{}),programsPage:Object.assign(JSON.parse(JSON.stringify(DD.programsPage)),p.programsPage||{}),hyperion:Object.assign({},DD.hyperion,p.hyperion||{},{partners:(p.hyperion&&p.hyperion.partners)||DD.hyperion.partners,dates:(p.hyperion&&p.hyperion.dates)||DD.hyperion.dates,eligibility:Object.assign({},DD.hyperion.eligibility,(p.hyperion&&p.hyperion.eligibility)||{})}),site:Object.assign({},DD.site,p.site||{})});
 }
 // Instant local cache — read synchronously at boot so the CMS shell paints
 // immediately, then refreshed from Supabase a moment later (see
@@ -534,6 +593,7 @@ function rebuildSidebar(){
     <div class="nav-section">Content</div>
     <div class="nav-item" onclick="nav('research')">Research</div>
     <div class="nav-item" onclick="nav('programs')">Programs</div>
+    <div class="nav-item" onclick="nav('programsPage')">Programs Page</div>
     <div class="nav-item" onclick="nav('about')">About Page</div>
     <div class="nav-item" onclick="nav('cail')">CAIL Posts</div>
     <div class="nav-item" onclick="nav('team')">People</div>
@@ -652,6 +712,7 @@ function render(){
   else if(PAGE==='messages') c.innerHTML=renderMessages();
   else if(PAGE==='cail') c.innerHTML=renderCAIL();
   else if(PAGE==='programs') c.innerHTML=renderPrograms();
+  else if(PAGE==='programsPage') c.innerHTML=renderProgramsPage();
   else if(PAGE==='carousel') c.innerHTML=renderCarousel();
   else if(PAGE==='hyperion') c.innerHTML=renderHyperion();
   else if(PAGE==='counterweight') c.innerHTML=renderCounterweight();
@@ -875,7 +936,7 @@ function renderPrograms(){
       ${open?`<div class="card-body">
         <div class="grid2">
           <div class="field"><label>Name</label><input type="text" value="${esc(p.name||'')}" onchange="updateProgram(${i},'name',this.value)"></div>
-          <div class="field"><label>Level</label><input type="text" value="${esc(p.level||'')}" onchange="updateProgram(${i},'level',this.value)"></div>
+          <div class="field"><label>Level</label><input type="text" list="pp-levels" value="${esc(p.level||'')}" placeholder="Choose or type a level" onchange="updateProgram(${i},'level',this.value)"><datalist id="pp-levels">${PP_LEVELS.map(l=>`<option value="${l}">`).join('')}</datalist><div style="font-size:11px;color:#7a7a72;margin-top:4px">Shown on the program card and used for the level filter on the Programs page.</div></div>
         </div>
         <div class="grid2">
           <div class="field"><label>Format</label><input type="text" value="${esc(p.format||'')}" onchange="updateProgram(${i},'format',this.value)"></div>
@@ -903,6 +964,190 @@ function renderPrograms(){
         <button class="btn" onclick="save()">Save Changes</button>
       </div>`:''}
     </div>`;}).join('')}`;
+}
+
+// ── Programs Page tab ────────────────────────────────────────────────────────
+// Copy, stats, learner map, steps, alumni logos and partner buttons for the
+// public /programs page live at DATA.programsPage and are saved with
+// everything else via save(). Program cards themselves stay under Programs;
+// the header photo stays under Settings › Page Hero Sections.
+const PP_LEVELS=['Featured','Graduate','Undergraduate','Fellowship','High School','Professional','Executive'];
+// Approximate capital-city coordinates, used to fill in lat/lon when a country
+// is typed in. Anything not listed can still be added by entering coordinates.
+const PP_PLACES={"Afghanistan":[34.5,69.2],"Algeria":[36.8,3.1],"Angola":[-8.8,13.2],"Antigua and Barbuda":[17.1,-61.8],"Argentina":[-34.6,-58.4],"Armenia":[40.2,44.5],"Australia":[-35.3,149.1],"Austria":[48.2,16.4],"Bahamas":[25.1,-77.3],"Bangladesh":[23.8,90.4],"Barbados":[13.1,-59.6],"Belgium":[50.8,4.4],"Belize":[17.3,-88.8],"Bolivia":[-16.5,-68.1],"Botswana":[-24.7,25.9],"Brazil":[-15.8,-47.9],"Cameroon":[3.9,11.5],"Canada":[45.4,-75.7],"Chile":[-33.4,-70.6],"China":[39.9,116.4],"Colombia":[4.7,-74.1],"Costa Rica":[9.9,-84.1],"Cuba":[23.1,-82.4],"Cyprus":[35.2,33.4],"Denmark":[55.7,12.6],"Dominica":[15.3,-61.4],"Dominican Republic":[18.5,-69.9],"Ecuador":[-0.2,-78.5],"Egypt":[30.0,31.2],"El Salvador":[13.7,-89.2],"Ethiopia":[9.0,38.7],"Finland":[60.2,24.9],"France":[48.9,2.4],"Germany":[52.5,13.4],"Ghana":[5.6,-0.2],"Greece":[38.0,23.7],"Grenada":[12.1,-61.7],"Guatemala":[14.6,-90.5],"Guyana":[6.8,-58.2],"Haiti":[18.5,-72.3],"Honduras":[14.1,-87.2],"India":[28.6,77.2],"Indonesia":[-6.2,106.8],"Iran":[35.7,51.4],"Ireland":[53.3,-6.3],"Israel":[31.8,35.2],"Italy":[41.9,12.5],"Jamaica":[18.0,-76.8],"Japan":[35.7,139.7],"Jordan":[31.9,35.9],"Kenya":[-1.3,36.8],"Lebanon":[33.9,35.5],"Malawi":[-14.0,33.8],"Malaysia":[3.1,101.7],"Mexico":[19.4,-99.1],"Morocco":[34.0,-6.8],"Mozambique":[-25.9,32.6],"Nepal":[27.7,85.3],"Netherlands":[52.4,4.9],"New Zealand":[-41.3,174.8],"Nicaragua":[12.1,-86.3],"Nigeria":[9.1,7.5],"Norway":[59.9,10.8],"Pakistan":[33.7,73.1],"Panama":[9.0,-79.5],"Paraguay":[-25.3,-57.6],"Peru":[-12.0,-77.0],"Philippines":[14.6,121.0],"Poland":[52.2,21.0],"Portugal":[38.7,-9.1],"Puerto Rico":[18.4,-66.1],"Qatar":[25.3,51.5],"Romania":[44.4,26.1],"Rwanda":[-1.9,30.1],"Saint Kitts and Nevis":[17.3,-62.7],"Saint Lucia":[14.0,-61.0],"Saint Vincent and the Grenadines":[13.2,-61.2],"Saudi Arabia":[24.7,46.7],"Senegal":[14.7,-17.4],"Singapore":[1.35,103.8],"South Africa":[-26.2,28.0],"South Korea":[37.6,127.0],"Spain":[40.4,-3.7],"Sri Lanka":[6.9,79.9],"Suriname":[5.9,-55.2],"Sweden":[59.3,18.1],"Switzerland":[46.9,7.4],"Taiwan":[25.0,121.5],"Tanzania":[-6.8,39.3],"Thailand":[13.8,100.5],"Trinidad and Tobago":[10.7,-61.5],"Tunisia":[36.8,10.2],"Turkey":[39.9,32.9],"Uganda":[0.35,32.6],"Ukraine":[50.5,30.5],"United Arab Emirates":[24.5,54.4],"United Kingdom":[51.5,-0.1],"United States":[39.0,-98.0],"Uruguay":[-34.9,-56.2],"Venezuela":[10.5,-66.9],"Vietnam":[21.0,105.8],"Zambia":[-15.4,28.3],"Zimbabwe":[-17.8,31.0]};
+
+function ppEnsure(){
+  if(!DATA.programsPage) DATA.programsPage=JSON.parse(JSON.stringify(DD.programsPage));
+  const d=DD.programsPage, p=DATA.programsPage;
+  Object.keys(d).forEach(k=>{ if(p[k]===undefined) p[k]=JSON.parse(JSON.stringify(d[k])); });
+  return p;
+}
+function ppGet(path){return path.split('.').reduce((o,k)=>o==null?o:o[k],ppEnsure());}
+function ppSet(path,val){
+  const keys=path.split('.'),last=keys.pop();
+  const obj=keys.reduce((o,k)=>o[k],ppEnsure());
+  obj[last]=val;
+}
+function ppArrAdd(path,item){ppGet(path).push(item);render();}
+function ppArrRemove(path,i){if(!confirm('Remove this item?'))return;const removed=ppGet(path).splice(i,1)[0];if(path==='alumni'&&removed&&removed.logo)deleteFromStorage(removed.logo);save();}
+function ppArrMove(path,i,d){const a=ppGet(path),j=i+d;if(j<0||j>=a.length)return;[a[i],a[j]]=[a[j],a[i]];render();}
+function ppField(label,path,rows,placeholder){return field(label,ppGet(path),`ppSet('${path}',this.value)`,rows,placeholder);}
+function ppMoveBtns(path,i){
+  return `<button class="btn-ghost" style="padding:3px 8px" onclick="ppArrMove('${path}',${i},-1)" title="Move up">↑</button>
+    <button class="btn-ghost" style="padding:3px 8px" onclick="ppArrMove('${path}',${i},1)" title="Move down">↓</button>
+    <button class="btn-danger" style="padding:3px 8px" onclick="ppArrRemove('${path}',${i})" title="Remove">&times;</button>`;
+}
+function ppCountryCount(){return (ppGet('countries')||[]).filter(c=>c&&c.name&&!c.territory).length;}
+function ppRounded(n){return n>=10?(Math.floor(n/5)*5)+'+':String(n);}
+function ppSetCountryName(i,v){
+  const c=ppGet('countries')[i]; c.name=v.trim();
+  const hit=PP_PLACES[c.name];
+  if(hit){c.lat=hit[0];c.lon=hit[1];if(c.name==='Puerto Rico')c.territory=true;}
+  render();
+}
+function ppSetNum(path,v){const n=parseFloat(v);ppSet(path,isFinite(n)?n:0);}
+function ppUploadAlumniLogo(i,input){
+  var file=input.files[0]; if(!file) return;
+  if(!file.type.startsWith('image/')){ alert('Please upload an image file (PNG, SVG, JPG, WebP).'); input.value=''; return; }
+  var oldUrl=(ppGet('alumni')[i]||{}).logo;
+  storeLogo(file,'logos',function(url){
+    ppGet('alumni')[i].logo=url;
+    save(); render();
+    toast('✓ Logo uploaded');
+    if(oldUrl) deleteFromStorage(oldUrl);
+  });
+}
+function ppRemoveAlumniLogo(i){
+  var oldUrl=(ppGet('alumni')[i]||{}).logo;
+  ppGet('alumni')[i].logo=''; save(); render();
+  if(oldUrl) deleteFromStorage(oldUrl);
+}
+
+function renderProgramsPage(){
+  ppEnsure();
+  const countries=ppGet('countries'), stats=ppGet('stats'), steps=ppGet('steps'), alumni=ppGet('alumni'), buttons=ppGet('partnerButtons');
+  const nC=ppCountryCount(), nT=countries.filter(c=>c&&c.name&&c.territory).length;
+  const note=t=>`<div style="font-size:11px;color:#7a7a72;margin:-.25rem 0 .75rem">${t}</div>`;
+  const box='border:1px solid rgba(14,14,12,0.12);padding:.75rem;margin-bottom:.6rem;background:#faf8f5';
+  return `
+    <div class="section-header">
+      <div><h1>Programs Page</h1><div style="font-size:12px;color:#7a7a72;margin-top:4px">Everything on /programs around the program cards. Program cards are edited under Programs; the header photo under Settings › Page Hero Sections.</div></div>
+    </div>
+
+    <div class="card">
+      <div class="section-sub">Header</div>
+      <div class="grid2">${ppField('Headline (line 1)','headline')}${ppField('Headline accent (line 2, italic)','headlineAccent')}</div>
+      ${ppField('Intro paragraph','intro',3)}
+      <div class="grid2">${ppField('Main button','primaryCta')}${ppField('Second button','secondaryCta')}</div>
+      ${note('The main button scrolls to the program list; the second scrolls to the partner section. Clear a label to hide that button.')}
+      <button class="btn" onclick="save()">Save Changes</button>
+    </div>
+
+    <div class="card">
+      <div class="section-sub">Stats strip</div>
+      ${note(`Auto stats are counted from the data so they never overstate: the map currently lists ${nC} countr${nC===1?'y':'ies'}${nT?` and ${nT} territor${nT===1?'y':'ies'} (territories are not counted)`:''}, shown as <b>${ppRounded(nC)}</b>. Type a number to override.`)}
+      ${stats.map((s,i)=>`<div style="${box}">
+        <div style="display:flex;gap:.5rem;align-items:center;margin-bottom:.5rem;flex-wrap:wrap">
+          <select onchange="ppGet('stats')[${i}].kind=this.value;render()" style="width:auto">
+            <option value="countries" ${s.kind==='countries'?'selected':''}>Auto: countries on the map</option>
+            <option value="programs" ${s.kind==='programs'?'selected':''}>Auto: number of programs</option>
+            <option value="custom" ${s.kind!=='countries'&&s.kind!=='programs'?'selected':''}>Custom</option>
+          </select>
+          <input type="text" style="width:120px" value="${esc(s.num||'')}" placeholder="${s.kind==='countries'?ppRounded(nC):s.kind==='programs'?String((DATA.programs||[]).length):'Number'}" onchange="ppGet('stats')[${i}].num=this.value">
+          <span style="flex:1"></span>${ppMoveBtns('stats',i)}
+        </div>
+        <input type="text" style="width:100%" value="${esc(s.desc||'')}" placeholder="Label under the number" onchange="ppGet('stats')[${i}].desc=this.value">
+      </div>`).join('')}
+      <button class="btn-ghost" onclick="ppArrAdd('stats',{kind:'custom',num:'',desc:''})">+ Add stat</button>
+      <div style="margin-top:1rem"><button class="btn" onclick="save()">Save Changes</button></div>
+    </div>
+
+    <div class="card">
+      <div class="section-sub">Learner map</div>
+      <div class="grid2">${ppField('Eyebrow','mapEyebrow')}${ppField('Heading','mapHeading')}</div>
+      ${ppField('Intro','mapIntro',2)}
+      ${ppField('Label on the Cambridge marker','hubLabel')}
+      <div class="field"><label>Countries</label>
+        ${note('Type a country name and its coordinates fill in automatically (most countries are listed). Adjust the label side and nudge (px up/down) if labels overlap on the map. Tick "Territory" for places that are not countries, like Puerto Rico, so they are not counted in the stat.')}
+        <datalist id="pp-places">${Object.keys(PP_PLACES).map(n=>`<option value="${esc(n)}">`).join('')}</datalist>
+        ${countries.map((c,i)=>`<div style="${box};display:flex;gap:.5rem;align-items:center;flex-wrap:wrap">
+          <input type="text" list="pp-places" style="flex:1;min-width:170px" value="${esc(c.name||'')}" placeholder="Country" onchange="ppSetCountryName(${i},this.value)">
+          <label style="margin:0;font-size:10px">Lat <input type="number" step="0.1" style="width:80px" value="${esc(c.lat)}" onchange="ppSetNum('countries.${i}.lat',this.value)"></label>
+          <label style="margin:0;font-size:10px">Lon <input type="number" step="0.1" style="width:80px" value="${esc(c.lon)}" onchange="ppSetNum('countries.${i}.lon',this.value)"></label>
+          <select style="width:auto" onchange="ppGet('countries')[${i}].label=this.value">
+            <option value="r" ${c.label!=='l'&&c.label!=='b'?'selected':''}>Label right</option>
+            <option value="l" ${c.label==='l'?'selected':''}>Label left</option>
+            <option value="b" ${c.label==='b'?'selected':''}>Label below</option>
+          </select>
+          <label style="margin:0;font-size:10px">Nudge <input type="number" step="1" style="width:64px" value="${esc(c.dy||0)}" onchange="ppSetNum('countries.${i}.dy',this.value)"></label>
+          <label style="margin:0;font-size:11px;text-transform:none;letter-spacing:0;display:flex;align-items:center;gap:4px"><input type="checkbox" style="width:auto;margin:0" ${c.territory?'checked':''} onchange="ppGet('countries')[${i}].territory=this.checked;render()">Territory</label>
+          ${ppMoveBtns('countries',i)}
+        </div>`).join('')}
+        <button class="btn-ghost" onclick="ppArrAdd('countries',{name:'',lat:0,lon:0,label:'r',dy:0,territory:false})">+ Add country</button>
+      </div>
+      <button class="btn" onclick="save()">Save Changes</button>
+    </div>
+
+    <div class="card">
+      <div class="section-sub">How our programs work</div>
+      ${ppField('Eyebrow','howEyebrow')}
+      ${steps.map((s,i)=>`<div style="${box}">
+        <div style="display:flex;gap:.5rem;margin-bottom:.5rem;align-items:center">
+          <span class="mono" style="font-size:11px;color:#c8401e;min-width:22px">${String(i+1).padStart(2,'0')}</span>
+          <input type="text" style="width:120px" value="${esc(s.kicker||'')}" placeholder="Kicker (Train)" onchange="ppGet('steps')[${i}].kicker=this.value">
+          <input type="text" style="flex:1" value="${esc(s.title||'')}" placeholder="Title" onchange="ppGet('steps')[${i}].title=this.value">
+          ${ppMoveBtns('steps',i)}
+        </div>
+        <textarea rows="2" style="width:100%" placeholder="Description" onchange="ppGet('steps')[${i}].body=this.value">${esc(s.body||'')}</textarea>
+      </div>`).join('')}
+      <button class="btn-ghost" onclick="ppArrAdd('steps',{kicker:'',title:'',body:''})">+ Add step</button>
+      <div style="margin-top:1rem"><button class="btn" onclick="save()">Save Changes</button></div>
+    </div>
+
+    <div class="card">
+      <div class="section-sub">Program list</div>
+      <div class="grid2">${ppField('Eyebrow','programsEyebrow')}${ppField('Heading','programsHeading')}</div>
+      ${note('The level filter buttons are built from each program\'s Level (set under Programs).')}
+      <button class="btn" onclick="save()">Save Changes</button>
+    </div>
+
+    <div class="card">
+      <div class="section-sub">Where alumni go next</div>
+      ${ppField('Eyebrow','alumniEyebrow')}
+      ${ppField('Text','alumniText',2)}
+      <div class="field"><label>Institutions</label>
+        ${note('Upload each institution\'s official logo (PNG with a transparent background or SVG, under 200 KB). Until a logo is uploaded, the name is shown instead. Check each institution\'s logo-use guidelines before publishing.')}
+        ${alumni.map((a,i)=>`<div style="${box}">
+          <div style="display:flex;gap:.5rem;margin-bottom:.5rem;align-items:center;flex-wrap:wrap">
+            <input type="text" style="flex:1;min-width:180px" value="${esc(a.name||'')}" placeholder="Institution name (also the logo's alt text)" onchange="ppGet('alumni')[${i}].name=this.value">
+            <input type="text" style="flex:1;min-width:180px" value="${esc(a.url||'')}" placeholder="Link (optional, https://…)" onchange="ppGet('alumni')[${i}].url=this.value">
+            ${ppMoveBtns('alumni',i)}
+          </div>
+          <div style="display:flex;gap:.75rem;align-items:center;flex-wrap:wrap">
+            ${a.logo?`<img src="${esc(a.logo)}" alt="" style="max-height:48px;max-width:160px;background:#fff;border:1px solid rgba(14,14,12,0.12);padding:4px"><button class="btn-danger" onclick="ppRemoveAlumniLogo(${i})">Remove logo</button>`:''}
+            <input type="file" accept="image/png,image/svg+xml,image/jpeg,image/webp" onchange="ppUploadAlumniLogo(${i},this)" style="font-size:11px;padding:4px;width:auto">
+          </div>
+        </div>`).join('')}
+        <button class="btn-ghost" onclick="ppArrAdd('alumni',{name:'',logo:'',url:''})">+ Add institution</button>
+      </div>
+      <button class="btn" onclick="save()">Save Changes</button>
+    </div>
+
+    <div class="card">
+      <div class="section-sub">Partner section</div>
+      <div class="grid2">${ppField('Eyebrow','partnerEyebrow')}${ppField('Heading','partnerHeading')}</div>
+      ${ppField('Text','partnerBody',3)}
+      <div class="field"><label>Buttons</label>
+        ${note('Link can be a site page (e.g. contact, opportunities) or a full https:// address.')}
+        ${buttons.map((b,i)=>`<div style="${box};display:flex;gap:.5rem;align-items:center;flex-wrap:wrap">
+          <input type="text" style="flex:1;min-width:160px" value="${esc(b.label||'')}" placeholder="Button label" onchange="ppGet('partnerButtons')[${i}].label=this.value">
+          <input type="text" style="flex:1;min-width:160px" value="${esc(b.link||'')}" placeholder="contact" onchange="ppGet('partnerButtons')[${i}].link=this.value">
+          ${ppMoveBtns('partnerButtons',i)}
+        </div>`).join('')}
+        <button class="btn-ghost" onclick="ppArrAdd('partnerButtons',{label:'',link:'contact'})">+ Add button</button>
+      </div>
+      <button class="btn" onclick="save()">Save Changes</button>
+    </div>`;
 }
 
 function renderCarousel(){
