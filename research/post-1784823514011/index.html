@@ -188,8 +188,8 @@ const DEFAULT_DATA={
     ],
     mapEyebrow:"Where our learners come from",
     mapHeading:"One classroom, many hometowns.",
-    mapIntro:"Every cohort is run from Cambridge, but the problems our learners bring with them come from everywhere. Hover over or tap a country to trace the connection.",
-    hubLabel:"Cambridge, MA",
+    mapIntro:"Our learners join from across the world, and each brings the challenges of their own community into the cohort. Hover over or tap a country to trace the connection.",
+    hubLabel:"PII · Cambridge, MA",
     countries:[
       {name:"United States",lat:39.0,lon:-98.0,label:"l",dy:0,territory:false},
       {name:"Mexico",lat:19.4,lon:-99.1,label:"l",dy:0,territory:false},
@@ -1046,7 +1046,7 @@ function LearnerMap({pp}){
   return h("div",{className:"pii-map-scroll"},
     h("div",{className:"pii-map",style:{position:"relative",width:"100%",aspectRatio:"1000 / 383",background:WARM,border:`1px solid ${RULE}`,overflow:"hidden"}},
       h("img",{src:"/assets/programs/land-dots.svg",alt:"","aria-hidden":"true",style:{position:"absolute",inset:0,width:"100%",height:"100%",display:"block"}}),
-      h("svg",{viewBox:`0 0 1000 ${PII_MAP_H}`,role:"img","aria-label":`Map of the ${countries.length} places PII learners have come from, each connected by an arc to Cambridge, Massachusetts`,style:{position:"absolute",inset:0,width:"100%",height:"100%"}},
+      h("svg",{viewBox:`0 0 1000 ${PII_MAP_H}`,role:"img","aria-label":`Map of the ${countries.length} places PII learners have come from, each connected by an arc to PII in Cambridge, Massachusetts`,style:{position:"absolute",inset:0,width:"100%",height:"100%"}},
         pts.map(({c,d},i)=>{
           const on=act===c.name,dim=act&&!on;
           return h("path",{key:"a"+i,className:"pii-arc",d,fill:"none",stroke:dim?"#b9b2a3":ACCENT,strokeWidth:on?2.6:1.3,strokeLinecap:"round",opacity:dim?0.35:(on?1:0.7),style:{animationDelay:`${(i*0.09).toFixed(2)}s`}});
@@ -1058,7 +1058,7 @@ function LearnerMap({pp}){
         h("circle",{className:"pii-pulse",cx:hub.x,cy:hub.y,r:5,fill:ACCENT}),
         h("circle",{cx:hub.x,cy:hub.y,r:6,fill:INK,stroke:PAPER,strokeWidth:2})
       ),
-      h("div",{style:{position:"absolute",left:pct(hub.x,1000),top:pct(hub.y,PII_MAP_H),transform:"translate(-50%, calc(-100% - 14px))",background:INK,color:"#fff",fontFamily:MONO,fontSize:11,letterSpacing:"0.06em",textTransform:"uppercase",padding:"5px 9px",whiteSpace:"nowrap",pointerEvents:"none",zIndex:4}},pp.hubLabel||"Cambridge, MA"),
+      h("div",{style:{position:"absolute",left:pct(hub.x,1000),top:pct(hub.y,PII_MAP_H),transform:"translate(-50%, calc(-100% - 14px))",background:INK,color:"#fff",fontFamily:MONO,fontSize:11,letterSpacing:"0.06em",textTransform:"uppercase",padding:"5px 9px",whiteSpace:"nowrap",pointerEvents:"none",zIndex:4}},pp.hubLabel||"PII · Cambridge, MA"),
       pts.map(({c,p},i)=>{
         const on=act===c.name,dy=Number(c.dy)||0;
         const t=c.label==="l"?`translate(calc(-100% - 9px), calc(-50% + ${dy}px))`:c.label==="b"?`translate(-50%, ${dy}px)`:`translate(9px, calc(-50% + ${dy}px))`;
