@@ -188,7 +188,7 @@ const DEFAULT_DATA={
     ],
     mapEyebrow:"Where our learners come from",
     mapHeading:"One classroom, many hometowns.",
-    mapIntro:"Our learners join from across the world, and each brings the challenges of their own community into the cohort. Hover over or tap a country to trace the connection.",
+    mapIntro:"Our learners join from across the world, and each brings the challenges of their own community into the cohort.",
     hubLabel:"PII · Cambridge, MA",
     countries:[
       {name:"United States",lat:39.0,lon:-98.0,label:"l",dy:0,territory:false},
@@ -1022,6 +1022,12 @@ function ArticlePage({article,setPage,data}){
 // program cards come from data.programs; the header photo comes from
 // data.pageHeroes.programs, exactly as before.
 const PII_MAP_H=383.33;
+const PII_AUDIENCES=["High school students","Undergraduates","Graduate students","Recent graduates","Early-career professionals","Mid-career professionals","Researchers"];
+function piiAudiences(p){
+  if(Array.isArray(p.levels)) return p.levels;
+  const map={"Graduate":"Graduate students","Undergraduate":"Undergraduates","High School":"High school students","Fellowship":"Researchers"};
+  return p.level&&p.level!=="Featured"?[map[p.level]||p.level]:[];
+}
 function piiProj(lat,lon){return {x:(Number(lon)+180)/360*1000,y:(80-Number(lat))/138*PII_MAP_H};}
 function piiCountryCount(pp){return ((pp&&pp.countries)||[]).filter(c=>c&&c.name&&!c.territory).length;}
 // Never overstate: 16 countries reads "15+", 9 reads "9".
@@ -1074,9 +1080,10 @@ function ProgramsPage({data,setPage}){
   const pp=data.programsPage||{};
   const progs=data.programs||[];
   const [filter,setFilter]=useState("All");
-  const levels=["All",...new Set(progs.map(p=>p.level).filter(Boolean))];
+  const used=new Set(progs.flatMap(piiAudiences));
+  const levels=["All",...PII_AUDIENCES.filter(a=>used.has(a)),...[...used].filter(a=>!PII_AUDIENCES.includes(a))];
   const active=levels.includes(filter)?filter:"All";
-  const shown=progs.filter(p=>active==="All"||p.level===active);
+  const shown=progs.filter(p=>active==="All"||piiAudiences(p).includes(active));
   const hasImage=!!(hero.image&&hero.image.length);
   const scrollTo=id=>{const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:"smooth",block:"start"});};
   const statNum=s=>(s.num&&String(s.num).trim())?s.num:(s.kind==="countries"?piiRoundedPlus(piiCountryCount(pp)):s.kind==="programs"?String(progs.length):"");
@@ -1146,7 +1153,7 @@ function ProgramsPage({data,setPage}){
       h("div",{style:wrap},
         h("div",{style:{display:"flex",flexWrap:"wrap",justifyContent:"space-between",alignItems:"flex-end",gap:24,marginBottom:32}},
           h("div",null,eyebrow(pp.programsEyebrow||"Our programs"),h2(pp.programsHeading||"")),
-          levels.length>2&&h("div",{role:"group","aria-label":"Filter programs by level",style:{display:"flex",flexWrap:"wrap",gap:8}},
+          levels.length>2&&h("div",{role:"group","aria-label":"Filter programs by who they are for",style:{display:"flex",flexWrap:"wrap",gap:8}},
             levels.map(l=>{const on=active===l;return h("button",{key:l,type:"button",onClick:()=>setFilter(l),"aria-pressed":on?"true":"false",style:{fontFamily:SANS,fontSize:12,fontWeight:600,letterSpacing:"0.04em",padding:"10px 16px",minHeight:44,cursor:"pointer",border:`1px solid ${on?INK:"rgba(14,14,12,0.2)"}`,background:on?INK:"transparent",color:on?"#fff":INK}},l);})
           )
         ),
@@ -1160,7 +1167,8 @@ function ProgramsPage({data,setPage}){
             ):h("div",{style:{fontFamily:MONO,fontSize:"1.5rem",color:"rgba(14,14,12,0.28)",minWidth:40}},`0${i+1}`),
             h("div",{style:{minWidth:0}},
               h("div",{style:{display:"flex",flexWrap:"wrap",gap:8,marginBottom:10}},
-                prog.level&&h("span",{style:{fontSize:10,letterSpacing:"0.1em",textTransform:"uppercase",background:"#f5ede9",color:"#a8331a",padding:"4px 9px",fontWeight:600}},prog.level),
+                prog.featured&&h("span",{style:{fontSize:10,letterSpacing:"0.1em",textTransform:"uppercase",background:ACCENT,color:"#fff",padding:"4px 9px",fontWeight:600}},"Featured"),
+                piiAudiences(prog).map(a=>h("span",{key:a,style:{fontSize:10,letterSpacing:"0.1em",textTransform:"uppercase",background:"#f5ede9",color:"#a8331a",padding:"4px 9px",fontWeight:600}},a)),
                 prog.format&&h("span",{style:{fontSize:10,letterSpacing:"0.1em",textTransform:"uppercase",background:WARM,color:"#3a3a36",padding:"4px 9px",fontWeight:600}},prog.format)
               ),
               h("h3",{style:{fontFamily:SERIF,fontSize:"1.6rem",fontWeight:700,lineHeight:1.25,marginBottom:8}},prog.name),
